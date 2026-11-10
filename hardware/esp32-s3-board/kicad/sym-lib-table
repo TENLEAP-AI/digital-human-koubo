@@ -1,0 +1,4 @@
+(sym_lib_table
+  (version 7)
+  (lib (name "zeebuddy")(type "KiCad")(uri "${KIPRJMOD}/zeebuddy.kicad_sym")(options "")(descr "Project symbols"))
+)
