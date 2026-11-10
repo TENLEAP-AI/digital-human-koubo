@@ -8,7 +8,7 @@ ESP32-S3-WROOM-1U-N16R8 + Air780E 的主板原理图，第一版，**草稿**。
 |---|---|
 | `zeebuddy-mainboard.pdf` | 原理图 PDF，直接看这个 |
 | `zeebuddy-mainboard.kicad_pro` / `.kicad_sch` | KiCad 工程和顶层图 |
-| `power.kicad_sch` | 1 电源：Type-C、充电（BQ25895）、电池、3.3 V |
+| `power.kicad_sch` | 1 电源：Type-C、充电（SY6970）、电池、3.3 V |
 | `mcu.kicad_sch` | 2 主控：ESP32-S3 模组、下载口、USB 切换 |
 | `expander.kicad_sch` | 3 两颗 I²C 扩展芯片、按键 |
 | `cellular.kicad_sch` | 4 4G：Air780E、SIM 卡、天线 |
@@ -43,7 +43,8 @@ gen/build.sh
 
 | 元件 | 脚位出处 |
 |---|---|
-| ESP32-S3 模组、BQ25895、MAX98357A、FSUSB42、ME6211、三极管、MOS 管、保护器件 | KiCad 9 官方符号库 |
+| ESP32-S3 模组、MAX98357A、FSUSB42、ME6211、三极管、MOS 管、保护器件 | KiCad 9 官方符号库 |
+| SY6970QCC 充电芯片 | 矽力杰 SY6970 数据手册 Rev 0.1 的管脚表；外围元件值也按这份手册 |
 | XL9555QF24 | 用官方库里 TCA9555RTWR 的符号；对照 XL9555 数据手册，QFN-24 的 24 个脚完全相同 |
 | SY8089AAAC | 用官方库里 TLV62569DBV 的符号；对照 SY8089 数据手册，5 个脚和 0.6 V 反馈电压相同 |
 | Air780E | 合宙《Air780E 硬件手册》AT 方式管脚表，109 个焊盘 |
@@ -58,7 +59,7 @@ gen/build.sh
 
 | 图上的型号 | 可替换 | 说明 |
 |---|---|---|
-| BQ25895RTWR | SY6970QCC | 24 个脚相同，便宜约 6 元；它的数据手册用 1 µH 电感、6.8 µF 的 PMID 电容 |
+| SY6970QCC | BQ25895RTWR | 24 个脚相同，贵约 6 元；TI 的数据手册用 2.2 µH 电感 |
 | XL9555QF24 | TCA9555RTWR | 脚位相同；TCA9555 没有内部上拉 |
 | SY8089AAAC | TLV62569DBV | 脚位和反馈电压相同 |
 

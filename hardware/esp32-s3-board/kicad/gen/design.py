@@ -79,6 +79,20 @@ CAM_FPC = fpc("CAM_FPC_24P", CAM_PINS, "24 脚并口摄像头排线（OV2640 模
 TP_FPC = fpc("TP_FPC_6P", ["VDD", "GND", "SCL", "SDA", "INT", "RST"], "触摸屏排线，脚位待屏厂确认")
 KEY_FPC = fpc("KEY_FPC_6P", ["GND", "K1", "K2", "K3", "NC", "GND"], "按键排线，脚位待定")
 
+CHARGER = d.define(box_symbol(
+    "SY6970QCC", "U",
+    left=[(1, "BUS", "power_in"), (2, "DP", "bidirectional"), (3, "DM", "bidirectional"), None,
+          (5, "SCL", "input"), (6, "SDA", "bidirectional"), (7, "INT", "open_collector"), None,
+          (8, "OTG", "input"), (9, "~{CE}", "input"), (12, "~{QON}", "input"), (10, "ILIM"), None,
+          ([17, 18, 25], "PGND", "power_in")],
+    right=[(4, "STAT", "open_collector"), (24, "DSEL", "open_collector"), None,
+           (23, "PMID"), ([19, 20], "LX"), (21, "BST"), None,
+           ([15, 16], "SYS"), ([13, 14], "BAT"), None,
+           (22, "REGN"), (11, "NTC")],
+    fp="Package_DFN_QFN:QFN-24-1EP_4x4mm_P0.5mm_EP2.65x2.65mm", minw=25.4,
+    desc="矽力杰 I²C 开关充电芯片，带电源路径和电压电流检测，QFN4x4-24，脚位与 BQ25895RTW 相同",
+    datasheet="https://www.electronics-lab.com/wp-content/uploads/2023/12/SY6970-.pdf"))
+
 MIC = d.define(box_symbol(
     "MSM261S4030H0R", "MK",
     left=[(8, "VDD", "power_in"), (4, "CHIPEN", "input"), (5, "L/R", "input"), (1, "GND", "power_in")],
@@ -120,16 +134,15 @@ def power():
     sh.text(15.24, 121.92, "VBUS 可能被快充适配器抬到 9 ~ 12 V（充电芯片自己握手）。\n"
                            "VBUS 上的电容和 TVS 按 25 V / 12 V 选；ESD 管的 VBUS 脚不接。", 1.3)
 
-    sh.frame(142.24, 17.78, 406.4, 132.08, "充电和电源路径（BQ25895，I²C 地址 0x6A）")
-    sh.place("Battery_Management:BQ25895RTW", 198.12, 66.04,
-             {"VBUS": "VBUS", "D+": "USBC_DP", "D-": "USBC_DM", "SCL": "I2C_SCL", "SDA": "I2C_SDA",
-              "~{INT}": "CHG_INT", "OTG": "GND", "~{CE}": "GND", "~{QON}": "CHG_QON", "ILIM": "CHG_ILIM",
-              "STAT": "CHG_STAT", "PMID": "CHG_PMID", "SW": "CHG_SW", "BTST": "CHG_BTST", "SYS": "VSYS",
-              "BAT": "VBAT", "REGN": "CHG_REGN", "TS": "CHG_TS", "PGND": "GND"}, nc=["DSEL"],
-             value="BQ25895RTWR")
+    sh.frame(142.24, 17.78, 406.4, 132.08, "充电和电源路径（SY6970，I²C 地址 0x6A）")
+    sh.place(CHARGER, 198.12, 66.04,
+             {"BUS": "VBUS", "DP": "USBC_DP", "DM": "USBC_DM", "SCL": "I2C_SCL", "SDA": "I2C_SDA",
+              "INT": "CHG_INT", "OTG": "GND", "~{CE}": "GND", "~{QON}": "CHG_QON", "ILIM": "CHG_ILIM",
+              "STAT": "CHG_STAT", "PMID": "CHG_PMID", "LX": "CHG_SW", "BST": "CHG_BTST", "SYS": "VSYS",
+              "BAT": "VBAT", "REGN": "CHG_REGN", "NTC": "CHG_TS", "PGND": "GND"}, nc=["DSEL"])
     sh.hlist(274.32, 33.02, [
         ("C", "CHG_BTST", "CHG_SW", "47nF"),
-        ("L", "CHG_SW", "VSYS", "2.2µH 4A", "", "Inductor_SMD:L_Sunlord_MWSA0402S"),
+        ("L", "CHG_SW", "VSYS", "1µH 4A", "", "Inductor_SMD:L_Sunlord_MWSA0402S"),
         ("R", "CHG_ILIM", "GND", RILIM),
         ("R", "CHG_REGN", "CHG_TS", TS_TOP),
         ("R", "CHG_TS", "GND", TS_BOT),
@@ -144,9 +157,11 @@ def power():
     sh.caps(373.38, 111.76, "VSYS", [("10µF", FP_0603), ("10µF", FP_0603)])
     sh.caps(162.56, 104.14, "VBAT", [("10µF", FP_0603)])
     sh.tp(345.44, 43.18, "CHG_QON")
-    sh.text(144.78, 121.92, "没接电池温度电阻：TS 用两颗 10k 固定在正常窗口。OTG、CE 接地：不用反向升压，充电默认打开。\n"
-                            "输入限流 = 355 / 200 Ω ≈ 1.8 A（最大不超过 2 A）。可换脚位相同的 SY6970QCC（它的手册用 1 µH 电感）。\n"
-                            "注意：芯片默认充电电流 2 A，固件没配置或看门狗超时都会回到这个值，电池小于 2000 mAh 必须调小。", 1.3)
+    sh.text(144.78, 120.65,
+            "没接电池温度电阻：NTC 脚用两颗 10k 固定在正常窗口。OTG、CE 接地：不用反向升压，充电默认打开。\n"
+            "输入限流 = 360 / 200 Ω ≈ 1.8 A。外围元件值按 SY6970 数据手册（1 µH、PMID ≥ 6.8 µF）。\n"
+            "电池 2000 mAh。芯片上电默认充电电流 2.048 A（约 1C），固件启动后要设成 1 A（0.5C），\n"
+            "并处理好 40 秒的 I²C 看门狗（定时喂或关掉），否则会回到默认值。", 1.3)
 
     sh.frame(12.7, 137.16, 213.36, 248.92, "电池座和 3.3 V 降压")
     sh.place("Connector_Generic:Conn_01x02", 48.26, 162.56, {"1": "VBAT", "2": "GND"}, value="电池座")
@@ -569,8 +584,8 @@ def audio_tf():
 
 
 # ---- values taken from the datasheets ----------------------------------------------
-RILIM = "200R 1%"     # BQ25895: IINMAX = K / R, K = 320 / 355 / 390 A·Ω -> at most 1.97 A
-TS_TOP = "10k"        # BQ25895 datasheet figure 9-14, no thermistor
+RILIM = "200R 1%"     # SY6970: IINMAX = K / R, K = 360 A·Ω typ -> about 1.8 A
+TS_TOP = "10k"        # 50 % of REGN sits between the 44.75 % and 68.25 % thresholds
 TS_BOT = "10k"
 EXP_VALUE = "XL9555QF24"
 
@@ -624,7 +639,7 @@ if __name__ == "__main__":
          "1. 屏 LB28BOE47：背光电压电流、VCI 电压、排线间距和上下接、8 根数据线里哪几根有效、能否只用 DE。\n"
          "2. 触摸屏：芯片型号、排线脚位。\n"
          "3. 前摄：型号、排线脚位、10 脚要不要供电。\n"
-         "4. 电池：容量。充电芯片默认充电电流约 2 A，电池小于 2000 mAh 时必须调小。\n"
+         "4. 电池（2000 mAh）：电芯规格书允许的最大充电电流、电池座型号、有没有温度电阻脚。\n"
          "5. 按键：排线脚位，是否包含开关机键。\n"
          "6. 各连接器的具体型号（Type-C、SIM 卡座、TF 卡座、排线座、电池座、喇叭座）。\n"
          "7. 220 µF 钽电容的高度是否放得进外壳。", 1.5),
