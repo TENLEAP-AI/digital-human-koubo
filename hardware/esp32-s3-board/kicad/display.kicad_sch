@@ -204,75 +204,6 @@
 			)
 			(embedded_fonts no)
 		)
-		(symbol "Driver_LED:TPS61165DBV"
-			(exclude_from_sim no)
-			(in_bom yes)
-			(on_board yes)
-			(property "Reference" "U" (at 0 11.43 0) (effects (font (size 1.27 1.27))))
-			(property "Value" "TPS61165DBV" (at 0 8.89 0) (effects (font (size 1.27 1.27))))
-			(property "Footprint" "Package_TO_SOT_SMD:SOT-23-6"
-				(at 0 -25.146 0)
-				(effects (font (size 1.27 1.27)) (hide yes))
-			)
-			(property "Datasheet" "https://www.ti.com/lit/ds/symlink/tps61165.pdf"
-				(at 0 -22.86 0)
-				(effects (font (size 1.27 1.27)) (hide yes))
-			)
-			(property "Description" "High-Brightness, White LED Driver, 3V to 18V input voltage range, internal switch, constant current, up to 38V/1.2A output, SOT-23-6"
-				(at 0 -20.574 0)
-				(effects (font (size 1.27 1.27)) (hide yes))
-			)
-			(property "ki_keywords" "LED-backlight-display-driver PWM EasyScale-protocol"
-				(at 0 0 0)
-				(effects (font (size 1.27 1.27)) (hide yes))
-			)
-			(property "ki_fp_filters" "SOT?23*" (at 0 0 0) (effects (font (size 1.27 1.27)) (hide yes)))
-			(symbol "TPS61165DBV_1_1"
-				(rectangle
-					(start -5.08 7.62)
-					(end 5.08 -7.62)
-					(stroke (width 0.254) (type default))
-					(fill (type background))
-				)
-				(pin power_in line
-					(at -7.62 5.08 0)
-					(length 2.54)
-					(name "VIN" (effects (font (size 1.27 1.27))))
-					(number "1" (effects (font (size 1.27 1.27))))
-				)
-				(pin input line
-					(at -7.62 2.54 0)
-					(length 2.54)
-					(name "CTRL" (effects (font (size 1.27 1.27))))
-					(number "2" (effects (font (size 1.27 1.27))))
-				)
-				(pin output line
-					(at -7.62 0 0)
-					(length 2.54)
-					(name "COMP" (effects (font (size 1.27 1.27))))
-					(number "5" (effects (font (size 1.27 1.27))))
-				)
-				(pin power_in line
-					(at 0 -10.16 90)
-					(length 2.54)
-					(name "GND" (effects (font (size 1.27 1.27))))
-					(number "4" (effects (font (size 1.27 1.27))))
-				)
-				(pin power_out line
-					(at 7.62 5.08 180)
-					(length 2.54)
-					(name "SW" (effects (font (size 1.27 1.27))))
-					(number "3" (effects (font (size 1.27 1.27))))
-				)
-				(pin input line
-					(at 7.62 2.54 180)
-					(length 2.54)
-					(name "FB" (effects (font (size 1.27 1.27))))
-					(number "6" (effects (font (size 1.27 1.27))))
-				)
-			)
-			(embedded_fonts no)
-		)
 		(symbol "power:+3V3"
 			(power)
 			(pin_numbers (hide yes))
@@ -505,6 +436,79 @@
 					(length 2.54)
 					(name "SHELL" (effects (font (size 1.27 1.27))))
 					(number "MP" (effects (font (size 1.27 1.27))))
+				)
+			)
+			(embedded_fonts no)
+		)
+		(symbol "zeebuddy:SY7200AABC"
+			(pin_names (offset 0.762))
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(property "Reference" "U"
+				(at -10.16 6.35 0)
+				(effects (font (size 1.27 1.27)) (justify left bottom))
+			)
+			(property "Value" "SY7200AABC"
+				(at -10.16 -6.35 0)
+				(effects (font (size 1.27 1.27)) (justify left top))
+			)
+			(property "Footprint" "Package_TO_SOT_SMD:SOT-23-6"
+				(at 0 0 0)
+				(effects (font (size 1.27 1.27)) (hide yes))
+			)
+			(property "Datasheet" "https://www.lcsc.com/datasheet/C107309.pdf"
+				(at 0 0 0)
+				(effects (font (size 1.27 1.27)) (hide yes))
+			)
+			(property "Description" "矽力杰白光 LED 升压恒流驱动，SOT-23-6，反馈 0.2 V，过压保护 30 V"
+				(at 0 0 0)
+				(effects (font (size 1.27 1.27)) (hide yes))
+			)
+			(symbol "SY7200AABC_0_1"
+				(rectangle
+					(start -10.16 5.08)
+					(end 10.16 -5.08)
+					(stroke (width 0.254) (type default))
+					(fill (type background))
+				)
+			)
+			(symbol "SY7200AABC_1_1"
+				(pin power_in line
+					(at -12.7 2.54 0)
+					(length 2.54)
+					(name "IN" (effects (font (size 1.27 1.27))))
+					(number "6" (effects (font (size 1.27 1.27))))
+				)
+				(pin input line
+					(at -12.7 0 0)
+					(length 2.54)
+					(name "EN/PWM" (effects (font (size 1.27 1.27))))
+					(number "4" (effects (font (size 1.27 1.27))))
+				)
+				(pin power_in line
+					(at -12.7 -2.54 0)
+					(length 2.54)
+					(name "GND" (effects (font (size 1.27 1.27))))
+					(number "2" (effects (font (size 1.27 1.27))))
+				)
+				(pin passive line
+					(at 12.7 2.54 180)
+					(length 2.54)
+					(name "LX" (effects (font (size 1.27 1.27))))
+					(number "1" (effects (font (size 1.27 1.27))))
+				)
+				(pin passive line
+					(at 12.7 0 180)
+					(length 2.54)
+					(name "OVP" (effects (font (size 1.27 1.27))))
+					(number "5" (effects (font (size 1.27 1.27))))
+				)
+				(pin input line
+					(at 12.7 -2.54 180)
+					(length 2.54)
+					(name "FB" (effects (font (size 1.27 1.27))))
+					(number "3" (effects (font (size 1.27 1.27))))
 				)
 			)
 			(embedded_fonts no)
@@ -1166,51 +1170,61 @@
 	)
 	(global_label "VSYS"
 		(shape passive)
-		(at 279.4 55.88 180)
+		(at 274.32 58.42 180)
 		(effects (font (size 1.27 1.27)) (justify right))
 		(uuid "377c2584-87e7-5e5f-8437-ed77014376dc")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 279.4 55.88 0)
+			(at 274.32 58.42 0)
 			(effects (font (size 1.27 1.27)) (hide yes))
 		)
 	)
 	(global_label "LCD_BL_PWM"
 		(shape passive)
-		(at 279.4 58.42 180)
+		(at 274.32 60.96 180)
 		(effects (font (size 1.27 1.27)) (justify right))
 		(uuid "73b77bf1-e644-5751-8fde-fb8df719c32e")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 279.4 58.42 0)
+			(at 274.32 60.96 0)
 			(effects (font (size 1.27 1.27)) (hide yes))
 		)
 	)
-	(global_label "BL_COMP"
+	(global_label "GND"
 		(shape passive)
-		(at 279.4 60.96 180)
+		(at 274.32 63.5 180)
 		(effects (font (size 1.27 1.27)) (justify right))
 		(uuid "d446f825-159e-54a2-a105-0419aa99f553")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 279.4 60.96 0)
+			(at 274.32 63.5 0)
 			(effects (font (size 1.27 1.27)) (hide yes))
 		)
 	)
 	(global_label "BL_SW"
 		(shape passive)
-		(at 299.72 55.88 0)
+		(at 304.8 58.42 0)
 		(effects (font (size 1.27 1.27)) (justify left))
 		(uuid "1a5800d2-923a-54b9-a0d6-1f6c63f18ec1")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 299.72 55.88 0)
+			(at 304.8 58.42 0)
+			(effects (font (size 1.27 1.27)) (hide yes))
+		)
+	)
+	(global_label "LCD_LEDA"
+		(shape passive)
+		(at 304.8 60.96 0)
+		(effects (font (size 1.27 1.27)) (justify left))
+		(uuid "9104eda3-d8e2-5fb3-983c-e3a2aa49b5d2")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 304.8 60.96 0)
 			(effects (font (size 1.27 1.27)) (hide yes))
 		)
 	)
 	(global_label "LCD_LEDK"
 		(shape passive)
-		(at 299.72 58.42 0)
+		(at 304.8 63.5 0)
 		(effects (font (size 1.27 1.27)) (justify left))
-		(uuid "9104eda3-d8e2-5fb3-983c-e3a2aa49b5d2")
+		(uuid "43ab1894-9832-59f1-b319-568ab5147ce4")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 299.72 58.42 0)
+			(at 304.8 63.5 0)
 			(effects (font (size 1.27 1.27)) (hide yes))
 		)
 	)
@@ -1218,7 +1232,7 @@
 		(shape passive)
 		(at 344.17 96.52 180)
 		(effects (font (size 1.27 1.27)) (justify right))
-		(uuid "43ab1894-9832-59f1-b319-568ab5147ce4")
+		(uuid "a8a4c0bd-24a6-56ac-b440-bb5188d452df")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
 			(at 344.17 96.52 0)
 			(effects (font (size 1.27 1.27)) (hide yes))
@@ -1228,69 +1242,49 @@
 		(shape passive)
 		(at 356.87 96.52 0)
 		(effects (font (size 1.27 1.27)) (justify left))
-		(uuid "a8a4c0bd-24a6-56ac-b440-bb5188d452df")
+		(uuid "d8cb57a9-ff85-5741-b986-67e3ea5d0699")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
 			(at 356.87 96.52 0)
 			(effects (font (size 1.27 1.27)) (hide yes))
 		)
 	)
-	(global_label "BL_COMP"
-		(shape passive)
-		(at 344.17 106.68 180)
-		(effects (font (size 1.27 1.27)) (justify right))
-		(uuid "d8cb57a9-ff85-5741-b986-67e3ea5d0699")
-		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 344.17 106.68 0)
-			(effects (font (size 1.27 1.27)) (hide yes))
-		)
-	)
-	(global_label "GND"
-		(shape passive)
-		(at 356.87 106.68 0)
-		(effects (font (size 1.27 1.27)) (justify left))
-		(uuid "c5546f1d-c4d7-5d93-b51f-76ac6fee89b0")
-		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 356.87 106.68 0)
-			(effects (font (size 1.27 1.27)) (hide yes))
-		)
-	)
 	(global_label "LCD_LEDK"
 		(shape passive)
-		(at 344.17 116.84 180)
+		(at 344.17 104.14 180)
 		(effects (font (size 1.27 1.27)) (justify right))
-		(uuid "6482495c-0c2e-5528-bc8e-eeb1af7248df")
+		(uuid "c5546f1d-c4d7-5d93-b51f-76ac6fee89b0")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 344.17 116.84 0)
+			(at 344.17 104.14 0)
 			(effects (font (size 1.27 1.27)) (hide yes))
 		)
 	)
 	(global_label "GND"
 		(shape passive)
-		(at 356.87 116.84 0)
+		(at 356.87 104.14 0)
 		(effects (font (size 1.27 1.27)) (justify left))
-		(uuid "89073f42-bd26-5ce7-9f9e-e449eeec5f61")
+		(uuid "6482495c-0c2e-5528-bc8e-eeb1af7248df")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 356.87 116.84 0)
+			(at 356.87 104.14 0)
 			(effects (font (size 1.27 1.27)) (hide yes))
 		)
 	)
 	(global_label "LCD_LEDA"
 		(shape passive)
-		(at 356.87 127 0)
+		(at 356.87 119.38 0)
 		(effects (font (size 1.27 1.27)) (justify left))
-		(uuid "f6f4d3cb-c0df-5fec-8d3e-ed660cb089d8")
+		(uuid "89073f42-bd26-5ce7-9f9e-e449eeec5f61")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 356.87 127 0)
+			(at 356.87 119.38 0)
 			(effects (font (size 1.27 1.27)) (hide yes))
 		)
 	)
 	(global_label "BL_SW"
 		(shape passive)
-		(at 344.17 127 180)
+		(at 344.17 119.38 180)
 		(effects (font (size 1.27 1.27)) (justify right))
-		(uuid "f68146e6-566a-5290-a4cb-2af3730dbe44")
+		(uuid "f6f4d3cb-c0df-5fec-8d3e-ed660cb089d8")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 344.17 127 0)
+			(at 344.17 119.38 0)
 			(effects (font (size 1.27 1.27)) (hide yes))
 		)
 	)
@@ -1298,7 +1292,7 @@
 		(shape passive)
 		(at 269.24 105.41 90)
 		(effects (font (size 1.27 1.27)) (justify left))
-		(uuid "156b5777-cc5d-5fe6-8ae4-2b97f2f5e6a6")
+		(uuid "f68146e6-566a-5290-a4cb-2af3730dbe44")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
 			(at 269.24 105.41 0)
 			(effects (font (size 1.27 1.27)) (hide yes))
@@ -1610,7 +1604,7 @@
 		(dnp no)
 		(uuid "dae4413b-af31-577c-a109-450cf58c96e5")
 		(property "Reference" "R53" (at 134.62 58.42 90) (effects (font (size 1.27 1.27))))
-		(property "Value" "10k" (at 134.62 63.5 90) (effects (font (size 1.27 1.27))))
+		(property "Value" "4.7k" (at 134.62 63.5 90) (effects (font (size 1.27 1.27))))
 		(property "Footprint" "Resistor_SMD:R_0402_1005Metric"
 			(at 134.62 62.738 90)
 			(effects (font (size 1.27 1.27)) (hide yes))
@@ -1916,7 +1910,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "b7892990-2905-512c-9c8c-90d624d89775")
-		(property "Reference" "C30" (at 182.64 49.7 0) (effects (font (size 1.27 1.27)) (justify left)))
+		(property "Reference" "C31" (at 182.64 49.7 0) (effects (font (size 1.27 1.27)) (justify left)))
 		(property "Value" "1µF" (at 182.64 51.9 0) (effects (font (size 1.27 1.27)) (justify left)))
 		(property "Footprint" "Capacitor_SMD:C_0402_1005Metric"
 			(at 181.3052 54.61 0)
@@ -1932,7 +1926,7 @@
 		(instances
 			(project "zeebuddy-mainboard"
 				(path "/7aeefa69-ecae-5622-92cc-4aeb9ca26e29/72d8b70c-6a09-5074-81b9-3c57a242f61f"
-					(reference "C30")
+					(reference "C31")
 					(unit 1)
 				)
 			)
@@ -1984,7 +1978,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "b60a762d-a2ad-5cb6-8772-cd69b5f6efd9")
-		(property "Reference" "C31" (at 195.34 49.7 0) (effects (font (size 1.27 1.27)) (justify left)))
+		(property "Reference" "C32" (at 195.34 49.7 0) (effects (font (size 1.27 1.27)) (justify left)))
 		(property "Value" "100nF" (at 195.34 51.9 0) (effects (font (size 1.27 1.27)) (justify left)))
 		(property "Footprint" "Capacitor_SMD:C_0402_1005Metric"
 			(at 194.0052 54.61 0)
@@ -2000,7 +1994,7 @@
 		(instances
 			(project "zeebuddy-mainboard"
 				(path "/7aeefa69-ecae-5622-92cc-4aeb9ca26e29/72d8b70c-6a09-5074-81b9-3c57a242f61f"
-					(reference "C31")
+					(reference "C32")
 					(unit 1)
 				)
 			)
@@ -2176,7 +2170,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "85ac8d3e-24de-5247-9ee0-c673e0c5e2cc")
-		(property "Reference" "C32" (at 182.64 191.94 0) (effects (font (size 1.27 1.27)) (justify left)))
+		(property "Reference" "C33" (at 182.64 191.94 0) (effects (font (size 1.27 1.27)) (justify left)))
 		(property "Value" "100nF" (at 182.64 194.14 0) (effects (font (size 1.27 1.27)) (justify left)))
 		(property "Footprint" "Capacitor_SMD:C_0402_1005Metric"
 			(at 181.3052 196.85 0)
@@ -2192,7 +2186,7 @@
 		(instances
 			(project "zeebuddy-mainboard"
 				(path "/7aeefa69-ecae-5622-92cc-4aeb9ca26e29/72d8b70c-6a09-5074-81b9-3c57a242f61f"
-					(reference "C32")
+					(reference "C33")
 					(unit 1)
 				)
 			)
@@ -2275,14 +2269,14 @@
 		(fill (type none))
 		(uuid "0eb8933a-62c0-571b-9012-df6add8b7e82")
 	)
-	(text "背光升压恒流（TPS61165）"
+	(text "背光升压恒流（SY7200A）"
 		(exclude_from_sim no)
 		(at 219.94 19.28 0)
 		(effects (font (size 2 2)) (justify left top))
 		(uuid "fe47faef-b36f-584d-9be5-d48887e8cd27")
 	)
 	(symbol
-		(lib_id "Driver_LED:TPS61165DBV")
+		(lib_id "zeebuddy:SY7200AABC")
 		(at 289.56 60.96 0)
 		(unit 1)
 		(exclude_from_sim no)
@@ -2290,26 +2284,32 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "4266e279-d916-5d7d-8deb-b85ecd747f04")
-		(property "Reference" "U11" (at 289.56 49.53 0) (effects (font (size 1.27 1.27))))
-		(property "Value" "TPS61165DBV" (at 289.56 52.07 0) (effects (font (size 1.27 1.27))))
+		(property "Reference" "U11"
+			(at 279.4 54.61 0)
+			(effects (font (size 1.27 1.27)) (justify left bottom))
+		)
+		(property "Value" "SY7200AABC"
+			(at 279.4 67.31 0)
+			(effects (font (size 1.27 1.27)) (justify left top))
+		)
 		(property "Footprint" "Package_TO_SOT_SMD:SOT-23-6"
-			(at 289.56 86.106 0)
+			(at 289.56 60.96 0)
 			(effects (font (size 1.27 1.27)) (hide yes))
 		)
-		(property "Datasheet" "https://www.ti.com/lit/ds/symlink/tps61165.pdf"
-			(at 289.56 83.82 0)
+		(property "Datasheet" "https://www.lcsc.com/datasheet/C107309.pdf"
+			(at 289.56 60.96 0)
 			(effects (font (size 1.27 1.27)) (hide yes))
 		)
-		(property "Description" "High-Brightness, White LED Driver, 3V to 18V input voltage range, internal switch, constant current, up to 38V/1.2A output, SOT-23-6"
-			(at 289.56 81.534 0)
+		(property "Description" "矽力杰白光 LED 升压恒流驱动，SOT-23-6，反馈 0.2 V，过压保护 30 V"
+			(at 289.56 60.96 0)
 			(effects (font (size 1.27 1.27)) (hide yes))
 		)
-		(pin "1" (uuid "aa0ba135-5ddd-5eaa-9082-8c6bfd2a6da1"))
-		(pin "2" (uuid "90addc3f-eb20-5960-b69a-869c404a7f7d"))
-		(pin "5" (uuid "869057aa-049a-5356-89a8-a61b4700c08b"))
-		(pin "4" (uuid "92e7b36a-3e68-5318-a0f8-ca1d98e69ff1"))
-		(pin "3" (uuid "c1cfd4d4-46c1-5fbc-9c4f-5bd627e0bfd3"))
-		(pin "6" (uuid "304a8207-9ade-5077-91ab-084f1fefaf10"))
+		(pin "6" (uuid "aa0ba135-5ddd-5eaa-9082-8c6bfd2a6da1"))
+		(pin "4" (uuid "90addc3f-eb20-5960-b69a-869c404a7f7d"))
+		(pin "2" (uuid "869057aa-049a-5356-89a8-a61b4700c08b"))
+		(pin "1" (uuid "92e7b36a-3e68-5318-a0f8-ca1d98e69ff1"))
+		(pin "5" (uuid "c1cfd4d4-46c1-5fbc-9c4f-5bd627e0bfd3"))
+		(pin "3" (uuid "304a8207-9ade-5077-91ab-084f1fefaf10"))
 		(instances
 			(project "zeebuddy-mainboard"
 				(path "/7aeefa69-ecae-5622-92cc-4aeb9ca26e29/72d8b70c-6a09-5074-81b9-3c57a242f61f"
@@ -2320,61 +2320,34 @@
 		)
 	)
 	(wire
-		(pts (xy 281.94 55.88) (xy 279.4 55.88))
+		(pts (xy 276.86 58.42) (xy 274.32 58.42))
 		(stroke (width 0) (type default))
 		(uuid "a306df70-dd47-5e35-b80a-2adbb0845638")
 	)
 	(wire
-		(pts (xy 281.94 58.42) (xy 279.4 58.42))
+		(pts (xy 276.86 60.96) (xy 274.32 60.96))
 		(stroke (width 0) (type default))
 		(uuid "d5be30de-f162-5651-a4fb-63529d90e7a0")
 	)
 	(wire
-		(pts (xy 281.94 60.96) (xy 279.4 60.96))
+		(pts (xy 276.86 63.5) (xy 274.32 63.5))
 		(stroke (width 0) (type default))
 		(uuid "1b2991f5-032e-5480-a2c0-8946e7e58485")
 	)
 	(wire
-		(pts (xy 289.56 71.12) (xy 289.56 73.66))
+		(pts (xy 302.26 58.42) (xy 304.8 58.42))
 		(stroke (width 0) (type default))
 		(uuid "565e3245-4dad-5ec1-b42f-994cdc449a63")
 	)
-	(symbol
-		(lib_id "power:GND")
-		(at 289.56 73.66 0)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom no)
-		(on_board yes)
-		(dnp no)
-		(uuid "f43cca55-3fad-5ec7-8e12-124b5ea0265f")
-		(property "Reference" "#PWR85" (at 289.56 80.01 0) (effects (font (size 1.27 1.27)) (hide yes)))
-		(property "Value" "GND" (at 289.56 77.47 0) (effects (font (size 1.27 1.27))))
-		(property "Footprint" "" (at 289.56 73.66 0) (effects (font (size 1.27 1.27)) (hide yes)))
-		(property "Datasheet" "" (at 289.56 73.66 0) (effects (font (size 1.27 1.27)) (hide yes)))
-		(property "Description" "Power symbol creates a global label with name \"GND\" , ground"
-			(at 289.56 73.66 0)
-			(effects (font (size 1.27 1.27)) (hide yes))
-		)
-		(pin "1" (uuid "c7899a37-6db0-51d5-9bf9-a4ccf914629e"))
-		(instances
-			(project "zeebuddy-mainboard"
-				(path "/7aeefa69-ecae-5622-92cc-4aeb9ca26e29/72d8b70c-6a09-5074-81b9-3c57a242f61f"
-					(reference "#PWR85")
-					(unit 1)
-				)
-			)
-		)
+	(wire
+		(pts (xy 302.26 60.96) (xy 304.8 60.96))
+		(stroke (width 0) (type default))
+		(uuid "278a7e52-82e9-570e-8a94-0291efce5662")
 	)
 	(wire
-		(pts (xy 297.18 55.88) (xy 299.72 55.88))
+		(pts (xy 302.26 63.5) (xy 304.8 63.5))
 		(stroke (width 0) (type default))
-		(uuid "992dac2c-815c-5a99-80f0-8430545dba7c")
-	)
-	(wire
-		(pts (xy 297.18 58.42) (xy 299.72 58.42))
-		(stroke (width 0) (type default))
-		(uuid "26f5fab3-7dee-53c1-8caa-c3e1b184966a")
+		(uuid "1192ec5f-c9ee-5035-8744-ed55e3fe984a")
 	)
 	(symbol
 		(lib_id "Device:L")
@@ -2384,17 +2357,17 @@
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
-		(uuid "233ed56b-2f30-59f2-941c-d745ce9f19ef")
+		(uuid "ecfdb30e-1a5d-5393-bf0f-08408d09f8ea")
 		(property "Reference" "L3" (at 350.52 93.98 90) (effects (font (size 1.27 1.27))))
-		(property "Value" "10µH" (at 350.52 99.06 90) (effects (font (size 1.27 1.27))))
+		(property "Value" "22µH" (at 350.52 99.06 90) (effects (font (size 1.27 1.27))))
 		(property "Footprint" "Inductor_SMD:L_Sunlord_MWSA0402S"
 			(at 350.52 96.52 0)
 			(effects (font (size 1.27 1.27)) (hide yes))
 		)
 		(property "Datasheet" "~" (at 350.52 96.52 0) (effects (font (size 1.27 1.27)) (hide yes)))
 		(property "Description" "Inductor" (at 350.52 96.52 0) (effects (font (size 1.27 1.27)) (hide yes)))
-		(pin "1" (uuid "2b67398d-8079-527b-9bdf-737565e6b589"))
-		(pin "2" (uuid "0b2efc67-d232-5ade-9aa4-6d60d11092f4"))
+		(pin "1" (uuid "5c164775-acf6-50a8-a12b-e1ade6729bf3"))
+		(pin "2" (uuid "7bb761d9-5f45-55af-a131-857c3b4513d7"))
 		(instances
 			(project "zeebuddy-mainboard"
 				(path "/7aeefa69-ecae-5622-92cc-4aeb9ca26e29/72d8b70c-6a09-5074-81b9-3c57a242f61f"
@@ -2407,76 +2380,35 @@
 	(wire
 		(pts (xy 346.71 96.52) (xy 344.17 96.52))
 		(stroke (width 0) (type default))
-		(uuid "1b3cd4db-bfe6-53ca-9c94-6d8b41238915")
+		(uuid "1a907389-bb31-5d4b-ad02-88d64022a058")
 	)
 	(wire
 		(pts (xy 354.33 96.52) (xy 356.87 96.52))
 		(stroke (width 0) (type default))
-		(uuid "b63c48eb-9833-5c30-9742-5fe0c2ca5c88")
-	)
-	(symbol
-		(lib_id "Device:C")
-		(at 350.52 106.68 90)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(uuid "8cfbb76c-f7fb-549e-b66b-1b7cc6f8ddc7")
-		(property "Reference" "C33" (at 350.52 103.38 90) (effects (font (size 1.27 1.27))))
-		(property "Value" "220nF" (at 350.52 109.98 90) (effects (font (size 1.27 1.27))))
-		(property "Footprint" "Capacitor_SMD:C_0402_1005Metric"
-			(at 354.33 105.7148 0)
-			(effects (font (size 1.27 1.27)) (hide yes))
-		)
-		(property "Datasheet" "~" (at 350.52 106.68 0) (effects (font (size 1.27 1.27)) (hide yes)))
-		(property "Description" "Unpolarized capacitor"
-			(at 350.52 106.68 0)
-			(effects (font (size 1.27 1.27)) (hide yes))
-		)
-		(pin "1" (uuid "4ee45fc8-bf92-5249-9dab-43a7ae453c83"))
-		(pin "2" (uuid "6b1c40ab-9d79-5fda-93d2-0c5a68a79297"))
-		(instances
-			(project "zeebuddy-mainboard"
-				(path "/7aeefa69-ecae-5622-92cc-4aeb9ca26e29/72d8b70c-6a09-5074-81b9-3c57a242f61f"
-					(reference "C33")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(wire
-		(pts (xy 346.71 106.68) (xy 344.17 106.68))
-		(stroke (width 0) (type default))
-		(uuid "6e1e60d4-7f4b-580f-bc5b-70b147e7693e")
-	)
-	(wire
-		(pts (xy 354.33 106.68) (xy 356.87 106.68))
-		(stroke (width 0) (type default))
-		(uuid "809d3ab2-fc94-553d-916c-e4daafd3346f")
+		(uuid "faf9c962-e251-57d8-93ea-a48cb6d1c599")
 	)
 	(symbol
 		(lib_id "Device:R")
-		(at 350.52 116.84 90)
+		(at 350.52 104.14 90)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
-		(uuid "60ba1547-73a7-54c5-946a-4337c2d2c5de")
-		(property "Reference" "R62" (at 350.52 114.3 90) (effects (font (size 1.27 1.27))))
-		(property "Value" "5.1R 1%" (at 350.52 119.38 90) (effects (font (size 1.27 1.27))))
+		(uuid "8a54a374-dbde-599f-969e-540f6d29babd")
+		(property "Reference" "R62" (at 350.52 101.6 90) (effects (font (size 1.27 1.27))))
+		(property "Value" "5.1R 1%" (at 350.52 106.68 90) (effects (font (size 1.27 1.27))))
 		(property "Footprint" "Resistor_SMD:R_0402_1005Metric"
-			(at 350.52 118.618 90)
+			(at 350.52 105.918 90)
 			(effects (font (size 1.27 1.27)) (hide yes))
 		)
-		(property "Datasheet" "~" (at 350.52 116.84 0) (effects (font (size 1.27 1.27)) (hide yes)))
+		(property "Datasheet" "~" (at 350.52 104.14 0) (effects (font (size 1.27 1.27)) (hide yes)))
 		(property "Description" "Resistor"
-			(at 350.52 116.84 0)
+			(at 350.52 104.14 0)
 			(effects (font (size 1.27 1.27)) (hide yes))
 		)
-		(pin "1" (uuid "82f6e063-b500-5b0d-9fd9-5c6934d58b14"))
-		(pin "2" (uuid "e54b7dcc-f6b4-527a-9ebb-f0aac44f3949"))
+		(pin "1" (uuid "4ecad265-e77d-5645-a04d-f69f15022f52"))
+		(pin "2" (uuid "d5464f10-97c8-5626-b095-bd867c04e2e4"))
 		(instances
 			(project "zeebuddy-mainboard"
 				(path "/7aeefa69-ecae-5622-92cc-4aeb9ca26e29/72d8b70c-6a09-5074-81b9-3c57a242f61f"
@@ -2487,37 +2419,37 @@
 		)
 	)
 	(wire
-		(pts (xy 346.71 116.84) (xy 344.17 116.84))
+		(pts (xy 346.71 104.14) (xy 344.17 104.14))
 		(stroke (width 0) (type default))
-		(uuid "cab2f0e2-e0d2-565d-996d-f31766a2a892")
+		(uuid "7bc1cf45-3f1e-501c-9051-fb9f51a7b7b0")
 	)
 	(wire
-		(pts (xy 354.33 116.84) (xy 356.87 116.84))
+		(pts (xy 354.33 104.14) (xy 356.87 104.14))
 		(stroke (width 0) (type default))
-		(uuid "646cea66-77d8-565a-99d6-a9ae12fd1c2f")
+		(uuid "2bbf0f7b-52fd-549c-be42-b84616ff3a53")
 	)
 	(symbol
 		(lib_id "Device:D_Schottky")
-		(at 350.52 127 180)
+		(at 350.52 119.38 180)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
-		(uuid "0bacb933-2494-55b0-abfe-fe9174a5bfbe")
-		(property "Reference" "D5" (at 350.52 124 0) (effects (font (size 1.27 1.27))))
-		(property "Value" "肖特基 40V" (at 350.52 130 0) (effects (font (size 1.27 1.27))))
+		(uuid "07e17c8f-e114-5234-82ab-abbb3c0a16b1")
+		(property "Reference" "D5" (at 350.52 116.38 0) (effects (font (size 1.27 1.27))))
+		(property "Value" "肖特基 40V" (at 350.52 122.38 0) (effects (font (size 1.27 1.27))))
 		(property "Footprint" "Diode_SMD:D_SOD-323"
-			(at 350.52 127 0)
+			(at 350.52 119.38 0)
 			(effects (font (size 1.27 1.27)) (hide yes))
 		)
-		(property "Datasheet" "~" (at 350.52 127 0) (effects (font (size 1.27 1.27)) (hide yes)))
+		(property "Datasheet" "~" (at 350.52 119.38 0) (effects (font (size 1.27 1.27)) (hide yes)))
 		(property "Description" "Schottky diode"
-			(at 350.52 127 0)
+			(at 350.52 119.38 0)
 			(effects (font (size 1.27 1.27)) (hide yes))
 		)
-		(pin "1" (uuid "cfc7faa2-e624-5619-be04-da7828342175"))
-		(pin "2" (uuid "beb9e84c-902c-511c-a463-f89616e4d790"))
+		(pin "1" (uuid "3cfd2222-3bca-5231-8f95-f8f631521697"))
+		(pin "2" (uuid "2c36ee58-56db-5e0d-8d0e-f050663450b9"))
 		(instances
 			(project "zeebuddy-mainboard"
 				(path "/7aeefa69-ecae-5622-92cc-4aeb9ca26e29/72d8b70c-6a09-5074-81b9-3c57a242f61f"
@@ -2528,14 +2460,14 @@
 		)
 	)
 	(wire
-		(pts (xy 354.33 127) (xy 356.87 127))
+		(pts (xy 354.33 119.38) (xy 356.87 119.38))
 		(stroke (width 0) (type default))
-		(uuid "4c4dd3fc-0c50-5bff-8b62-433e147b81f1")
+		(uuid "9cdddb1a-eb1c-511e-b1c1-2b3d8a670856")
 	)
 	(wire
-		(pts (xy 346.71 127) (xy 344.17 127))
+		(pts (xy 346.71 119.38) (xy 344.17 119.38))
 		(stroke (width 0) (type default))
-		(uuid "8479fbec-c826-5ad4-ab80-fd1f1b42398b")
+		(uuid "65d72a57-e681-5dc2-b5ca-2c4cc5c88010")
 	)
 	(symbol
 		(lib_id "Device:C")
@@ -2545,7 +2477,7 @@
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
-		(uuid "f858c024-d570-595f-80a1-18eb84ec7872")
+		(uuid "7c4329f8-3037-597b-b2bd-261e663c1217")
 		(property "Reference" "C34" (at 246.14 110.66 0) (effects (font (size 1.27 1.27)) (justify left)))
 		(property "Value" "4.7µF" (at 246.14 112.86 0) (effects (font (size 1.27 1.27)) (justify left)))
 		(property "Footprint" "Capacitor_SMD:C_0603_1608Metric"
@@ -2557,8 +2489,8 @@
 			(at 243.84 111.76 0)
 			(effects (font (size 1.27 1.27)) (hide yes))
 		)
-		(pin "1" (uuid "91c73980-ce7d-54aa-b768-01357cf61732"))
-		(pin "2" (uuid "cde22148-5abb-5e0f-bd85-1e45ed934228"))
+		(pin "1" (uuid "cc6d3079-b9ac-5db7-9890-0b6f35a03629"))
+		(pin "2" (uuid "93a5a7c3-1cad-5c3f-a6bd-e43ce21a7e80"))
 		(instances
 			(project "zeebuddy-mainboard"
 				(path "/7aeefa69-ecae-5622-92cc-4aeb9ca26e29/72d8b70c-6a09-5074-81b9-3c57a242f61f"
@@ -2571,7 +2503,7 @@
 	(wire
 		(pts (xy 243.84 107.95) (xy 243.84 105.41))
 		(stroke (width 0) (type default))
-		(uuid "c2d39095-ab22-5ab7-9bd4-8494c8708fbc")
+		(uuid "739c2e62-12ec-5bb1-ad13-b7e58869aa1a")
 	)
 	(symbol
 		(lib_id "zeebuddy:VSYS")
@@ -2581,8 +2513,8 @@
 		(in_bom no)
 		(on_board yes)
 		(dnp no)
-		(uuid "de67fab8-e8d4-5e02-977c-64edb5112d35")
-		(property "Reference" "#PWR86" (at 243.84 109.22 0) (effects (font (size 1.27 1.27)) (hide yes)))
+		(uuid "0fd0f5da-77bc-51f2-8b58-867cabff6d8f")
+		(property "Reference" "#PWR85" (at 243.84 109.22 0) (effects (font (size 1.27 1.27)) (hide yes)))
 		(property "Value" "VSYS" (at 243.84 101.854 0) (effects (font (size 1.27 1.27))))
 		(property "Footprint" "" (at 243.84 105.41 0) (effects (font (size 1.27 1.27)) (hide yes)))
 		(property "Datasheet" "" (at 243.84 105.41 0) (effects (font (size 1.27 1.27)) (hide yes)))
@@ -2590,11 +2522,11 @@
 			(at 243.84 105.41 0)
 			(effects (font (size 1.27 1.27)) (hide yes))
 		)
-		(pin "1" (uuid "581b6a12-3e46-5bee-b891-257897ef5aa9"))
+		(pin "1" (uuid "74e81939-8c69-532c-ac05-88a117eb3be0"))
 		(instances
 			(project "zeebuddy-mainboard"
 				(path "/7aeefa69-ecae-5622-92cc-4aeb9ca26e29/72d8b70c-6a09-5074-81b9-3c57a242f61f"
-					(reference "#PWR86")
+					(reference "#PWR85")
 					(unit 1)
 				)
 			)
@@ -2603,7 +2535,7 @@
 	(wire
 		(pts (xy 243.84 115.57) (xy 243.84 118.11))
 		(stroke (width 0) (type default))
-		(uuid "03d26df4-c31f-511d-bb83-372688ca4732")
+		(uuid "8479fbec-c826-5ad4-ab80-fd1f1b42398b")
 	)
 	(symbol
 		(lib_id "power:GND")
@@ -2613,8 +2545,8 @@
 		(in_bom no)
 		(on_board yes)
 		(dnp no)
-		(uuid "ac918231-cd0c-5be4-8fb4-76a2889939bd")
-		(property "Reference" "#PWR87" (at 243.84 124.46 0) (effects (font (size 1.27 1.27)) (hide yes)))
+		(uuid "f858c024-d570-595f-80a1-18eb84ec7872")
+		(property "Reference" "#PWR86" (at 243.84 124.46 0) (effects (font (size 1.27 1.27)) (hide yes)))
 		(property "Value" "GND" (at 243.84 121.92 0) (effects (font (size 1.27 1.27))))
 		(property "Footprint" "" (at 243.84 118.11 0) (effects (font (size 1.27 1.27)) (hide yes)))
 		(property "Datasheet" "" (at 243.84 118.11 0) (effects (font (size 1.27 1.27)) (hide yes)))
@@ -2622,11 +2554,11 @@
 			(at 243.84 118.11 0)
 			(effects (font (size 1.27 1.27)) (hide yes))
 		)
-		(pin "1" (uuid "9c2b979f-086f-59be-adaf-4ec2fae352da"))
+		(pin "1" (uuid "91c73980-ce7d-54aa-b768-01357cf61732"))
 		(instances
 			(project "zeebuddy-mainboard"
 				(path "/7aeefa69-ecae-5622-92cc-4aeb9ca26e29/72d8b70c-6a09-5074-81b9-3c57a242f61f"
-					(reference "#PWR87")
+					(reference "#PWR86")
 					(unit 1)
 				)
 			)
@@ -2640,10 +2572,10 @@
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
-		(uuid "ffa6d386-f574-5b6d-b5cd-000a9d5534c2")
+		(uuid "6bd38e9d-5cd9-53b7-b563-5a9044c435d2")
 		(property "Reference" "C35" (at 271.54 110.66 0) (effects (font (size 1.27 1.27)) (justify left)))
-		(property "Value" "1µF 50V" (at 271.54 112.86 0) (effects (font (size 1.27 1.27)) (justify left)))
-		(property "Footprint" "Capacitor_SMD:C_0603_1608Metric"
+		(property "Value" "2.2µF 50V" (at 271.54 112.86 0) (effects (font (size 1.27 1.27)) (justify left)))
+		(property "Footprint" "Capacitor_SMD:C_0805_2012Metric"
 			(at 270.2052 115.57 0)
 			(effects (font (size 1.27 1.27)) (hide yes))
 		)
@@ -2652,8 +2584,8 @@
 			(at 269.24 111.76 0)
 			(effects (font (size 1.27 1.27)) (hide yes))
 		)
-		(pin "1" (uuid "9e16f4e2-0ed1-57fb-826b-ea82c667d17b"))
-		(pin "2" (uuid "fc8146fd-4bbe-5e6c-b128-5f70741266a4"))
+		(pin "1" (uuid "eb43506e-1d2e-5f51-a6a8-7e971b54858e"))
+		(pin "2" (uuid "7f2d428c-b236-587d-a5a6-da8fa10a3125"))
 		(instances
 			(project "zeebuddy-mainboard"
 				(path "/7aeefa69-ecae-5622-92cc-4aeb9ca26e29/72d8b70c-6a09-5074-81b9-3c57a242f61f"
@@ -2666,12 +2598,12 @@
 	(wire
 		(pts (xy 269.24 107.95) (xy 269.24 105.41))
 		(stroke (width 0) (type default))
-		(uuid "84715a49-ae0f-5063-9c5b-c4b792e933d1")
+		(uuid "31be6b25-ee22-5ed1-b43b-07d0d687d79e")
 	)
 	(wire
 		(pts (xy 269.24 115.57) (xy 269.24 118.11))
 		(stroke (width 0) (type default))
-		(uuid "519c1d24-638e-539b-b1f4-5b6c03da0b5e")
+		(uuid "03d26df4-c31f-511d-bb83-372688ca4732")
 	)
 	(symbol
 		(lib_id "power:GND")
@@ -2681,8 +2613,8 @@
 		(in_bom no)
 		(on_board yes)
 		(dnp no)
-		(uuid "53ccf8d3-0930-5da5-be8e-cb508440bfe4")
-		(property "Reference" "#PWR88" (at 269.24 124.46 0) (effects (font (size 1.27 1.27)) (hide yes)))
+		(uuid "ac918231-cd0c-5be4-8fb4-76a2889939bd")
+		(property "Reference" "#PWR87" (at 269.24 124.46 0) (effects (font (size 1.27 1.27)) (hide yes)))
 		(property "Value" "GND" (at 269.24 121.92 0) (effects (font (size 1.27 1.27))))
 		(property "Footprint" "" (at 269.24 118.11 0) (effects (font (size 1.27 1.27)) (hide yes)))
 		(property "Datasheet" "" (at 269.24 118.11 0) (effects (font (size 1.27 1.27)) (hide yes)))
@@ -2690,21 +2622,21 @@
 			(at 269.24 118.11 0)
 			(effects (font (size 1.27 1.27)) (hide yes))
 		)
-		(pin "1" (uuid "6f0431c4-7d7c-5af7-b590-f34785248a66"))
+		(pin "1" (uuid "9c2b979f-086f-59be-adaf-4ec2fae352da"))
 		(instances
 			(project "zeebuddy-mainboard"
 				(path "/7aeefa69-ecae-5622-92cc-4aeb9ca26e29/72d8b70c-6a09-5074-81b9-3c57a242f61f"
-					(reference "#PWR88")
+					(reference "#PWR87")
 					(unit 1)
 				)
 			)
 		)
 	)
-	(text "LED 电流 = 0.2 V / 5.1 Ω ≈ 39 mA。\n这块屏的背光规格还没拿到，先按同尺寸 MIPI 版的\n\"6 颗灯、40 mA、9.6 V\" 设计，拿到规格后只改这颗电阻。\nGPIO45 输出 PWM 调光（5 ~ 100 kHz），上电默认低 = 背光关。\n屏没插时芯片有开路保护（约 38 V），输出电容选 50 V。"
+	(text "LED 电流 = 0.2 V / 5.1 Ω ≈ 39 mA。\n这块屏的背光规格还没拿到，先按同尺寸 MIPI 版的\n\"6 颗灯、40 mA、9.6 V\" 设计，拿到规格后只改这颗电阻。\nGPIO45 输出 PWM 调光（20 kHz ~ 1 MHz），上电默认低 = 背光关。\n屏没插时输出会升到过压保护点（约 30 V），输出电容选 50 V。"
 		(exclude_from_sim no)
 		(at 220.98 147.32 0)
 		(effects (font (size 1.3 1.3)) (justify left top))
-		(uuid "a36ed75d-f2bb-5b67-abcf-2a3d2b84df36")
+		(uuid "819576d7-1e41-52b2-8293-fd2b75294b15")
 	)
 	(embedded_fonts no)
 )

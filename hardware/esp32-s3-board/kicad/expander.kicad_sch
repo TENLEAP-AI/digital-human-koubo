@@ -1150,7 +1150,7 @@
 		(dnp no)
 		(uuid "db008d9d-1830-5a7c-ba07-a0fa4bd17217")
 		(property "Reference" "U7" (at 80.01 54.61 0) (effects (font (size 1.27 1.27))))
-		(property "Value" "XL9555 / TCA9555 (QFN-24)" (at 91.44 78.74 0) (effects (font (size 1.27 1.27))))
+		(property "Value" "XL9555QF24" (at 91.44 78.74 0) (effects (font (size 1.27 1.27))))
 		(property "Footprint" "Package_DFN_QFN:WQFN-24-1EP_4x4mm_P0.5mm_EP2.45x2.45mm"
 			(at 121.92 104.14 0)
 			(effects (font (size 1.27 1.27)) (hide yes))
@@ -1389,7 +1389,7 @@
 		(dnp no)
 		(uuid "dc465d91-bb3a-56fe-8b3c-bd67d8d04005")
 		(property "Reference" "U8" (at 80.01 161.29 0) (effects (font (size 1.27 1.27))))
-		(property "Value" "XL9555 / TCA9555 (QFN-24)" (at 91.44 185.42 0) (effects (font (size 1.27 1.27))))
+		(property "Value" "XL9555QF24" (at 91.44 185.42 0) (effects (font (size 1.27 1.27))))
 		(property "Footprint" "Package_DFN_QFN:WQFN-24-1EP_4x4mm_P0.5mm_EP2.45x2.45mm"
 			(at 121.92 210.82 0)
 			(effects (font (size 1.27 1.27)) (hide yes))
@@ -1648,7 +1648,7 @@
 		(effects (font (size 1.3 1.3)) (justify left top))
 		(uuid "37fb89c2-3549-5eef-9cd8-395c959543a3")
 	)
-	(text "扩展芯片上电后所有脚是输入。\n需要确定默认电平的输出都在各自的页上加了上拉或下拉。"
+	(text "XL9555 上电后所有脚是输入，芯片内部每个脚有 100 kΩ 上拉。可换脚位相同的 TCA9555RTWR（没有内部上拉）。\n需要默认为低的输出都在各自的页上加了能压过它的下拉（2.2k ~ 10k）。"
 		(exclude_from_sim no)
 		(at 15.24 231.14 0)
 		(effects (font (size 1.3 1.3)) (justify left top))
@@ -2018,7 +2018,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "76531e46-a984-5b04-bd6e-6a48671ad4ab")
-		(property "Reference" "C15" (at 210.58 130.98 0) (effects (font (size 1.27 1.27)) (justify left)))
+		(property "Reference" "C16" (at 210.58 130.98 0) (effects (font (size 1.27 1.27)) (justify left)))
 		(property "Value" "100nF" (at 210.58 133.18 0) (effects (font (size 1.27 1.27)) (justify left)))
 		(property "Footprint" "Capacitor_SMD:C_0402_1005Metric"
 			(at 209.2452 135.89 0)
@@ -2034,7 +2034,7 @@
 		(instances
 			(project "zeebuddy-mainboard"
 				(path "/7aeefa69-ecae-5622-92cc-4aeb9ca26e29/0b6e559a-63fd-5685-ad6e-c1be18a75baa"
-					(reference "C15")
+					(reference "C16")
 					(unit 1)
 				)
 			)
@@ -2113,7 +2113,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "fc057db5-ef15-56e5-a613-331129ff52dc")
-		(property "Reference" "C16" (at 223.28 130.98 0) (effects (font (size 1.27 1.27)) (justify left)))
+		(property "Reference" "C17" (at 223.28 130.98 0) (effects (font (size 1.27 1.27)) (justify left)))
 		(property "Value" "100nF" (at 223.28 133.18 0) (effects (font (size 1.27 1.27)) (justify left)))
 		(property "Footprint" "Capacitor_SMD:C_0402_1005Metric"
 			(at 221.9452 135.89 0)
@@ -2129,7 +2129,7 @@
 		(instances
 			(project "zeebuddy-mainboard"
 				(path "/7aeefa69-ecae-5622-92cc-4aeb9ca26e29/0b6e559a-63fd-5685-ad6e-c1be18a75baa"
-					(reference "C16")
+					(reference "C17")
 					(unit 1)
 				)
 			)

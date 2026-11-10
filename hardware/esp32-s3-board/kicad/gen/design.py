@@ -79,6 +79,22 @@ CAM_FPC = fpc("CAM_FPC_24P", CAM_PINS, "24 脚并口摄像头排线（OV2640 模
 TP_FPC = fpc("TP_FPC_6P", ["VDD", "GND", "SCL", "SDA", "INT", "RST"], "触摸屏排线，脚位待屏厂确认")
 KEY_FPC = fpc("KEY_FPC_6P", ["GND", "K1", "K2", "K3", "NC", "GND"], "按键排线，脚位待定")
 
+MIC = d.define(box_symbol(
+    "MSM261S4030H0R", "MK",
+    left=[(8, "VDD", "power_in"), (4, "CHIPEN", "input"), (5, "L/R", "input"), (1, "GND", "power_in")],
+    right=[(3, "WS", "input"), (6, "SCK", "input"), (7, "SD", "output")],
+    hidden_nc=[2], minw=20.32,
+    desc="敏芯 I²S 硅麦，4 × 3 × 1.25 mm，顶部进音",
+    datasheet="https://www.waveshare.com/w/upload/0/01/MSM261S4030H0R.pdf"))
+
+WLED = d.define(box_symbol(
+    "SY7200AABC", "U",
+    left=[(6, "IN", "power_in"), (4, "EN/PWM", "input"), (2, "GND", "power_in")],
+    right=[(1, "LX"), (5, "OVP"), (3, "FB", "input")],
+    fp="Package_TO_SOT_SMD:SOT-23-6", minw=20.32,
+    desc="矽力杰白光 LED 升压恒流驱动，SOT-23-6，反馈 0.2 V，过压保护 30 V",
+    datasheet="https://www.lcsc.com/datasheet/C107309.pdf"))
+
 NANO_SIM = d.define(box_symbol(
     "NanoSIM_PushPush", "J",
     [("C1", "VCC"), ("C2", "RST"), ("C3", "CLK"), ("C7", "IO"), ("C6", "VPP"), ("CD", "DET"),
@@ -128,22 +144,24 @@ def power():
     sh.caps(373.38, 111.76, "VSYS", [("10µF", FP_0603), ("10µF", FP_0603)])
     sh.caps(162.56, 104.14, "VBAT", [("10µF", FP_0603)])
     sh.tp(345.44, 43.18, "CHG_QON")
-    sh.text(144.78, 123.19, "没接电池温度电阻：TS 用两颗电阻固定在正常窗口。\n"
-                            "OTG、CE 接地：不用反向升压，充电默认打开。QON 留测试点，可选接到按键 1。", 1.3)
+    sh.text(144.78, 121.92, "没接电池温度电阻：TS 用两颗 10k 固定在正常窗口。OTG、CE 接地：不用反向升压，充电默认打开。\n"
+                            "输入限流 = 355 / 200 Ω ≈ 1.8 A（最大不超过 2 A）。可换脚位相同的 SY6970QCC（它的手册用 1 µH 电感）。\n"
+                            "注意：芯片默认充电电流 2 A，固件没配置或看门狗超时都会回到这个值，电池小于 2000 mAh 必须调小。", 1.3)
 
     sh.frame(12.7, 137.16, 213.36, 248.92, "电池座和 3.3 V 降压")
     sh.place("Connector_Generic:Conn_01x02", 48.26, 162.56, {"1": "VBAT", "2": "GND"}, value="电池座")
     sh.place("Regulator_Switching:TLV62569DBV", 111.76, 162.56,
              {"VIN": "VSYS", "EN": "BUCK_EN", "SW": "BUCK_SW", "FB": "BUCK_FB", "GND": "GND"},
-             value="TLV62569DBV")
+             value="SY8089AAAC（可换 TLV62569DBV）")
     sh.hlist(175.26, 152.4, [
         ("L", "BUCK_SW", "+3V3", "2.2µH 2A", "", "Inductor_SMD:L_Sunlord_MWSA0402S"),
         ("R", "+3V3", "BUCK_FB", "100k 1%"),
+        ("C", "+3V3", "BUCK_FB", "22pF"),
         ("R", "BUCK_FB", "GND", "22.1k 1%"),
         ("R", "VSYS", "BUCK_EN", "100k"),
     ])
-    sh.caps(60.96, 218.44, "VSYS", [("10µF", FP_0603)])
-    sh.caps(86.36, 218.44, "+3V3", [("10µF", FP_0603), ("10µF", FP_0603)], pitch=12.7)
+    sh.caps(60.96, 218.44, "VSYS", [("22µF", FP_0805)])
+    sh.caps(86.36, 218.44, "+3V3", [("22µF", FP_0805), ("22µF", FP_0805)], pitch=12.7)
     sh.text(15.24, 238.76, "输出 = 0.6 V × (1 + 100k / 22.1k) = 3.31 V。电池低于 3.4 V 左右时输出会跟着往下掉，固件要提前关机。", 1.3)
 
     sh.frame(218.44, 137.16, 406.4, 248.92, "电源标记、测试点、螺丝孔")
@@ -254,7 +272,8 @@ def expander():
     sh.text(15.24, 121.92, "上：地址 0x20，全部当输入用（按键、中断、检测），变化时 INT 拉低。\n"
                            "    没用到的 P12 ~ P17 固件里设成输出，避免悬空的输入脚乱触发中断。\n"
                            "下：地址 0x22，全部当输出用。不用 0x21，前摄常见型号占这个地址。", 1.3)
-    sh.text(15.24, 231.14, "扩展芯片上电后所有脚是输入。\n需要确定默认电平的输出都在各自的页上加了上拉或下拉。", 1.3)
+    sh.text(15.24, 231.14, "XL9555 上电后所有脚是输入，芯片内部每个脚有 100 kΩ 上拉。可换脚位相同的 TCA9555RTWR（没有内部上拉）。\n"
+                           "需要默认为低的输出都在各自的页上加了能压过它的下拉（2.2k ~ 10k）。", 1.3)
 
     sh.frame(180.34, 17.78, 281.94, 248.92, "上拉、去耦")
     sh.hlist(231.14, 40.64, [("R", f"KEY{i}", "+3V3", "10k") for i in range(1, 7)] + [
@@ -396,7 +415,7 @@ def display():
         ("R", "LCD_PCLK", "LCD_PCLK_R", "33R"),
         ("R", "U0TXD", "LCD_VSYNC", "470R"),
         ("R", "U0RXD", "LCD_HSYNC", "100R"),
-        ("R", "LCD_RST", "GND", "10k"),
+        ("R", "LCD_RST", "GND", "4.7k"),
         ("R", "+3V3", "LCD_VCI", "0R"),
         ("R", "LCD_G0", "GND", "0R"),
         ("R", "LCD_G1", "GND", "0R"),
@@ -430,18 +449,18 @@ def display():
 def camera():
     sh = d.sheet("camera.kicad_sch", "6 摄像头：后摄 OV2640、前摄、总线切换、电源")
 
-    def cam(y, side, name, dvdd):
+    def cam(y, side, name, dvdd, iovdd):
         p = "CAM" + side
         sh.place(CAM_FPC, 33.02, y, {
             "2": "GND", "3": "I2C_SDA", "4": "+2V8", "5": "I2C_SCL", "6": "CAM_RST",
-            "7": p + "_VSYNC", "8": p + "_PWDN", "9": p + "_HREF", "10": dvdd, "11": "+3V3",
+            "7": p + "_VSYNC", "8": p + "_PWDN", "9": p + "_HREF", "10": dvdd, "11": iovdd,
             "12": p + "_D7", "13": p + "_XCLK", "14": p + "_D6", "15": "GND", "16": p + "_D5",
             "17": p + "_PCLK", "18": p + "_D4", "19": p + "_D0", "20": p + "_D3", "21": p + "_D1",
             "22": p + "_D2", "MP": "GND"}, nc=["1", "23", "24"], value=name)
 
     sh.frame(12.7, 17.78, 101.6, 248.92, "摄像头排线座（24P 0.5mm）")
-    cam(71.12, "R", "后摄 OV2640", "+1V2")
-    cam(187.96, "F", "前摄 30 万（型号待定）", "CAMF_DVDD")
+    cam(71.12, "R", "后摄 OV2640", "+1V2", "+3V3")
+    cam(187.96, "F", "前摄 30 万（型号待定）", "CAMF_DVDD", "CAMF_IOVDD")
 
     sh.frame(106.68, 17.78, 251.46, 248.92, "并口总线切换（CAM_SEL = 0 后摄，1 前摄）")
     groups = [["D0", "D1", "D2", "D3"], ["D4", "D5", "D6", "D7"], ["PCLK", "VSYNC", "HREF", None]]
@@ -472,6 +491,7 @@ def camera():
     sh.caps(360.68, 78.74, "+1V2", ["1µF", "100nF"], pitch=12.7)
     sh.caps(271.78, 109.22, "+3V3", ["1µF", "1µF", "100nF", "100nF"], pitch=12.7)
     sh.caps(335.28, 109.22, "CAMF_DVDD", ["100nF"])
+    sh.caps(353.06, 109.22, "CAMF_IOVDD", ["100nF"])
     sh.place("Oscillator:ASE-xxxMHz", 317.5, 144.78,
              {"EN": "CAM_PWR_EN", "Vdd": "+3V3", "GND": "GND", "OUT": "CAM_XCLK"}, value="24 MHz 有源晶振",
              fp="Oscillator:Oscillator_SMD_Abracon_ASE-4Pin_3.2x2.5mm")
@@ -481,15 +501,20 @@ def camera():
         ("R", "+3V3", "CAMR_PWDN", "10k"),
         ("R", "+3V3", "CAMF_PWDN", "10k"),
         ("R", "+3V3", "CAM_RST", "10k"),
-        ("R", "CAM_PWR_EN", "GND", "10k"),
+        ("R", "CAM_PWR_EN", "GND", "4.7k"),
+        ("R", "+3V3", "CAM_PWR_EN", "10k", "dnp"),
         ("R", "CAM_SEL", "GND", "10k"),
-        ("R", "+1V2", "CAMF_DVDD", "0R"),
+    ])
+    sh.hlist(383.54, 175.26, [
+        ("R", "+3V3", "CAMF_IOVDD", "0R"),
+        ("R", "+2V8", "CAMF_IOVDD", "0R", "dnp"),
+        ("R", "+1V2", "CAMF_DVDD", "0R", "dnp"),
     ])
     sh.text(259.08, 236.22,
-            "CAM_PWR_EN 同时开 2.8 V、1.2 V 和晶振，默认关。\n"
-            "PWDN 默认上拉：两颗摄像头上电后都在待机。\n"
-            "排线 11 脚（IO 电源）一直接 3.3 V，这样摄像头断电时不会拖住 I²C 总线。\n"
-            "前摄 10 脚的电压取决于型号，经 0R 接 1.2 V，可改。", 1.3)
+            "CAM_PWR_EN 同时开 2.8 V、1.2 V 和晶振，默认关。PWDN 默认上拉，两颗摄像头上电后都在待机。\n"
+            "摄像头的 IO 电源（排线 11 脚）必须一直有电，否则断电的摄像头会把共用的 I²C 总线拉死。\n"
+            "前摄如果是 GC0308 这类只用 11 脚单独供 2.8 V 的型号：11 脚改接 2.8 V，\n"
+            "并把 CAM_PWR_EN 的下拉换成上拉（让 2.8 V 上电即有）；10 脚的 0R 不贴。", 1.3)
     return sh
 
 
@@ -513,12 +538,14 @@ def audio_tf():
         ("C", "SPK_P", "GND", "220pF", "dnp"),
         ("C", "SPK_N", "GND", "220pF", "dnp"),
         ("R", "PA_GAIN", "GND", "0R", "dnp"),
+        ("R", "PA_EN", "GND", "2.2k"),
     ])
     sh.place("Connector_Generic:Conn_01x02", 373.38, 48.26, {"1": "SPK_P", "2": "SPK_N"}, value="喇叭")
     sh.caps(160.02, 109.22, "VSYS", [("10µF", FP_0603), "100nF"], pitch=12.7)
     sh.text(233.68, 96.52,
             "功放直接用电池电压供电，输出功率比用 3.3 V 大。\n"
-            "PA_EN 高：工作（取左声道）；低：关断。\n"
+            "PA_EN 高：工作（取左声道）；低：关断。2.2k 下拉保证上电时是关断。\n"
+            "不用更便宜的 NS4168：它的逻辑高电平要到 0.7 × 供电电压，用电池供电时 3.3 V 信号不够。\n"
             "增益脚悬空 = 9 dB；贴 0R 接地 = 12 dB。", 1.3)
 
     sh.frame(12.7, 137.16, 406.4, 248.92, "TF 卡（SD 一线模式：CLK、CMD、D0）")
@@ -541,41 +568,43 @@ def audio_tf():
     return sh
 
 
-# ---- parts that depend on the datasheet check ------------------------------------
-RILIM = "180R 1%"
-TS_TOP = "10k"
+# ---- values taken from the datasheets ----------------------------------------------
+RILIM = "200R 1%"     # BQ25895: IINMAX = K / R, K = 320 / 355 / 390 A·Ω -> at most 1.97 A
+TS_TOP = "10k"        # BQ25895 datasheet figure 9-14, no thermistor
 TS_BOT = "10k"
-EXP_VALUE = "XL9555 / TCA9555 (QFN-24)"
+EXP_VALUE = "XL9555QF24"
 
 
 def microphone(sh):
-    sh.place("Sensor_Audio:ICS-43434", 73.66, 66.04,
-             {"WS": "I2S_WS", "SCK": "I2S_BCLK", "SD": "I2S_DIN", "LR": "GND", "VDD": "+3V3", "GND": "GND"})
+    sh.place(MIC, 73.66, 66.04,
+             {"VDD": "+3V3", "CHIPEN": "+3V3", "L/R": "GND", "GND": "GND",
+              "WS": "I2S_WS", "SCK": "I2S_BCLK", "SD": "I2S_DIN"}, nc=["NC"])
     sh.hlist(73.66, 99.06, [("R", "I2S_DIN", "GND", "100k")])
-    sh.caps(27.94, 99.06, "+3V3", ["100nF"])
-    sh.text(15.24, 114.3, "L/R 接地 = 左声道。数据线下拉，\n另一个声道的时隙里数据脚是高阻。", 1.3)
+    sh.caps(22.86, 99.06, "+3V3", [("10µF", FP_0603), "100nF"])
+    sh.text(15.24, 114.3, "L/R 接地 = 左声道；CHIPEN 接高 = 一直工作。\n"
+                          "数据线下拉 100k 是数据手册的要求。\n"
+                          "这颗是顶部进音，外壳的进音孔要对着它；要底部进音得换型号。", 1.3)
 
 
 def backlight(sh):
-    sh.frame(218.44, 17.78, 406.4, 248.92, "背光升压恒流（TPS61165）")
-    sh.place("Driver_LED:TPS61165DBV", 289.56, 60.96,
-             {"VIN": "VSYS", "CTRL": "LCD_BL_PWM", "COMP": "BL_COMP", "SW": "BL_SW", "FB": "LCD_LEDK",
-              "GND": "GND"})
+    sh.frame(218.44, 17.78, 406.4, 248.92, "背光升压恒流（SY7200A）")
+    sh.place(WLED, 289.56, 60.96,
+             {"IN": "VSYS", "EN/PWM": "LCD_BL_PWM", "GND": "GND", "LX": "BL_SW", "OVP": "LCD_LEDA",
+              "FB": "LCD_LEDK"})
     sh.hlist(350.52, 96.52, [
-        ("L", "VSYS", "BL_SW", "10µH", "", "Inductor_SMD:L_Sunlord_MWSA0402S"),
-        ("C", "BL_COMP", "GND", "220nF"),
+        ("L", "VSYS", "BL_SW", "22µH", "", "Inductor_SMD:L_Sunlord_MWSA0402S"),
         ("R", "LCD_LEDK", "GND", "5.1R 1%"),
     ])
-    sh.D(350.52, 127, "BL_SW", "LCD_LEDA", "肖特基 40V", "Device:D_Schottky", "right",
+    sh.D(350.52, 119.38, "BL_SW", "LCD_LEDA", "肖特基 40V", "Device:D_Schottky", "right",
          fp="Diode_SMD:D_SOD-323")
     sh.caps(243.84, 111.76, "VSYS", [("4.7µF", FP_0603)])
-    sh.caps(269.24, 111.76, "LCD_LEDA", [("1µF 50V", FP_0603)])
+    sh.caps(269.24, 111.76, "LCD_LEDA", [("2.2µF 50V", FP_0805)])
     sh.text(220.98, 147.32,
             "LED 电流 = 0.2 V / 5.1 Ω ≈ 39 mA。\n"
             "这块屏的背光规格还没拿到，先按同尺寸 MIPI 版的\n"
             "\"6 颗灯、40 mA、9.6 V\" 设计，拿到规格后只改这颗电阻。\n"
-            "GPIO45 输出 PWM 调光（5 ~ 100 kHz），上电默认低 = 背光关。\n"
-            "屏没插时芯片有开路保护（约 38 V），输出电容选 50 V。", 1.3)
+            "GPIO45 输出 PWM 调光（20 kHz ~ 1 MHz），上电默认低 = 背光关。\n"
+            "屏没插时输出会升到过压保护点（约 30 V），输出电容选 50 V。", 1.3)
 
 
 if __name__ == "__main__":
