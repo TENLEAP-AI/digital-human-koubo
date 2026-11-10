@@ -378,7 +378,7 @@ class Sheet:
         """Two-pin part. Vertical: pin 1 (net a) on top. Horizontal: pin 1 (net a) on the left."""
         x, y = snap(x), snap(y)
         if horizontal:
-            off = 3.3 if lib_id.startswith("Device:C") else 2.54
+            off = 3.3 if lib_id.startswith(("Device:C", "Device:FerriteBead")) else 2.54
             pos = {"Reference": (x, y - off, 90, None), "Value": (x, y + off, 90, None)}
             rot = 90
         else:

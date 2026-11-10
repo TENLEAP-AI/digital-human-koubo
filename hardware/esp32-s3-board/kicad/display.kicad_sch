@@ -1495,7 +1495,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "e8da4b43-a11a-5767-b241-07976728e9dd")
-		(property "Reference" "R48" (at 134.62 35.56 90) (effects (font (size 1.27 1.27))))
+		(property "Reference" "R50" (at 134.62 35.56 90) (effects (font (size 1.27 1.27))))
 		(property "Value" "33R" (at 134.62 40.64 90) (effects (font (size 1.27 1.27))))
 		(property "Footprint" "Resistor_SMD:R_0402_1005Metric"
 			(at 134.62 39.878 90)
@@ -1508,7 +1508,7 @@
 		(instances
 			(project "zeebuddy-mainboard"
 				(path "/7aeefa69-ecae-5622-92cc-4aeb9ca26e29/72d8b70c-6a09-5074-81b9-3c57a242f61f"
-					(reference "R48")
+					(reference "R50")
 					(unit 1)
 				)
 			)
@@ -1533,8 +1533,8 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "742bc48c-a2ce-59d4-afa9-ce12b893a56e")
-		(property "Reference" "R49" (at 134.62 43.18 90) (effects (font (size 1.27 1.27))))
-		(property "Value" "100R" (at 134.62 48.26 90) (effects (font (size 1.27 1.27))))
+		(property "Reference" "R51" (at 134.62 43.18 90) (effects (font (size 1.27 1.27))))
+		(property "Value" "470R" (at 134.62 48.26 90) (effects (font (size 1.27 1.27))))
 		(property "Footprint" "Resistor_SMD:R_0402_1005Metric"
 			(at 134.62 47.498 90)
 			(effects (font (size 1.27 1.27)) (hide yes))
@@ -1546,7 +1546,7 @@
 		(instances
 			(project "zeebuddy-mainboard"
 				(path "/7aeefa69-ecae-5622-92cc-4aeb9ca26e29/72d8b70c-6a09-5074-81b9-3c57a242f61f"
-					(reference "R49")
+					(reference "R51")
 					(unit 1)
 				)
 			)
@@ -1571,7 +1571,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "ac63920d-cd4a-59b7-9873-38349897faf9")
-		(property "Reference" "R50" (at 134.62 50.8 90) (effects (font (size 1.27 1.27))))
+		(property "Reference" "R52" (at 134.62 50.8 90) (effects (font (size 1.27 1.27))))
 		(property "Value" "100R" (at 134.62 55.88 90) (effects (font (size 1.27 1.27))))
 		(property "Footprint" "Resistor_SMD:R_0402_1005Metric"
 			(at 134.62 55.118 90)
@@ -1584,7 +1584,7 @@
 		(instances
 			(project "zeebuddy-mainboard"
 				(path "/7aeefa69-ecae-5622-92cc-4aeb9ca26e29/72d8b70c-6a09-5074-81b9-3c57a242f61f"
-					(reference "R50")
+					(reference "R52")
 					(unit 1)
 				)
 			)
@@ -1609,7 +1609,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "dae4413b-af31-577c-a109-450cf58c96e5")
-		(property "Reference" "R51" (at 134.62 58.42 90) (effects (font (size 1.27 1.27))))
+		(property "Reference" "R53" (at 134.62 58.42 90) (effects (font (size 1.27 1.27))))
 		(property "Value" "10k" (at 134.62 63.5 90) (effects (font (size 1.27 1.27))))
 		(property "Footprint" "Resistor_SMD:R_0402_1005Metric"
 			(at 134.62 62.738 90)
@@ -1622,7 +1622,7 @@
 		(instances
 			(project "zeebuddy-mainboard"
 				(path "/7aeefa69-ecae-5622-92cc-4aeb9ca26e29/72d8b70c-6a09-5074-81b9-3c57a242f61f"
-					(reference "R51")
+					(reference "R53")
 					(unit 1)
 				)
 			)
@@ -1647,7 +1647,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "670fee61-62d1-5e1d-b5dd-92c1fa40fb0c")
-		(property "Reference" "R52" (at 134.62 66.04 90) (effects (font (size 1.27 1.27))))
+		(property "Reference" "R54" (at 134.62 66.04 90) (effects (font (size 1.27 1.27))))
 		(property "Value" "0R" (at 134.62 71.12 90) (effects (font (size 1.27 1.27))))
 		(property "Footprint" "Resistor_SMD:R_0402_1005Metric"
 			(at 134.62 70.358 90)
@@ -1660,7 +1660,7 @@
 		(instances
 			(project "zeebuddy-mainboard"
 				(path "/7aeefa69-ecae-5622-92cc-4aeb9ca26e29/72d8b70c-6a09-5074-81b9-3c57a242f61f"
-					(reference "R52")
+					(reference "R54")
 					(unit 1)
 				)
 			)
@@ -1685,7 +1685,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "640a4588-884a-5d33-8e3e-e84480334a6d")
-		(property "Reference" "R53" (at 134.62 73.66 90) (effects (font (size 1.27 1.27))))
+		(property "Reference" "R55" (at 134.62 73.66 90) (effects (font (size 1.27 1.27))))
 		(property "Value" "0R" (at 134.62 78.74 90) (effects (font (size 1.27 1.27))))
 		(property "Footprint" "Resistor_SMD:R_0402_1005Metric"
 			(at 134.62 77.978 90)
@@ -1698,7 +1698,7 @@
 		(instances
 			(project "zeebuddy-mainboard"
 				(path "/7aeefa69-ecae-5622-92cc-4aeb9ca26e29/72d8b70c-6a09-5074-81b9-3c57a242f61f"
-					(reference "R53")
+					(reference "R55")
 					(unit 1)
 				)
 			)
@@ -1723,7 +1723,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "21b050f0-8f30-517d-934f-ddd0b1e6a643")
-		(property "Reference" "R54" (at 134.62 81.28 90) (effects (font (size 1.27 1.27))))
+		(property "Reference" "R56" (at 134.62 81.28 90) (effects (font (size 1.27 1.27))))
 		(property "Value" "0R" (at 134.62 86.36 90) (effects (font (size 1.27 1.27))))
 		(property "Footprint" "Resistor_SMD:R_0402_1005Metric"
 			(at 134.62 85.598 90)
@@ -1736,7 +1736,7 @@
 		(instances
 			(project "zeebuddy-mainboard"
 				(path "/7aeefa69-ecae-5622-92cc-4aeb9ca26e29/72d8b70c-6a09-5074-81b9-3c57a242f61f"
-					(reference "R54")
+					(reference "R56")
 					(unit 1)
 				)
 			)
@@ -1761,7 +1761,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "794fa98f-17f6-543a-b86c-e135135d68ac")
-		(property "Reference" "R55" (at 134.62 88.9 90) (effects (font (size 1.27 1.27))))
+		(property "Reference" "R57" (at 134.62 88.9 90) (effects (font (size 1.27 1.27))))
 		(property "Value" "0R" (at 134.62 93.98 90) (effects (font (size 1.27 1.27))))
 		(property "Footprint" "Resistor_SMD:R_0402_1005Metric"
 			(at 134.62 93.218 90)
@@ -1774,7 +1774,7 @@
 		(instances
 			(project "zeebuddy-mainboard"
 				(path "/7aeefa69-ecae-5622-92cc-4aeb9ca26e29/72d8b70c-6a09-5074-81b9-3c57a242f61f"
-					(reference "R55")
+					(reference "R57")
 					(unit 1)
 				)
 			)
@@ -1799,7 +1799,7 @@
 		(on_board yes)
 		(dnp yes)
 		(uuid "4c62dd02-4074-5e57-98f8-3fcfab6f7ddd")
-		(property "Reference" "R56" (at 134.62 96.52 90) (effects (font (size 1.27 1.27))))
+		(property "Reference" "R58" (at 134.62 96.52 90) (effects (font (size 1.27 1.27))))
 		(property "Value" "0R (不贴)" (at 134.62 101.6 90) (effects (font (size 1.27 1.27))))
 		(property "Footprint" "Resistor_SMD:R_0402_1005Metric"
 			(at 134.62 100.838 90)
@@ -1812,7 +1812,7 @@
 		(instances
 			(project "zeebuddy-mainboard"
 				(path "/7aeefa69-ecae-5622-92cc-4aeb9ca26e29/72d8b70c-6a09-5074-81b9-3c57a242f61f"
-					(reference "R56")
+					(reference "R58")
 					(unit 1)
 				)
 			)
@@ -1837,7 +1837,7 @@
 		(on_board yes)
 		(dnp yes)
 		(uuid "810ffdd3-3eb3-51a7-b556-c868615a9600")
-		(property "Reference" "R57" (at 134.62 104.14 90) (effects (font (size 1.27 1.27))))
+		(property "Reference" "R59" (at 134.62 104.14 90) (effects (font (size 1.27 1.27))))
 		(property "Value" "0R (不贴)" (at 134.62 109.22 90) (effects (font (size 1.27 1.27))))
 		(property "Footprint" "Resistor_SMD:R_0402_1005Metric"
 			(at 134.62 108.458 90)
@@ -1853,7 +1853,7 @@
 		(instances
 			(project "zeebuddy-mainboard"
 				(path "/7aeefa69-ecae-5622-92cc-4aeb9ca26e29/72d8b70c-6a09-5074-81b9-3c57a242f61f"
-					(reference "R57")
+					(reference "R59")
 					(unit 1)
 				)
 			)
@@ -1878,7 +1878,7 @@
 		(on_board yes)
 		(dnp yes)
 		(uuid "df931ddc-922d-586f-81d9-5c93be2e4d71")
-		(property "Reference" "R58" (at 134.62 111.76 90) (effects (font (size 1.27 1.27))))
+		(property "Reference" "R60" (at 134.62 111.76 90) (effects (font (size 1.27 1.27))))
 		(property "Value" "0R (不贴)" (at 134.62 116.84 90) (effects (font (size 1.27 1.27))))
 		(property "Footprint" "Resistor_SMD:R_0402_1005Metric"
 			(at 134.62 116.078 90)
@@ -1891,7 +1891,7 @@
 		(instances
 			(project "zeebuddy-mainboard"
 				(path "/7aeefa69-ecae-5622-92cc-4aeb9ca26e29/72d8b70c-6a09-5074-81b9-3c57a242f61f"
-					(reference "R58")
+					(reference "R60")
 					(unit 1)
 				)
 			)
@@ -1957,7 +1957,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "bfb01c2d-f9c0-518f-98f7-906112d64152")
-		(property "Reference" "#PWR79" (at 180.34 63.5 0) (effects (font (size 1.27 1.27)) (hide yes)))
+		(property "Reference" "#PWR81" (at 180.34 63.5 0) (effects (font (size 1.27 1.27)) (hide yes)))
 		(property "Value" "GND" (at 180.34 60.96 0) (effects (font (size 1.27 1.27))))
 		(property "Footprint" "" (at 180.34 57.15 0) (effects (font (size 1.27 1.27)) (hide yes)))
 		(property "Datasheet" "" (at 180.34 57.15 0) (effects (font (size 1.27 1.27)) (hide yes)))
@@ -1969,7 +1969,7 @@
 		(instances
 			(project "zeebuddy-mainboard"
 				(path "/7aeefa69-ecae-5622-92cc-4aeb9ca26e29/72d8b70c-6a09-5074-81b9-3c57a242f61f"
-					(reference "#PWR79")
+					(reference "#PWR81")
 					(unit 1)
 				)
 			)
@@ -2025,7 +2025,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "439f1eee-2463-5b6c-ba78-416571c32288")
-		(property "Reference" "#PWR80" (at 193.04 63.5 0) (effects (font (size 1.27 1.27)) (hide yes)))
+		(property "Reference" "#PWR82" (at 193.04 63.5 0) (effects (font (size 1.27 1.27)) (hide yes)))
 		(property "Value" "GND" (at 193.04 60.96 0) (effects (font (size 1.27 1.27))))
 		(property "Footprint" "" (at 193.04 57.15 0) (effects (font (size 1.27 1.27)) (hide yes)))
 		(property "Datasheet" "" (at 193.04 57.15 0) (effects (font (size 1.27 1.27)) (hide yes)))
@@ -2037,7 +2037,7 @@
 		(instances
 			(project "zeebuddy-mainboard"
 				(path "/7aeefa69-ecae-5622-92cc-4aeb9ca26e29/72d8b70c-6a09-5074-81b9-3c57a242f61f"
-					(reference "#PWR80")
+					(reference "#PWR82")
 					(unit 1)
 				)
 			)
@@ -2135,7 +2135,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "b3b64719-686e-5f94-8621-226ce76f4189")
-		(property "Reference" "R59" (at 134.62 182.88 90) (effects (font (size 1.27 1.27))))
+		(property "Reference" "R61" (at 134.62 182.88 90) (effects (font (size 1.27 1.27))))
 		(property "Value" "10k" (at 134.62 187.96 90) (effects (font (size 1.27 1.27))))
 		(property "Footprint" "Resistor_SMD:R_0402_1005Metric"
 			(at 134.62 187.198 90)
@@ -2151,7 +2151,7 @@
 		(instances
 			(project "zeebuddy-mainboard"
 				(path "/7aeefa69-ecae-5622-92cc-4aeb9ca26e29/72d8b70c-6a09-5074-81b9-3c57a242f61f"
-					(reference "R59")
+					(reference "R61")
 					(unit 1)
 				)
 			)
@@ -2212,7 +2212,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "f08ad46f-7d4e-5643-abf4-e9f1b2940857")
-		(property "Reference" "#PWR81" (at 180.34 190.5 0) (effects (font (size 1.27 1.27)) (hide yes)))
+		(property "Reference" "#PWR83" (at 180.34 190.5 0) (effects (font (size 1.27 1.27)) (hide yes)))
 		(property "Value" "+3V3" (at 180.34 183.134 0) (effects (font (size 1.27 1.27))))
 		(property "Footprint" "" (at 180.34 186.69 0) (effects (font (size 1.27 1.27)) (hide yes)))
 		(property "Datasheet" "" (at 180.34 186.69 0) (effects (font (size 1.27 1.27)) (hide yes)))
@@ -2224,7 +2224,7 @@
 		(instances
 			(project "zeebuddy-mainboard"
 				(path "/7aeefa69-ecae-5622-92cc-4aeb9ca26e29/72d8b70c-6a09-5074-81b9-3c57a242f61f"
-					(reference "#PWR81")
+					(reference "#PWR83")
 					(unit 1)
 				)
 			)
@@ -2244,7 +2244,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "f825f12f-c74e-54f8-a4a4-eeb3c24cc78d")
-		(property "Reference" "#PWR82" (at 180.34 205.74 0) (effects (font (size 1.27 1.27)) (hide yes)))
+		(property "Reference" "#PWR84" (at 180.34 205.74 0) (effects (font (size 1.27 1.27)) (hide yes)))
 		(property "Value" "GND" (at 180.34 203.2 0) (effects (font (size 1.27 1.27))))
 		(property "Footprint" "" (at 180.34 199.39 0) (effects (font (size 1.27 1.27)) (hide yes)))
 		(property "Datasheet" "" (at 180.34 199.39 0) (effects (font (size 1.27 1.27)) (hide yes)))
@@ -2256,7 +2256,7 @@
 		(instances
 			(project "zeebuddy-mainboard"
 				(path "/7aeefa69-ecae-5622-92cc-4aeb9ca26e29/72d8b70c-6a09-5074-81b9-3c57a242f61f"
-					(reference "#PWR82")
+					(reference "#PWR84")
 					(unit 1)
 				)
 			)
@@ -2290,7 +2290,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "4266e279-d916-5d7d-8deb-b85ecd747f04")
-		(property "Reference" "U10" (at 289.56 49.53 0) (effects (font (size 1.27 1.27))))
+		(property "Reference" "U11" (at 289.56 49.53 0) (effects (font (size 1.27 1.27))))
 		(property "Value" "TPS61165DBV" (at 289.56 52.07 0) (effects (font (size 1.27 1.27))))
 		(property "Footprint" "Package_TO_SOT_SMD:SOT-23-6"
 			(at 289.56 86.106 0)
@@ -2313,7 +2313,7 @@
 		(instances
 			(project "zeebuddy-mainboard"
 				(path "/7aeefa69-ecae-5622-92cc-4aeb9ca26e29/72d8b70c-6a09-5074-81b9-3c57a242f61f"
-					(reference "U10")
+					(reference "U11")
 					(unit 1)
 				)
 			)
@@ -2348,7 +2348,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "f43cca55-3fad-5ec7-8e12-124b5ea0265f")
-		(property "Reference" "#PWR83" (at 289.56 80.01 0) (effects (font (size 1.27 1.27)) (hide yes)))
+		(property "Reference" "#PWR85" (at 289.56 80.01 0) (effects (font (size 1.27 1.27)) (hide yes)))
 		(property "Value" "GND" (at 289.56 77.47 0) (effects (font (size 1.27 1.27))))
 		(property "Footprint" "" (at 289.56 73.66 0) (effects (font (size 1.27 1.27)) (hide yes)))
 		(property "Datasheet" "" (at 289.56 73.66 0) (effects (font (size 1.27 1.27)) (hide yes)))
@@ -2360,7 +2360,7 @@
 		(instances
 			(project "zeebuddy-mainboard"
 				(path "/7aeefa69-ecae-5622-92cc-4aeb9ca26e29/72d8b70c-6a09-5074-81b9-3c57a242f61f"
-					(reference "#PWR83")
+					(reference "#PWR85")
 					(unit 1)
 				)
 			)
@@ -2464,7 +2464,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "60ba1547-73a7-54c5-946a-4337c2d2c5de")
-		(property "Reference" "R60" (at 350.52 114.3 90) (effects (font (size 1.27 1.27))))
+		(property "Reference" "R62" (at 350.52 114.3 90) (effects (font (size 1.27 1.27))))
 		(property "Value" "5.1R 1%" (at 350.52 119.38 90) (effects (font (size 1.27 1.27))))
 		(property "Footprint" "Resistor_SMD:R_0402_1005Metric"
 			(at 350.52 118.618 90)
@@ -2480,7 +2480,7 @@
 		(instances
 			(project "zeebuddy-mainboard"
 				(path "/7aeefa69-ecae-5622-92cc-4aeb9ca26e29/72d8b70c-6a09-5074-81b9-3c57a242f61f"
-					(reference "R60")
+					(reference "R62")
 					(unit 1)
 				)
 			)
@@ -2582,7 +2582,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "de67fab8-e8d4-5e02-977c-64edb5112d35")
-		(property "Reference" "#PWR84" (at 243.84 109.22 0) (effects (font (size 1.27 1.27)) (hide yes)))
+		(property "Reference" "#PWR86" (at 243.84 109.22 0) (effects (font (size 1.27 1.27)) (hide yes)))
 		(property "Value" "VSYS" (at 243.84 101.854 0) (effects (font (size 1.27 1.27))))
 		(property "Footprint" "" (at 243.84 105.41 0) (effects (font (size 1.27 1.27)) (hide yes)))
 		(property "Datasheet" "" (at 243.84 105.41 0) (effects (font (size 1.27 1.27)) (hide yes)))
@@ -2594,7 +2594,7 @@
 		(instances
 			(project "zeebuddy-mainboard"
 				(path "/7aeefa69-ecae-5622-92cc-4aeb9ca26e29/72d8b70c-6a09-5074-81b9-3c57a242f61f"
-					(reference "#PWR84")
+					(reference "#PWR86")
 					(unit 1)
 				)
 			)
@@ -2614,7 +2614,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "ac918231-cd0c-5be4-8fb4-76a2889939bd")
-		(property "Reference" "#PWR85" (at 243.84 124.46 0) (effects (font (size 1.27 1.27)) (hide yes)))
+		(property "Reference" "#PWR87" (at 243.84 124.46 0) (effects (font (size 1.27 1.27)) (hide yes)))
 		(property "Value" "GND" (at 243.84 121.92 0) (effects (font (size 1.27 1.27))))
 		(property "Footprint" "" (at 243.84 118.11 0) (effects (font (size 1.27 1.27)) (hide yes)))
 		(property "Datasheet" "" (at 243.84 118.11 0) (effects (font (size 1.27 1.27)) (hide yes)))
@@ -2626,7 +2626,7 @@
 		(instances
 			(project "zeebuddy-mainboard"
 				(path "/7aeefa69-ecae-5622-92cc-4aeb9ca26e29/72d8b70c-6a09-5074-81b9-3c57a242f61f"
-					(reference "#PWR85")
+					(reference "#PWR87")
 					(unit 1)
 				)
 			)
@@ -2682,7 +2682,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "53ccf8d3-0930-5da5-be8e-cb508440bfe4")
-		(property "Reference" "#PWR86" (at 269.24 124.46 0) (effects (font (size 1.27 1.27)) (hide yes)))
+		(property "Reference" "#PWR88" (at 269.24 124.46 0) (effects (font (size 1.27 1.27)) (hide yes)))
 		(property "Value" "GND" (at 269.24 121.92 0) (effects (font (size 1.27 1.27))))
 		(property "Footprint" "" (at 269.24 118.11 0) (effects (font (size 1.27 1.27)) (hide yes)))
 		(property "Datasheet" "" (at 269.24 118.11 0) (effects (font (size 1.27 1.27)) (hide yes)))
@@ -2694,7 +2694,7 @@
 		(instances
 			(project "zeebuddy-mainboard"
 				(path "/7aeefa69-ecae-5622-92cc-4aeb9ca26e29/72d8b70c-6a09-5074-81b9-3c57a242f61f"
-					(reference "#PWR86")
+					(reference "#PWR88")
 					(unit 1)
 				)
 			)

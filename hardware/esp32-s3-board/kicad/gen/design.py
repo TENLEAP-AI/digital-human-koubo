@@ -164,7 +164,7 @@ ESP_PINS = {
     "IO4": "CAM_D0", "IO5": "CAM_D1", "IO6": "CAM_D2", "IO7": "CAM_D3", "IO8": "CAM_D4", "IO9": "CAM_D5",
     "IO10": "CAM_D6", "IO11": "CAM_D7", "IO12": "CAM_PCLK", "IO13": "CAM_VSYNC", "IO14": "CAM_HREF",
     "IO15": "SD_CLK", "IO16": "EXP_INT", "IO17": "SD_CMD", "IO18": "I2S_DIN",
-    "USB_D-": "ESP_USB_DM", "USB_D+": "ESP_USB_DP", "IO21": "SD_D0",
+    "USB_D-": "ESP_DM", "USB_D+": "ESP_DP", "IO21": "SD_D0",
     "IO38": "LCD_G3", "IO39": "LCD_G4", "IO40": "LCD_G5", "IO41": "LCD_G6", "IO42": "LCD_G7",
     "TXD0": "U0TXD", "RXD0": "U0RXD", "IO45": "LCD_BL_PWM", "IO46": "I2S_WS",
     "IO47": "LCD_PCLK", "IO48": "LCD_DE", "3V3": "+3V3", "GND": "GND",
@@ -193,6 +193,10 @@ def mcu():
     sh.place("Connector_Generic:Conn_01x06", 68.58, 200.66,
              {"1": "+3V3", "2": "GND", "3": "ESP_EN", "4": "I2S_BCLK", "5": "U0TXD", "6": "U0RXD"},
              value="下载 / 调试焊盘")
+    sh.place("Power_Supervisor:LM809", 116.84, 190.5, {"VCC": "+3V3", "GND": "GND", "~{RESET}": "ESP_EN"},
+             value="803 型 3.08V 开漏", dnp=True, fp=FP_SOT23)
+    sh.text(96.52, 209.55, "预留的复位监控芯片：电池供电时 3.3 V 可能缓慢下降，\n"
+                           "如果实测有上电不启动的情况就贴上。要用开漏输出的型号。", 1.3)
     sh.text(15.24, 220.98,
             "启动配置脚：\n"
             "GPIO0（音频 BCLK）：上拉；BOOT 键或下载焊盘拉低进下载模式。\n"
@@ -213,11 +217,15 @@ def mcu():
              {"VCC": "+3V3", "GND": "GND", "~{OE}": "GND", "SEL": "USB_SEL",
               "D+": "ESP_USB_DP", "D-": "ESP_USB_DM", "HSD1+": "USBC_DP", "HSD1-": "USBC_DM",
               "HSD2+": "LTE_USB_DP", "HSD2-": "LTE_USB_DM"})
-    sh.hlist(332.74, 104.14, [("R", "USB_SEL", "GND", "4.7k")])
+    sh.hlist(332.74, 99.06, [
+        ("R", "USB_SEL", "GND", "4.7k"),
+        ("R", "ESP_DP", "ESP_USB_DP", "0R"),
+        ("R", "ESP_DM", "ESP_USB_DM", "0R"),
+    ])
     sh.caps(383.54, 50.8, "+3V3", ["100nF"])
-    sh.text(259.08, 114.3, "USB_SEL = 0（默认）：ESP32-S3 的 USB 接 Type-C，\n"
-                           "插电脑可直接下载和看日志。\n"
-                           "USB_SEL = 1：ESP32-S3 做主机，接 Air780E 的 USB。", 1.3)
+    sh.text(259.08, 123.19, "USB_SEL = 0（默认）：ESP32-S3 的 USB 接 Type-C，插电脑可直接下载和看日志。\n"
+                            "USB_SEL = 1：ESP32-S3 做主机，接 Air780E 的 USB。\n"
+                            "两颗 0R 贴近模组，USB 信号有问题时可换成 22 ~ 33 Ω。", 1.3)
     return sh
 
 
@@ -386,7 +394,7 @@ def display():
     }, nc=["5"], value="屏排线座 22P 0.5mm")
     sh.hlist(134.62, 38.1, [
         ("R", "LCD_PCLK", "LCD_PCLK_R", "33R"),
-        ("R", "U0TXD", "LCD_VSYNC", "100R"),
+        ("R", "U0TXD", "LCD_VSYNC", "470R"),
         ("R", "U0RXD", "LCD_HSYNC", "100R"),
         ("R", "LCD_RST", "GND", "10k"),
         ("R", "+3V3", "LCD_VCI", "0R"),
