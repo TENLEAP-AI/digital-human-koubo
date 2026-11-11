@@ -20,6 +20,7 @@ ESP32-S3-WROOM-1U-N16R8 + Air780E 的主板，第一版，**草稿**：原理图
 | `zeebuddy-mainboard.kicad_pcb` | PCB：外形、螺丝孔、213 个元件全部摆好，已布 85% 的线 |
 | `placement-front.png` / `placement-back.png` | 正反两面主要器件的摆放示意图 |
 | `routing.png` | 当前布线的示意图 |
+| `freerouting/zeebuddy-mainboard.dsn` | 给 Freerouting 用的板子文件（已摆放、未布线） |
 | `zeebuddy.pretty/` | 工程自带的封装（Air780E、SY6970、麦克风和几个占位封装） |
 | `gen/` | 生成原理图、封装库和 PCB 的脚本 |
 
@@ -61,6 +62,17 @@ gen/build.sh
   没布通的清单在 `build/routing.json`（运行 `gen/build.sh` 后生成）。
 - 4G 天线走线按 0.35 mm 画，50 Ω 的实际线宽要按板厂的叠层再算。
 - USB 没有按差分对走，电源线宽、去耦电容到引脚的距离等都还没有人工检查。
+
+### 用 Freerouting 接着布
+
+`freerouting/zeebuddy-mainboard.dsn` 是给开源自动布线器 Freerouting 用的板子文件（元件已摆好、没有走线，
+地和 3.3 V 两个内层按平面导出，电源和天线的线宽按网络类导出）。两种用法：
+
+- 在自己的电脑上：用 Freerouting 打开这个 `.dsn`，自动布线，保存出 `.ses` 文件放回仓库，然后运行
+  `/usr/bin/python3.12 gen/freeroute.py . --ses 文件.ses` 导入并铺铜。
+- 在有 Freerouting 的环境里：`/usr/bin/python3.12 gen/freeroute.py . --jar freerouting.jar` 一步完成。
+
+`.dsn` 由 `gen/freeroute.py` 生成；元件位置变了要重新生成。
 
 ## PCB 摆放
 

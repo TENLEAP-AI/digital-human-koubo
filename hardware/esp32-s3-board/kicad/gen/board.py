@@ -50,6 +50,15 @@ RULES = {"min_clearance": 0.09, "min_track_width": 0.09, "min_copper_edge_cleara
          "min_hole_clearance": 0.2}
 DEFAULT_CLASS = {"clearance": 0.1, "track_width": 0.15, "via_diameter": 0.45, "via_drill": 0.2,
                  "diff_pair_width": 0.15, "diff_pair_gap": 0.15}
+# wider tracks for supply nets and the antenna line; used by KiCad and by an external autorouter
+NET_CLASSES = {
+    "PowerHi": (dict(track_width=0.6, via_diameter=0.6, via_drill=0.3),
+                ["VBUS", "VBAT", "VSYS", "VDD_4G", "CHG_SW", "CHG_PMID"]),
+    "Power": (dict(track_width=0.3, via_diameter=0.5, via_drill=0.25),
+              ["+3V3", "+2V8", "+1V2", "BUCK_SW", "BL_SW", "LCD_LEDA", "LCD_LEDK", "PA_OUTP", "PA_OUTN", "SPK_P",
+               "SPK_N", "CHG_REGN", "CHG_BTST", "SIM_VDD", "LCD_VCI", "CAMF_IOVDD", "CAMF_DVDD", "GND"]),
+    "RF": (dict(track_width=0.35), ["LTE_ANT", "LTE_ANT_C"]),
+}
 
 def arc_mid(cx, cy, x0, y0, x1, y1):
     a0, a1 = math.atan2(y0 - cy, x0 - cx), math.atan2(y1 - cy, x1 - cx)
@@ -229,7 +238,14 @@ def main():
     project["board"]["design_settings"]["rule_severities"].update(
         {"silk_overlap": "ignore", "silk_over_copper": "ignore", "silk_edge_clearance": "ignore",
          "text_height": "ignore", "text_thickness": "ignore"})
-    project["net_settings"]["classes"][0].update(DEFAULT_CLASS)
+    default = project["net_settings"]["classes"][0]
+    default.update(DEFAULT_CLASS)
+    classes, patterns = [default], []
+    for cname, (values, nets) in NET_CLASSES.items():
+        classes.append(dict(default, name=cname, priority=len(classes) - 1, **values))
+        patterns += [{"netclass": cname, "pattern": n} for n in nets]
+    project["net_settings"]["classes"] = classes
+    project["net_settings"]["netclass_patterns"] = patterns
     with open(pro, "w", encoding="utf-8") as f:
         json.dump(project, f, indent=2, ensure_ascii=False)
         f.write("\n")
