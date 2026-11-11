@@ -16,7 +16,7 @@ import sys
 import pcbnew
 
 from board import NAME
-from route import VDD_4G_AREA, add_pour, add_rf_ground, add_zone, strip_copper
+from route import L4_SIGNALS, VDD_4G_AREA, add_pour, add_rf_ground, add_zone, strip_copper
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 args = [a for a in sys.argv[1:] if not a.startswith("--")]
@@ -32,7 +32,10 @@ def main():
     bare = os.path.join(OUT, "build", NAME + "-unrouted.kicad_pcb")
     kept = strip_copper(path, bare, keep_locked=True)   # keep only the locked copper: antenna, USB, decoupling
     board = pcbnew.LoadBoard(bare)
-    for layer in (pcbnew.In1_Cu, pcbnew.In4_Cu):         # ground planes: no signal tracks on them
+    planes = [pcbnew.In1_Cu, pcbnew.In4_Cu]              # ground planes: no signal tracks on them
+    if not L4_SIGNALS:
+        planes.append(pcbnew.In3_Cu)                     # STK-6: L4 carries +3V3 only
+    for layer in planes:
         board.SetLayerType(layer, pcbnew.LT_POWER)
     add_zone(board, "GND", pcbnew.In1_Cu)      # exported as planes: the router drops vias onto them
     add_zone(board, "GND", pcbnew.In4_Cu)

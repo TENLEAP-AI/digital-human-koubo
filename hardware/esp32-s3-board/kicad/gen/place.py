@@ -19,7 +19,7 @@ MAIN = {
     "触摸排线座 6P（脚位待定）": (5.0, 2.75, 180, "B"),
     "屏排线座 22P 0.5mm": (16.2, 2.75, 180, "B"),
     "后摄 OV2640": (32.0, 2.75, 180, "B"),
-    "IPEX 座": (23.4, 29.6, 0, "B"),
+    "IPEX 座": (23.4, 30.46, 0, "B"),                     # moved down to make room for the matching parts
     "电池焊盘": (2.11, 8.7, 0, "B"),
     "喇叭焊盘": (1.27, 19.22, 0, "B"),
     "zeebuddy:SY6970_QFN-24_4x4mm": (8.6, 11.6, 0, "B"),
@@ -36,9 +36,9 @@ MAIN = {
 # Antenna matching on the back, in one straight line from the Air780E antenna pad to the socket's centre pad
 # (x = 24.45): the shunt capacitors sit with their signal pad on the line, the series part in the line (RF-8).
 EXACT = {
-    "C29": (23.97, 23.9, 0, "B"),
-    "R49": (24.45, 25.4, 90, "B"),
-    "C30": (23.97, 26.9, 0, "B"),
+    "C29": (23.97, 24.37, 0, "B"),
+    "R49": (24.45, 25.88, 90, "B"),
+    "C30": (23.97, 27.39, 0, "B"),
 }
 
 # ---- small parts ---------------------------------------------------------------------------------
@@ -48,7 +48,7 @@ GROUPS = [
     # ---------------- back ----------------
     ("B", 4.3, 6.0, ["C3 C4 C1 C2"], *T),                               # charger: PMID, REGN, BTST, VBUS
     ("B", 4.3, 14.7, ["C7 C5 C6", "R3 R5 R4"], *T),                     # charger: BAT, SYS, ILIM, NTC
-    ("B", 17.9, 8.7, ["C19@270"]),                                      # 220 uF, + pad within 1 mm of the Air780E supply pads (PWR-3)
+    ("B", 17.1, 8.7, ["C19@270"]),                                      # 220 uF: as close as the module's own outline allows (PWR-3)
     ("B", 17.8, 5.7, ["C20", "C21"], *T),
     ("B", 17.0, 14.0, ["Q1@90"]),                                       # Air780E load switch
     ("B", 61.3, 3.2, ["C13@180", "C12@90", "R12", "C14@180"], *T),      # ESP32: 3V3 decoupling (3V3 pads face pin 2), EN

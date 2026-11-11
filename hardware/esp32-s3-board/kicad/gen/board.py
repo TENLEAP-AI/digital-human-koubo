@@ -53,14 +53,16 @@ DEFAULT_CLASS = {"clearance": 0.1, "track_width": 0.15, "via_diameter": 0.45, "v
 # wider tracks for supply nets and the antenna line; used by KiCad and by an external autorouter
 NET_CLASSES = {
     "PowerHi": (dict(track_width=0.6, via_diameter=0.6, via_drill=0.3),
-                ["VBUS", "VBAT", "VSYS", "VDD_4G", "CHG_SW", "CHG_PMID"]),
+                ["VBAT", "VSYS", "VDD_4G", "CHG_SW", "CHG_PMID"]),
+    "Vbus": (dict(track_width=1.0, via_diameter=0.6, via_drill=0.3), ["VBUS"]),      # PWR-9
     "Power": (dict(track_width=0.3, via_diameter=0.5, via_drill=0.25),
               ["+3V3", "+2V8", "+1V2", "BUCK_SW", "BL_SW", "LCD_LEDA", "LCD_LEDK", "PA_OUTP", "PA_OUTN", "SPK_P",
                "SPK_N", "CHG_REGN", "CHG_BTST", "SIM_VDD", "LCD_VCI", "CAMF_IOVDD", "CAMF_DVDD", "GND"]),
-    # antenna line: coplanar, 0.5 mm wide with a 0.15 mm gap to the ground beside it. Placeholder values:
-    # the real ones come from the fab's impedance calculator (layout-spec.md RF-1)
-    "RF": (dict(track_width=0.5, clearance=0.15), ["LTE_ANT", "LTE_ANT_C"]),
-    "USB": (dict(track_width=0.2, diff_pair_width=0.2, diff_pair_gap=0.15),
+    # antenna line on the back over In4 (7628 prepreg, about 0.21 mm): 0.34 mm wide, 0.2 mm to the ground
+    # beside it; USB pairs 0.19 / 0.15. Design values of layout-spec.md 5.1 and USB-1, to be confirmed
+    # with the fab's impedance calculator.
+    "RF": (dict(track_width=0.34, clearance=0.2), ["LTE_ANT", "LTE_ANT_C"]),
+    "USB": (dict(track_width=0.19, diff_pair_width=0.19, diff_pair_gap=0.15),
             ["USBC_DP", "USBC_DM", "ESP_DP", "ESP_DM", "ESP_USB_DP", "ESP_USB_DM", "LTE_USB_DP", "LTE_USB_DM"]),
 }
 

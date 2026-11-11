@@ -35,22 +35,24 @@ HOLE_CLR = 0.25               # hole to hole / hole to copper
 ROUTE_LAYERS = [pcbnew.F_Cu, pcbnew.In2_Cu, pcbnew.In3_Cu, pcbnew.B_Cu]   # the two ground planes are not routed
 NL = len(ROUTE_LAYERS)
 L1, L3, L4, L6 = 0, 1, 2, 3    # index of each routing layer (L2 and L5 are the planes)
-LAYER_DIRS = (0, 1, 2, 0)      # 1 = mostly horizontal, 2 = mostly vertical (STK-2)
+L4_SIGNALS = os.environ.get("L4_SIGNALS", "0") == "1"   # STK-6: L4 is a pure +3V3 layer unless this is set
+LAYER_DIRS = (0, 1, 2, 0) if L4_SIGNALS else (0, 0, 0, 0)   # 1 = mostly horizontal, 2 = mostly vertical (STK-2)
 GW, GH = int(round(BOARD_W / G)) + 1, int(round(BOARD_H / G)) + 1
 
-PLANES = {"GND": pcbnew.In1_Cu}          # a ground via also lands on In4, the second plane
+PLANES = {"GND": pcbnew.In1_Cu, "+3V3": pcbnew.In3_Cu}   # a ground via also lands on In4, the second plane
 RF = {"LTE_ANT", "LTE_ANT_C"}
-# Antenna line (layout-spec.md RF-1..11): coplanar on the back, In4 cut away under it, In3 is its ground.
-# Width and gap are placeholders until the fab's impedance calculator gives the real ones.
-RF_W, RF_GAP = 0.5, 0.15
+# Antenna line (layout-spec.md 5.1): on the back over the In4 ground, ground beside it on the back.
+# In4 is opened only under the socket's signal pad; In3 is ground under that opening.
+# Width and gap are design values until the fab's impedance calculator confirms them.
+RF_W, RF_GAP = 0.34, 0.2
 RF_EXTRA = RF_GAP - CLR       # the line and its pads keep RF_GAP from all other copper, pours included
 RF_KEEP = 1.0                 # other signals on the back stay this far from the line (ground may be closer)
-RF_CUT = 5 * RF_W             # width of the opening in In4 under the line
-RF_GND_AREA = (22.0, 20.3, 26.9, 31.3)   # In3 is ground here and carries no tracks
+RF_SOCKET = "J7"
+RF_WIN, RF_WIN_GND, RF_ISLAND = 0.3, 0.2, 1.0   # opening = pad + 0.3, at least 0.2 from ground pads; In3 ground 1 mm larger
 USB = {"USBC_DP", "USBC_DM", "ESP_DP", "ESP_DM", "ESP_USB_DP", "ESP_USB_DM", "LTE_USB_DP", "LTE_USB_DM"}
 USB_PAIRS = [("USBC_DP", "USBC_DM"), ("ESP_DP", "ESP_DM"), ("ESP_USB_DP", "ESP_USB_DM"), ("LTE_USB_DP", "LTE_USB_DM")]
 COUPLED = [("ESP_USB_DP", "ESP_USB_DM", L3)]  # long pairs laid side by side on this routing layer
-PAIR_W, PAIR_GAP = 0.2, 0.15
+PAIR_W, PAIR_GAP = 0.19, 0.15
 VDD_4G_AREA = [(17.6, 5.65), (20.45, 5.65), (20.45, 10.9), (23.15, 10.9), (23.15, 13.0), (20.45, 13.0),
                (20.45, 18.1), (16.9, 18.1), (16.9, 8.6), (17.6, 8.6)]   # copper pour on the back, mm
 PWR_HI = {"VBUS", "VBAT", "VSYS", "VDD_4G", "CHG_SW", "CHG_PMID"}
@@ -60,19 +62,22 @@ PWR_LO = {"BUCK_SW", "BL_SW", "LCD_LEDA", "LCD_LEDK", "PA_OUTP", "PA_OUTN", "SPK
 
 def net_rules(name):
     """widths to try (mm), via (diameter, drill) or None, layer costs (L1, L3, L4, L6; 0 = not allowed), via cost."""
+    s4 = 1 if L4_SIGNALS else 0     # signals on L4 only when STK-6 has to be relaxed
     if name in RF:
         return dict(widths=[RF_W], via=None, lcost=(0, 0, 0, 1), viacost=0)
+    if name == "+3V3":      # a plane on L4: every pad gets a short stub and a via (capacitors first, DEC-2)
+        return dict(widths=[0.3, 0.2, 0.15], via=(0.45, 0.2), lcost=(1, 0, 0, 1), viacost=0)
     if name in PLANES:
         return dict(widths=[0.25, 0.15], via=(0.45, 0.2), lcost=(1, 0, 0, 1), viacost=0)
-    if name == "+3V3":      # trunk on L4 (a +3V3 pour fills the rest of that layer), short stubs to the pads
-        return dict(widths=[0.3, 0.2, 0.15], via=(0.45, 0.2), lcost=(3, 3, 1, 3), viacost=300)
     if name in USB:
-        return dict(widths=[PAIR_W, 0.15], via=(0.45, 0.2), lcost=(1, 2, 3, 1), viacost=500)
-    if name in PWR_HI:      # high current stays on the outer layers (1 oz copper)
-        return dict(widths=[0.6, 0.4, 0.25, 0.15], via=(0.6, 0.3), lcost=(1, 4, 2, 1), viacost=600)
+        return dict(widths=[PAIR_W, 0.15], via=(0.45, 0.2), lcost=(1, 2, 3 * s4, 1), viacost=500)
+    if name == "VBUS":      # PWR-9: 1.0 mm
+        return dict(widths=[1.0, 0.8, 0.6], via=(0.6, 0.3), lcost=(1, 0, 0, 1), viacost=600)
+    if name in PWR_HI:      # PWR-1: high current stays on the outer layers (1 oz copper)
+        return dict(widths=[0.6, 0.4, 0.25, 0.15], via=(0.6, 0.3), lcost=(1, 0, 0, 1), viacost=600)
     if name in PWR_LO:
-        return dict(widths=[0.3, 0.2, 0.15], via=(0.5, 0.25), lcost=(1, 4, 3, 1), viacost=500)
-    return dict(widths=[0.15], via=(0.45, 0.2), lcost=(2, 1, 1, 2), viacost=700)
+        return dict(widths=[0.3, 0.2, 0.15], via=(0.5, 0.25), lcost=(1, 4, 3 * s4, 1), viacost=500)
+    return dict(widths=[0.15], via=(0.45, 0.2), lcost=(2, 1, s4, 2), viacost=700)
 
 
 def build_core():
@@ -211,8 +216,11 @@ class Router:
                     lib.rt_paint_rect(l, x0 / G, y0 / G, x1 / G, y1 / G, (W_DEF / 2 + MARGIN) / G, -1, 0, 0)
             if no_vias or no_tracks:
                 lib.rt_viablock_rect(x0 / G, y0 / G, x1 / G, y1 / G, 0.3 / G)
-        x0, y0, x1, y1 = [v / G for v in RF_GND_AREA]          # the antenna line needs unbroken ground below it
-        lib.rt_paint_rect(L4, x0, y0, x1, y1, (W_DEF / 2 + MARGIN) / G, -1, 0, 0)
+        sig = [p["rect"] for p in self.pads if p["ref"] == RF_SOCKET and self.net_name[p["net"]] in RF]
+        if sig and "GND" in self.net_id:                       # In3 under the socket's opening is ground (RF-4)
+            gnd_pads = [p["rect"] for p in self.pads if self.net_name[p["net"]] == "GND" and L6 in p["layers"]]
+            x0, y0, x1, y1 = [v / G for v in rf_window(sig[0], gnd_pads)[1]]
+            lib.rt_paint_rect(L4, x0, y0, x1, y1, (W_DEF / 2 + MARGIN) / G, self.net_id["GND"], 0, 0)
         self.comps, self.comp_rect, self.net_box = {}, {}, {}
         for p in self.pads:
             plane = p["pth"] and self.net_name[p["net"]] in PLANES
@@ -245,9 +253,17 @@ class Router:
         if gnd is None:
             return
         lib.rt_set_fixed(1)
+        routed = False
         for net, l, x0, y0, x1, y1, w in self.tracks:
             if self.net_name[net] in RF:
+                routed = True
                 lib.rt_paint_seg(l, x0 / G, y0 / G, x1 / G, y1 / G, (w / 2 + RF_KEEP + W_DEF / 2 + MARGIN) / G, gnd, 0, 0)
+        if routed:                                   # the matching parts and the socket pad are part of the line
+            for p in self.pads:
+                if self.net_name[p["net"]] in RF and not p["ref"].startswith("U"):
+                    x0, y0, x1, y1 = [v / G for v in p["rect"]]
+                    for l in p["layers"]:
+                        lib.rt_paint_rect(l, x0, y0, x1, y1, (RF_KEEP + W_DEF / 2 + MARGIN) / G, gnd, 0, 0)
         lib.rt_set_fixed(0)
 
     def remove_net(self, net):
@@ -354,30 +370,86 @@ class Router:
                     self.commit(net, small["comp"], res[0], res[1], rules, width, False)
                     break
 
+    def decouple_first(self, name):
+        """DEC-2 for a plane net: every capacitor gets its via first; a supply pin with a capacitor of the same
+        net close by is then joined to that capacitor by a track instead of getting a via of its own."""
+        lib = self.lib
+        net = self.net_id.get(name)
+        if net is None:
+            return 0
+        rules = net_rules(name)
+        pads = [p for p in self.pads if p["net"] == net and not p["pth"]]
+        caps = [p for p in pads if p["ref"].startswith("C")]
+        for p in caps:
+            if lib.rt_plane(p["comp"]):
+                continue
+            for width in rules["widths"]:
+                res = self.search(net, p["comp"], rules, width, True, p["rect"], 3.0)
+                if res:
+                    self.commit(net, p["comp"], res[0], res[1], rules, width, True)
+                    break
+        joined = 0
+        for p in pads:
+            if p["ref"][0] in "CRLDQF" or p["ref"].startswith("TP") or lib.rt_plane(p["comp"]):
+                continue                                  # only pins of chips, modules and connectors
+            near = [c for c in caps if rect_gap(p["rect"], c["rect"]) <= 2.5]
+            if not near:
+                continue
+            c = min(near, key=lambda q: rect_gap(p["rect"], q["rect"]))
+            box = (min(p["rect"][0], c["rect"][0]), min(p["rect"][1], c["rect"][1]),
+                   max(p["rect"][2], c["rect"][2]), max(p["rect"][3], c["rect"][3]))
+            for width in rules["widths"]:
+                res = self.search(net, p["comp"], rules, width, False, box, 1.0)
+                if res:
+                    self.commit(net, p["comp"], res[0], res[1], rules, width, False)
+                    joined += 1
+                    break
+        return joined
+
     def stitch_rf(self):
-        """Ground vias on both sides of the antenna line."""
+        """RF-5: ground vias on both sides of the antenna line, about 1 mm apart, beside tracks and pads alike.
+        The line is taken as straight from the module's antenna pad to the socket's signal pad."""
         lib = self.lib
         gnd = self.net_id["GND"]
         via = net_rules("GND")["via"]
         nvp, vprobe = disc_offsets(via[0] / 2 - W_DEF / 2 + 0.01)
-        added = 0
-        for net, l, x0, y0, x1, y1, w in list(self.tracks):
-            if self.net_name[net] not in RF:
-                continue
-            length = math.hypot(x1 - x0, y1 - y0)
-            if length < 0.3:
-                continue
-            ux, uy = (x1 - x0) / length, (y1 - y0) / length
-            off = w / 2 + RF_GAP + via[0] / 2 + 0.1       # in the ground right beside the gap
-            steps = max(1, int(length / 1.2))
-            for k in range(steps + 1):
-                for side in (1, -1):
-                    x = x0 + ux * length * k / steps - side * uy * off
-                    y = y0 + uy * length * k / steps + side * ux * off
+        shapes = [(min(x0, x1) - w / 2, min(y0, y1) - w / 2, max(x0, x1) + w / 2, max(y0, y1) + w / 2)
+                  for net, l, x0, y0, x1, y1, w in self.tracks if self.net_name[net] in RF]
+        rf_pads = [p for p in self.pads if self.net_name[p["net"]] in RF]
+        shapes += [p["rect"] for p in rf_pads]
+        sock = [p for p in rf_pads if p["ref"] == RF_SOCKET]
+        far = [p for p in rf_pads if p["ref"].startswith("U")]
+        if not sock or not far or not shapes:
+            return 0
+        mid = lambda r: ((r[0] + r[2]) / 2, (r[1] + r[3]) / 2)
+        (ax, ay), (bx, by) = mid(far[0]["rect"]), mid(sock[0]["rect"])
+        length = math.hypot(bx - ax, by - ay)
+        ux, uy = (bx - ax) / length, (by - ay) / length
+        nx, ny = -uy, ux
+        added, placed = 0, []
+        t = -0.5
+        while t <= length + 0.5:
+            px, py = ax + ux * t, ay + uy * t
+            for side in (1, -1):
+                half = 0.0                         # how far the line's copper reaches sideways at this point
+                for x0, y0, x1, y1 in shapes:
+                    cs = [(x0, y0), (x1, y0), (x1, y1), (x0, y1)]
+                    along = [(cx - ax) * ux + (cy - ay) * uy for cx, cy in cs]
+                    if min(along) - 0.3 <= t <= max(along) + 0.3:
+                        half = max(half, max(side * ((cx - px) * nx + (cy - py) * ny) for cx, cy in cs))
+                for extra in (0.1, 0.25, 0.4, 0.6, 0.9):
+                    off = half + RF_GAP + via[0] / 2 + extra
+                    x, y = px + side * nx * off, py + side * ny * off
                     ix, iy = round(x / G), round(y / G)
-                    if 0 <= ix < GW and 0 <= iy < GH and lib.rt_via_ok(gnd, ix, iy, nvp, vprobe):
-                        self.add_via(gnd, ix * G, iy * G, via[0], via[1], None)
-                        added += 1
+                    if not (0 <= ix < GW and 0 <= iy < GH) or not lib.rt_via_ok(gnd, ix, iy, nvp, vprobe):
+                        continue
+                    if any(math.hypot(ix * G - qx, iy * G - qy) < 0.9 for qx, qy in placed):
+                        break
+                    self.add_via(gnd, ix * G, iy * G, via[0], via[1], None)
+                    placed.append((ix * G, iy * G))
+                    added += 1
+                    break
+            t += 1.0
         return added
 
     def route_pair(self, pname, nname, layer):
@@ -572,7 +644,8 @@ class Router:
                 queue.append(name)
         self.failed = []
         ripped, final = {}, {}
-        frozen = {self.net_id[n] for n in RF | USB | PWR_HI | {"+3V3"} if n in self.net_id}   # never pushed out
+        self.walled = 0
+        frozen = {self.net_id[n] for n in RF | USB | PWR_HI | set(PLANES) if n in self.net_id}   # never pushed out
         rounds = 0
         t0 = time.time()
         while queue and rounds < limit and time.time() - t0 < budget:
@@ -596,6 +669,7 @@ class Router:
                     if victims:
                         break
             if not victims:
+                self.walled += 1                 # no way through even when other nets' tracks may be pushed out
                 continue
             rounds += 1
             if rounds % 10 == 0:
@@ -732,6 +806,34 @@ def vec(x, y):
     return pcbnew.VECTOR2I(pcbnew.FromMM(OX + x), pcbnew.FromMM(OY + y))
 
 
+def rect_gap(a, b):
+    return math.hypot(max(a[0] - b[2], b[0] - a[2], 0), max(a[1] - b[3], b[1] - a[3], 0))
+
+
+def rf_window(sig, gnd_pads):
+    """Opening in In4 under the antenna socket's signal pad, and the In3 ground below it (RF-3, RF-4).
+    sig: rectangle of the signal pad; gnd_pads: rectangles of the ground pads on the same side.
+    The opening is the pad grown by RF_WIN, pulled back where it would come closer than RF_WIN_GND to a
+    ground pad (those pads need the In4 ground under them)."""
+    x0, y0, x1, y1 = sig[0] - RF_WIN, sig[1] - RF_WIN, sig[2] + RF_WIN, sig[3] + RF_WIN
+    for gx0, gy0, gx1, gy1 in gnd_pads:
+        gx0, gy0, gx1, gy1 = gx0 - RF_WIN_GND, gy0 - RF_WIN_GND, gx1 + RF_WIN_GND, gy1 + RF_WIN_GND
+        if gx1 <= x0 or gx0 >= x1 or gy1 <= y0 or gy0 >= y1:
+            continue
+        cuts = [(gx1 - x0, "l"), (x1 - gx0, "r"), (gy1 - y0, "t"), (y1 - gy0, "b")]   # how much each side must give
+        cuts = [(d, side) for d, side in cuts if d > 0]
+        d, side = min(cuts)
+        if side == "l":
+            x0 = gx1
+        elif side == "r":
+            x1 = gx0
+        elif side == "t":
+            y0 = gy1
+        else:
+            y1 = gy0
+    return (x0, y0, x1, y1), (x0 - RF_ISLAND, y0 - RF_ISLAND, x1 + RF_ISLAND, y1 + RF_ISLAND)
+
+
 def rule_area(board, layer, pts, name, no_tracks=False, no_pour=False):
     z = pcbnew.ZONE(board)
     z.SetIsRuleArea(True)
@@ -750,31 +852,29 @@ def rule_area(board, layer, pts, name, no_tracks=False, no_pour=False):
 
 
 def add_rf_ground(board):
-    """The antenna line's reference (RF-3, RF-4): In4 is opened under the line and its pads, 5 line widths
-    wide; In3 below the opening is ground and carries no tracks. Reads the line from the board's tracks."""
-    x0, y0, x1, y1 = RF_GND_AREA
-    pts = [(x0, y0), (x1, y0), (x1, y1), (x0, y1)]
-    add_pour(board, "GND", pcbnew.In3_Cu, pts, priority=2)
-    rule_area(board, pcbnew.In3_Cu, pts, "antenna line: In3 is its ground, no tracks", no_tracks=True)
-    half = RF_CUT / 2
-    boxes = []
-    for t in board.GetTracks():
-        if t.GetNetname() in RF and t.Type() != pcbnew.PCB_VIA_T:
-            a, b = t.GetStart(), t.GetEnd()
-            xs = [pcbnew.ToMM(a.x) - OX, pcbnew.ToMM(b.x) - OX]
-            ys = [pcbnew.ToMM(a.y) - OY, pcbnew.ToMM(b.y) - OY]
-            boxes.append((min(xs) - half, min(ys) - half, max(xs) + half, max(ys) + half))
+    """RF-3, RF-4: In4 stays whole except for an opening under the antenna socket's signal pad; In3 below
+    the opening is ground and carries no tracks."""
+    def rect(pad):
+        bb = pad.GetBoundingBox()
+        return (pcbnew.ToMM(bb.GetLeft()) - OX, pcbnew.ToMM(bb.GetTop()) - OY,
+                pcbnew.ToMM(bb.GetRight()) - OX, pcbnew.ToMM(bb.GetBottom()) - OY)
+
+    sig, gnd = None, []
     for fp in board.GetFootprints():
         for pad in fp.Pads():
-            if pad.GetNetname() in RF:
-                bb = pad.GetBoundingBox()
-                cx = (pcbnew.ToMM(bb.GetLeft()) + pcbnew.ToMM(bb.GetRight())) / 2 - OX
-                boxes.append((cx - half, pcbnew.ToMM(bb.GetTop()) - OY - 0.3, cx + half, pcbnew.ToMM(bb.GetBottom()) - OY + 0.3))
-    for bx0, by0, bx1, by1 in boxes:
-        bx0, by0, bx1, by1 = max(bx0, x0 + 1.0), max(by0, y0 + 0.5), min(bx1, x1 - 1.0), min(by1, y1 - 0.5)
-        if bx1 > bx0 and by1 > by0:
-            rule_area(board, pcbnew.In4_Cu, [(bx0, by0), (bx1, by0), (bx1, by1), (bx0, by1)],
-                      "antenna line: In4 opened under it", no_pour=True)
+            if fp.GetReference() == RF_SOCKET and pad.GetNetname() in RF:
+                sig = rect(pad)
+            elif pad.GetNetname() == "GND" and pad.IsOnLayer(pcbnew.B_Cu):
+                gnd.append(rect(pad))
+    if sig is None:
+        return None
+    (wx0, wy0, wx1, wy1), (ix0, iy0, ix1, iy1) = rf_window(sig, gnd)
+    island = [(ix0, iy0), (ix1, iy0), (ix1, iy1), (ix0, iy1)]
+    add_pour(board, "GND", pcbnew.In3_Cu, island, priority=2)
+    rule_area(board, pcbnew.In3_Cu, island, "antenna socket: In3 is ground here, no tracks", no_tracks=True)
+    rule_area(board, pcbnew.In4_Cu, [(wx0, wy0), (wx1, wy0), (wx1, wy1), (wx0, wy1)],
+              "antenna socket: In4 opened under the signal pad", no_pour=True)
+    return (wx0, wy0, wx1, wy1), (ix0, iy0, ix1, iy1)
 
 
 def strip_copper(src, dst, keep_locked=False):
@@ -872,10 +972,11 @@ def main():
     for name in sorted((n for n in multi if n in USB), key=size.get):
         r.route_net(name)
     r.critical = set(r.tracks) | set(r.vias)                  # everything so far is locked in the board file
-    order = (sorted((n for n in multi if n in PWR_HI), key=size.get)
-             + sorted((n for n in multi if n in PWR_LO), key=size.get) + [n for n in multi if n in PLANES]
-             + [n for n in multi if n == "+3V3"]
-             + sorted((n for n in multi if n not in special), key=size.get))
+    for name in (sorted((n for n in multi if n in PWR_HI), key=size.get)
+                 + sorted((n for n in multi if n in PWR_LO), key=size.get) + ["GND"]):
+        r.route_net(name)
+    print(f"+3V3: {r.decouple_first('+3V3')} supply pins joined to their capacitor instead of a via", flush=True)
+    order = ["+3V3"] + sorted((n for n in multi if n not in special), key=size.get)
     for k, name in enumerate(order):
         t1 = time.time()
         miss = r.route_net(name)
@@ -885,7 +986,8 @@ def main():
     print(f"first pass: {total - first} of {total} connections, {time.time() - t0:.0f} s", flush=True)
     rounds = r.rip_up()
     missing = sum(m for _, m in r.failed)
-    print(f"rip-up: {rounds} rounds", flush=True)
+    print(f"rip-up: {rounds} rounds; {r.walled} attempts found no way through even with other tracks pushed aside",
+          flush=True)
     print(f"trimmed {r.trim_tails()} track ends", flush=True)
     length = sum(math.hypot(t[4] - t[2], t[5] - t[3]) for t in r.tracks)
     print(f"routing: {total - missing} of {total} connections, {len(r.tracks)} segments, {len(r.vias)} vias, "
@@ -907,13 +1009,17 @@ def main():
     add_zone(board, "GND", pcbnew.F_Cu)
     add_zone(board, "GND", pcbnew.B_Cu)
     add_pour(board, "VDD_4G", pcbnew.B_Cu, VDD_4G_AREA)       # Air780E supply: a pour, not just a track
-    add_rf_ground(board)
+    win = add_rf_ground(board)
+    if win:
+        print("antenna socket: In4 opening %.2f x %.2f mm, In3 ground %.2f x %.2f mm"
+              % (win[0][2] - win[0][0], win[0][3] - win[0][1], win[1][2] - win[1][0], win[1][3] - win[1][1]))
     pcbnew.SaveBoard(path, board)
     board = pcbnew.LoadBoard(path)
     pcbnew.ZONE_FILLER(board).Fill(board.Zones())
     pcbnew.SaveBoard(path, board)
     with open(os.path.join(OUT, "build", "routing.json"), "w", encoding="utf-8") as f:
-        json.dump(dict(total=total, missing=missing, failed=r.failed, vias=len(r.vias), length=round(length), usb=usb), f,
+        json.dump(dict(total=total, missing=missing, failed=r.failed, vias=len(r.vias), length=round(length), usb=usb,
+                       l4_signals=L4_SIGNALS), f,
                   ensure_ascii=False)
     return 0
 
