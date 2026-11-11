@@ -56,8 +56,10 @@ NET_CLASSES = {
                 ["VBAT", "VSYS", "VDD_4G", "CHG_SW", "CHG_PMID"]),
     "Vbus": (dict(track_width=1.0, via_diameter=0.6, via_drill=0.3), ["VBUS"]),      # PWR-9
     "Power": (dict(track_width=0.3, via_diameter=0.5, via_drill=0.25),
-              ["+3V3", "+2V8", "+1V2", "BUCK_SW", "BL_SW", "LCD_LEDA", "LCD_LEDK", "PA_OUTP", "PA_OUTN", "SPK_P",
-               "SPK_N", "CHG_REGN", "CHG_BTST", "SIM_VDD", "LCD_VCI", "CAMF_IOVDD", "CAMF_DVDD", "GND"]),
+              ["+3V3", "+2V8", "+1V2", "BUCK_SW", "BL_SW", "LCD_LEDA", "LCD_LEDK", "CHG_REGN", "CHG_BTST", "SIM_VDD",
+               "LCD_VCI", "CAMF_IOVDD", "CAMF_DVDD", "GND"]),
+    "Speaker": (dict(track_width=0.4, via_diameter=0.5, via_drill=0.25),                # PWR-17
+                ["PA_OUTP", "PA_OUTN", "SPK_P", "SPK_N"]),
     # antenna line on the back over In4 (7628 prepreg, about 0.21 mm): 0.34 mm wide, 0.2 mm to the ground
     # beside it; USB pairs 0.19 / 0.15. Design values of layout-spec.md 5.1 and USB-1, to be confirmed
     # with the fab's impedance calculator.
@@ -263,9 +265,9 @@ def main():
     default = project["net_settings"]["classes"][0]
     default.update(DEFAULT_CLASS)
     classes, patterns = [default], []
-    for cname, (values, nets) in NET_CLASSES.items():
+    for cname, (values, members) in NET_CLASSES.items():
         classes.append(dict(default, name=cname, priority=len(classes) - 1, **values))
-        patterns += [{"netclass": cname, "pattern": n} for n in nets]
+        patterns += [{"netclass": cname, "pattern": n} for n in members]
     project["net_settings"]["classes"] = classes
     project["net_settings"]["netclass_patterns"] = patterns
     with open(pro, "w", encoding="utf-8") as f:

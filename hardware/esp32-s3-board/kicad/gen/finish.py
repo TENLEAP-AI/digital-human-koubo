@@ -20,7 +20,7 @@ import sys
 import pcbnew
 
 from board import NAME, OX, OY, keepouts_on_own_side
-from route import PLANES, PWR_HI, RF, ROUTE_LAYERS, USB, Router, add_all_zones, strip_copper
+from route import BRANCH, PLANES, PWR_HI, RF, ROUTE_LAYERS, USB, Router, add_all_zones, strip_copper
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 OUT = sys.argv[1] if len(sys.argv) > 1 else os.path.join(HERE, "..")
@@ -48,7 +48,6 @@ def main():
 
     board = pcbnew.LoadBoard(path)
     r = Router(board)
-    r.wide_copper = True
     r.build_maps()
     total = sum(m for _, m in r.open_nets())
     mm = pcbnew.ToMM
@@ -77,10 +76,12 @@ def main():
             breaking[item] = bad[t.m_Uuid.AsString()]
     print(f"imported: {len(r.tracks)} track segments, {len(r.vias)} vias", flush=True)
 
-    # 1. what Freerouting itself left hanging (unused fan-out vias and their stubs) goes first: it is in the way
+    # 1. what Freerouting itself left hanging (unused fan-out vias and their stubs) goes first: it is in the way.
+    #    The locked base is never tidied: its copper is meant as laid.
+    loose = set(r.net_name) - {r.net_id[n] for n in RF | USB | PWR_HI | set(PLANES) if n in r.net_id}
     r.build_maps(frozen=set(r.net_name))
     n = (len(r.tracks), len(r.vias))
-    r.trim_tails()
+    r.trim_tails(only=loose)
     print(f"left hanging by Freerouting: {n[0] - len(r.tracks)} track pieces and {n[1] - len(r.vias)} vias removed",
           flush=True)
     # 2. then the pieces that break a rule. What is left of their connection stays for now: the router can
@@ -97,8 +98,8 @@ def main():
           f"(ground / +3V3 pads without a via: {sum(m for n, m in before if n in PLANES)})", flush=True)
 
     r.failed = []
-    for name in sorted(n for n in PWR_HI if n in r.net_id):          # supply nets first, then the planes
-        r.route_net(name, record=False)
+    for name in sorted(n for n in PWR_HI if n in r.net_id):          # the base is complete already: these four
+        r.route_net(name, record=False, rules=BRANCH)                # steps only matter if it was not
     r.route_net("GND", record=False)
     print(f"+3V3: {r.decouple_first('+3V3')} supply pins joined to their capacitor instead of a via", flush=True)
     r.route_net("+3V3", record=False)
@@ -106,7 +107,7 @@ def main():
         if name not in PLANES:
             r.route_net(name, record=False)
     n = (len(r.tracks), len(r.vias))
-    r.trim_tails()
+    r.trim_tails(only=loose)
     print(f"tidied: {n[0] - len(r.tracks)} loose track pieces and {n[1] - len(r.vias)} unused vias removed", flush=True)
     r.build_maps(frozen=set(r.net_name))
     r.failed = r.open_nets()

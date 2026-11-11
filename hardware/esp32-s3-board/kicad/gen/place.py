@@ -22,8 +22,7 @@ MAIN = {
     "IPEX 座": (23.4, 30.46, 0, "B"),                     # moved down to make room for the matching parts
     "电池焊盘": (2.11, 8.7, 0, "B"),
     "喇叭焊盘": (1.27, 19.22, 0, "B"),
-    "zeebuddy:SY6970_QFN-24_4x4mm": (8.6, 11.6, 0, "B"),
-    "1µH 4A": (14.3, 11.6, 90, "B"),
+    "zeebuddy:SY6970_QFN-24_4x4mm": (7.9, 12.2, 270, "B"),
     # front: front camera, keys, microphone, download pads
     "前摄 30 万（型号待定）": (20.0, 2.75, 180, "F"),
     "按键排线 B": (49.4, 2.75, 180, "F"),
@@ -39,6 +38,63 @@ EXACT = {
     "C29": (23.97, 24.37, 0, "B"),
     "R49": (24.45, 25.88, 90, "B"),
     "C30": (23.97, 27.39, 0, "B"),
+    # Charger (SY6970 at 7.9, 12.2, turned so that BAT / SYS / PGND face up and SW faces right), PWR-11 / PWR-12:
+    # the system output leaves upwards into a 2 mm copper strip that runs right to the Air780E load switch.
+    "C7": (4.5, 8.135, 270, "B"),      # battery capacitor, on the battery copper next to the BAT pins
+    "C5": (9.0, 8.135, 90, "B"),       # system capacitors: ground pad straight above the PGND pins,
+    "C6": (10.65, 8.135, 90, "B"),     #   supply pad in the strip
+    "C1": (11.05, 11.62, 270, "B"),    # bootstrap capacitor, its SW pad sits in the switch-node copper
+    "L1": (14.09, 9.3, 270, "B"),      # SW pad level with the SW pins (2.7 mm of copper), output pad in the strip
+    "C3": (11.565, 14.37, 90, "B"),    # PMID capacitor, 0.7 mm from the pin
+    "C4": (13.465, 13.825, 90, "B"),   # REGN capacitor
+    "C2": (9.15, 16.265, 90, "B"),     # VBUS capacitor under pin 1
+    "R5": (4.975, 16.4, 0, "B"),       # NTC divider and input-current resistor, below the chip
+    "R4": (4.975, 17.6, 180, "B"),
+    "R3": (6.6, 16.9, 90, "B"),
+    # Air780E supply (PWR-1, PWR-3): strip -> Q1 (source top left, drain right) -> down into the 220 uF -> module pins
+    "Q1": (18.555, 7.8, 180, "B"),
+    "C19": (18.8, 12.2, 90, "B"),
+    # ... its small filter capacitors on the front, right opposite the supply pins (PWR-6); TVS and gate capacitor beside them
+    "C20": (22.0, 10.6, 0, "F"),
+    "C21": (22.0, 11.65, 0, "F"),
+    "C22": (22.0, 12.7, 0, "F"),
+    "D3": (20.3, 14.9, 270, "F"),
+    "C18": (20.75, 9.1, 270, "F"),
+    # 3.3 V buck on the front, fed from the vias at the left end of the system strip (PWR-11 / PWR-12):
+    # vias -> C9 -> VIN; ground of C9 runs under the chip to pin 2; SW pin -> L2 0.65 mm; L2 -> C10 -> vias to the 3.3 V layer
+    "C9": (7.575, 9.0, 270, "F"),
+    "U3": (10.695, 9.0, 180, "F"),
+    "L2": (14.385, 7.3, 0, "F"),
+    "C10": (14.925, 10.755, 270, "F"),
+    "C11": (11.3, 15.4, 180, "F"),
+    "R9": (11.05, 11.31, 180, "F"),
+    "C8": (11.05, 12.38, 180, "F"),
+    "R10": (9.5, 11.77, 270, "F"),
+    "R11": (9.9, 6.5, 0, "F"),
+    # audio amplifier at the lower end of the 2 mm system-supply trunk (x = 4.7 .. 6.7 on the front), PWR-16
+    "U17": (2.55, 22.2, 90, "F"),
+    "FB1": (3.35, 19.025, 90, "F"),
+    "FB2": (2.25, 19.025, 90, "F"),
+    "C55": (7.18, 21.7, 0, "F"),
+    "C54": (7.35, 22.9, 0, "F"),
+    "R76": (3.6, 24.91, 0, "F"),
+    "R75": (1.55, 24.91, 180, "F"),
+    "C52": (3.6, 17.45, 0, "F"),
+    "C53": (1.1, 18.9, 270, "F"),
+    "TP4": (5.6, 24.3, 0, "F"),        # system-supply test pad: the end of the trunk
+    # backlight boost at the bottom: L3 above the chip, diode and output capacitor to its left (hot loop under 2 mm)
+    "U11": (11.5, 29.75, 0, "F"),
+    "L3": (11.5, 26.66, 180, "F"),
+    "D5": (7.71, 28.8, 0, "F"),
+    "C35": (7.66, 30.88, 0, "F"),
+    "C34": (13.87, 26.75, 90, "F"),
+    "R62": (10.36, 32.52, 270, "F"),
+    # test pads next to what they measure
+    "TP1": (3.5, 6.55, 0, "F"),
+    "TP3": (3.5, 8.4, 0, "F"),
+    "TP2": (28.9, 31.9, 0, "F"),
+    # Type-C protection: turned so that a 0.6 mm supply track passes on each side, between it and the connector's pegs
+    "U1": (32.0, 25.8, 90, "F"),
 }
 
 # ---- small parts ---------------------------------------------------------------------------------
@@ -46,31 +102,23 @@ EXACT = {
 T = (0.12, 0.12)        # tight packing where there is no room to spare
 GROUPS = [
     # ---------------- back ----------------
-    ("B", 4.3, 6.0, ["C3 C4 C1 C2"], *T),                               # charger: PMID, REGN, BTST, VBUS
-    ("B", 4.3, 14.7, ["C7 C5 C6", "R3 R5 R4"], *T),                     # charger: BAT, SYS, ILIM, NTC
-    ("B", 17.1, 8.7, ["C19@270"]),                                      # 220 uF: as close as the module's own outline allows (PWR-3)
-    ("B", 17.8, 5.7, ["C20", "C21"], *T),
-    ("B", 17.0, 14.0, ["Q1@90"]),                                       # Air780E load switch
     ("B", 61.3, 3.2, ["C13@180", "C12@90", "R12", "C14@180"], *T),      # ESP32: 3V3 decoupling (3V3 pads face pin 2), EN
     ("B", 61.3, 16.8, ["R19@180", "R18@180"], *T),                      # ESP32 USB series resistors, in pin order
     # ---------------- front ----------------
     ("F", 1.9, 0.7, ["R53 R54 C31 C32", "R61 R55 R56 R57", "C33 R58 R59 R60"]),           # LCD / touch
-    ("F", 0.8, 6.2, ["U3 L2 C9@90 C10@90 C11@90", "R11 R9 C8 R10"]),                      # 3.3 V buck
-    ("F", 16.0, 5.8, ["R66 R67", "R71 R72", "R73 C46", "C47 C48", "C49"]),                # front camera options
-    ("F", 4.0, 11.9, ["U11 L3 D5", "C35 C34 R62"]),                                       # backlight boost
-    ("F", 0.8, 18.5, ["R6 R7 D2 R8 TP1"]),                                                # charger LED
-    ("F", 0.8, 20.3, ["U17 C54@90 C55@90 FB1@90 FB2@90", "R76 R75 C52 C53"]),             # audio amplifier
+    ("F", 0.8, 5.9, ["R6", "R7", "D2", "R8"]),                                            # charger LED, pull-ups
+    ("F", 16.0, 5.8, ["C46 C47", "R29 R30", "C48 C49", "R66 R67", "R71 R72", "R73"]),     # front camera options; Air780E switch gate
     ("F", 11.6, 18.5, ["R45 R46 R47 R48", "C24 C25 C26 C27", "U10 C28"]),                 # SIM
-    ("F", 11.6, 26.0, ["TP2 TP3 TP4 TP5 TP6 TP7"]),                                       # power test pads
-    ("F", 21.3, 6.2, ["Q2 Q3 Q4 Q5",                                                      # Air780E control
-                      "R31 R32 R33 R34 R35 R36 C23",
-                      "C22 R37 R38 R39 R40 R41 R42",                                  # C22 sits opposite the supply pads
-                      "R43 R44 R29 R30 C18 D4",
-                      "Q6 D3"]),
+    ("F", 16.37, 26.0, ["TP5 TP6 TP7"]),                                                  # 3.3 V and ground test pads
+    ("F", 21.3, 6.2, ["Q2 Q3 Q4 Q5"]),                                                    # Air780E control
+    ("F", 23.7, 10.19, ["R31 R32 R33 R34 R35 R36 C23",
+                        "R42 R37 R38 R39 R40 R41",
+                        "R44 R43 D4"]),
+    ("F", 21.3, 14.78, ["Q6"]),
     ("F", 29.6, 14.9, ["TP11 TP12 TP13 TP14 TP15", "TP16 TP17 TP18 TP19 TP20", "TP10"]),  # Air780E test pads
     ("F", 39.0, 6.0, ["R51", "R52"]),                                                     # UART0 / LCD sync
-    ("F", 21.3, 20.0, ["U8 C17@90 U6 C15@90 R17@90"]),                                    # expander B, USB switch
-    ("F", 29.9, 24.2, ["U1"]),                                                            # Type-C: ESD
+    ("F", 21.9, 20.0, ["U8 C17@90 U6 C15@90 R17@90"]),      # expander B, USB switch; the pad under U8 takes the
+                                                            # ground vias beside the antenna line on the back (RF-5)
     ("F", 30.6, 28.2, ["R1@90 R2@90"]),                                                   # Type-C: CC resistors
     ("F", 29.8, 30.7, ["D1"]),                                                            # Type-C: TVS
     ("F", 28.6, 0.6, ["U15 U16 Y1", "C44 C39 C40 C45 C42 C43 C41"]),                      # camera LDOs, clock

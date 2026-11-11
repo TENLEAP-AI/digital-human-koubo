@@ -1,11 +1,15 @@
-"""Route the placed board with a simple grid maze router and add the copper zones.
+"""Lay the base of the board and, optionally, route the signals with a simple grid maze router.
 
-    /usr/bin/python3.12 route.py [output_dir]
+    /usr/bin/python3.12 route.py [output_dir]            base only: what layout-spec.md section 2 puts first
+    SIGNALS=1 /usr/bin/python3.12 route.py [output_dir]  also route the signals with the built-in router
 
 Reads <name>.kicad_pcb written by board.py and writes it back with tracks, vias and zones.
-Six layers (docs/layout-spec.md): F.Cu and B.Cu carry parts and short tracks, In1.Cu and In4.Cu are
-solid ground, In2.Cu is the main signal layer (mostly horizontal), In3.Cu carries +3V3 and signals
-(mostly vertical).
+Six layers (docs/layout-spec.md): F.Cu and B.Cu carry parts, short tracks and the supply copper, In1.Cu and
+In4.Cu are solid ground, In2.Cu is the signal layer, In3.Cu is the +3V3 plane.
+
+The base, all of it locked in the board file: the supply copper of power.py, the ESP32 decoupling chain, the
+antenna line with its ground fence, the USB pairs, the remaining thin branches of the supply nets, and a stub
+with a via for every ground and +3V3 pad. The signals are left to Freerouting (freeroute.py, finish.py).
 """
 import ctypes
 import json
@@ -19,6 +23,7 @@ import time
 import pcbnew
 from PIL import Image, ImageDraw
 
+import power
 from board import H as BOARD_H, NAME, OX, OY, W as BOARD_W
 from preview import outline_points
 
@@ -37,6 +42,7 @@ NL = len(ROUTE_LAYERS)
 L1, L3, L4, L6 = 0, 1, 2, 3    # index of each routing layer (L2 and L5 are the planes)
 L4_SIGNALS = os.environ.get("L4_SIGNALS", "0") == "1"   # STK-6: L4 is a pure +3V3 layer unless this is set
 NEGOTIATE = os.environ.get("NEGOTIATE", "0") == "1"     # route by negotiation instead of one net after the other (experimental)
+SIGNALS = os.environ.get("SIGNALS", "0") == "1" or NEGOTIATE   # route the signals too; default is the locked base only
 LAYER_DIRS = (0, 1, 2, 0) if L4_SIGNALS else (0, 0, 0, 0)   # 1 = mostly horizontal, 2 = mostly vertical (STK-2)
 GW, GH = int(round(BOARD_W / G)) + 1, int(round(BOARD_H / G)) + 1
 
@@ -48,17 +54,19 @@ RF = {"LTE_ANT", "LTE_ANT_C"}
 RF_W, RF_GAP = 0.34, 0.2
 RF_EXTRA = RF_GAP - CLR       # the line and its pads keep RF_GAP from all other copper, pours included
 RF_KEEP = 1.0                 # other signals on the back stay this far from the line (ground may be closer)
+RF_RAIL = 0.45                # width of the ground tracks laid beside the line
 RF_SOCKET = "J7"
 RF_WIN, RF_WIN_GND, RF_ISLAND = 0.3, 0.2, 1.0   # opening = pad + 0.3, at least 0.2 from ground pads; In3 ground 1 mm larger
 USB = {"USBC_DP", "USBC_DM", "ESP_DP", "ESP_DM", "ESP_USB_DP", "ESP_USB_DM", "LTE_USB_DP", "LTE_USB_DM"}
 USB_PAIRS = [("USBC_DP", "USBC_DM"), ("ESP_DP", "ESP_DM"), ("ESP_USB_DP", "ESP_USB_DM"), ("LTE_USB_DP", "LTE_USB_DM")]
 COUPLED = [("ESP_USB_DP", "ESP_USB_DM", L3)]  # long pairs laid side by side on this routing layer
 PAIR_W, PAIR_GAP = 0.19, 0.15
-VDD_4G_AREA = [(17.6, 5.65), (20.45, 5.65), (20.45, 10.9), (23.15, 10.9), (23.15, 13.0), (20.45, 13.0),
-               (20.45, 18.1), (16.9, 18.1), (16.9, 8.6), (17.6, 8.6)]   # copper pour on the back, mm
 PWR_HI = {"VBUS", "VBAT", "VSYS", "VDD_4G", "CHG_SW", "CHG_PMID"}
 PWR_LO = {"BUCK_SW", "BL_SW", "LCD_LEDA", "LCD_LEDK", "PA_OUTP", "PA_OUTN", "SPK_P", "SPK_N", "+2V8", "+1V2",
           "CHG_REGN", "CHG_BTST", "SIM_VDD", "LCD_VCI", "CAMF_IOVDD", "CAMF_DVDD"}
+# What power.py leaves open on the supply nets carries no load current (test pads, pull-ups, small capacitors):
+# thin tracks, outer layers first (PWR-1)
+BRANCH = dict(widths=[0.4, 0.3, 0.2, 0.15], via=(0.45, 0.2), lcost=(1, 4, 0, 1), viacost=500)
 
 
 def net_rules(name):
@@ -135,8 +143,8 @@ class Router:
         self.critical = set()      # tracks and vias of the nets routed by rule: exported locked
         self.pid, self.cur_pid, self.next_pid = {}, None, 1   # track / via tuple -> id of the path it was laid in
         self.comp_of = {}          # track / via tuple -> component id (refreshed by build_maps)
-        self.wide_copper = False   # copper that was not laid on this grid (imported tracks): mark it wider, so
-                                   # that pieces meeting off the grid are still seen as joined
+        self.wide_copper = True    # mark a track's copper nearly as wide as it is: a pad anywhere under a wide
+                                   # track is joined to it, and so are pieces that meet off the grid
         self.neg = False           # negotiated routing in progress: new copper is counted, it does not block
         self.cur_items = None      # where add_track / add_via note what they laid while negotiating
         self.mov = {}              # net id -> [("t", track) | ("v", via)] of the nets being negotiated
@@ -416,6 +424,49 @@ class Router:
             self.pid[v] = self.cur_pid
         return comp
 
+    def blocked(self, net, layer, x0, y0, x1, y1, width):
+        """Where a track of this width would come too close to something of another net: (x, y, what), or None."""
+        lib = self.lib
+        np_, probe = disc_offsets(width / 2 - W_DEF / 2)
+        n = max(1, int(round(math.hypot(x1 - x0, y1 - y0) / G)))
+        for k in range(n + 1):
+            ix, iy = round((x0 + (x1 - x0) * k / n) / G), round((y0 + (y1 - y0) * k / n) / G)
+            if not lib.rt_usable(net, layer, ix, iy, np_, probe):
+                for i in range(np_):
+                    cx, cy = ix + probe[2 * i], iy + probe[2 * i + 1]
+                    o = lib.rt_owner_at(layer, cx, cy) if 0 <= cx < GW and 0 <= cy < GH else -1
+                    if o not in (0, net):
+                        return cx * G, cy * G, self.net_name.get(o, "the board edge, a keep-out or two nets at once")
+                return ix * G, iy * G, "?"
+        return None
+
+    def via_blocked(self, net, x, y, dia, in_pad=False, drill=0.2):
+        """Why a via cannot go here, or None. in_pad: a via inside a pad of its own net (thermal pads)."""
+        lib = self.lib
+        nvp, vprobe = disc_offsets(dia / 2 - W_DEF / 2 + 0.01)
+        ix, iy = round(x / G), round(y / G)
+        for l in range(NL):
+            hit = self.blocked(net, l, x, y, x, y, dia + 0.02)
+            if hit:
+                return f"layer {(1, 3, 4, 6)[l]}: {hit[2]} at ({hit[0]:.2f}, {hit[1]:.2f})"
+        if in_pad:                       # the pad itself bars vias in the router's map: check the holes by hand
+            for v in self.vias:
+                if math.hypot(v[1] - x, v[2] - y) < drill / 2 + v[4] / 2 + HOLE_CLR + MARGIN:
+                    return f"the hole at ({v[1]:.2f}, {v[2]:.2f})"
+        elif not lib.rt_via_ok(net, ix, iy, nvp, vprobe):
+            return "a pad or a hole right next to it"
+        return None
+
+    def in_ground_pad(self, x, y, r, least=0.8):
+        """Is a via of radius r at (x, y) wholly inside the ground pad under a chip (GEN-7 allows vias there)?"""
+        for p in self.pads:
+            x0, y0, x1, y1 = p["rect"]
+            if (not p["pth"] and p["ref"].startswith("U") and self.net_name[p["net"]] == "GND"
+                    and min(x1 - x0, y1 - y0) >= least
+                    and x0 + r <= x <= x1 - r and y0 + r <= y <= y1 - r):
+                return True
+        return False
+
     # ---- nets that need more than "connect the pads" -------------------------------------------
     def pad(self, ref, net_name):
         net = self.net_id[net_name]
@@ -527,29 +578,78 @@ class Router:
         ux, uy = (bx - ax) / length, (by - ay) / length
         nx, ny = -uy, ux
         added, placed = 0, []
-        t = -0.5
-        while t <= length + 0.5:
+
+        def half_at(t, side):
+            """How far the line's copper (track, pads on it) reaches sideways at distance t along the line."""
             px, py = ax + ux * t, ay + uy * t
-            for side in (1, -1):
-                half = 0.0                         # how far the line's copper reaches sideways at this point
-                for x0, y0, x1, y1 in shapes:
-                    cs = [(x0, y0), (x1, y0), (x1, y1), (x0, y1)]
-                    along = [(cx - ax) * ux + (cy - ay) * uy for cx, cy in cs]
-                    if min(along) - 0.3 <= t <= max(along) + 0.3:
-                        half = max(half, max(side * ((cx - px) * nx + (cy - py) * ny) for cx, cy in cs))
-                for extra in (0.1, 0.25, 0.4, 0.6, 0.9):
-                    off = half + RF_GAP + via[0] / 2 + extra
-                    x, y = px + side * nx * off, py + side * ny * off
-                    ix, iy = round(x / G), round(y / G)
-                    if not (0 <= ix < GW and 0 <= iy < GH) or not lib.rt_via_ok(gnd, ix, iy, nvp, vprobe):
-                        continue
-                    if any(math.hypot(ix * G - qx, iy * G - qy) < 0.9 for qx, qy in placed):
-                        break
-                    self.add_via(gnd, ix * G, iy * G, via[0], via[1], None)
-                    placed.append((ix * G, iy * G))
-                    added += 1
-                    break
-            t += 1.0
+            half = None                            # may be negative: the copper need not lie on the straight line
+            for x0, y0, x1, y1 in shapes:
+                cs = [(x0, y0), (x1, y0), (x1, y1), (x0, y1)]
+                along = [(cx - ax) * ux + (cy - ay) * uy for cx, cy in cs]
+                if min(along) - 0.3 <= t <= max(along) + 0.3:
+                    reach = max(side * ((cx - px) * nx + (cy - py) * ny) for cx, cy in cs)
+                    half = reach if half is None else max(half, reach)
+            return half or 0.0
+
+        def legal(x, y):
+            ix, iy = round(x / G), round(y / G)
+            if not (0 <= ix < GW and 0 <= iy < GH):
+                return False
+            return bool(lib.rt_via_ok(gnd, ix, iy, nvp, vprobe)) or (       # the pad under a chip on the other side
+                self.in_ground_pad(x, y, via[0] / 2) and not self.via_blocked(gnd, x, y, via[0], True, via[1]))
+
+        def spot_at(t, side):
+            px, py = ax + ux * t, ay + uy * t
+            half = half_at(t, side)
+            for extra in (0.1, 0.25, 0.4, 0.6, 0.9):
+                off = half + RF_GAP + via[0] / 2 + extra
+                x = round((px + side * nx * off) / G) * G
+                y = round((py + side * ny * off) / G) * G
+                if legal(x, y):
+                    return x, y
+            return None
+
+        # Each side on its own. Along the line there are stretches where a via fits and stretches where none
+        # does (pads on either side of the board). A via goes at both ends of every free stretch, so that the
+        # gap across a blocked one is as short as it can be, and every 1.3 mm or less in between.
+        step, n_steps = 0.1, int((length + 0.8) / 0.1) + 1
+        for side in (1, -1):
+            spots = [spot_at(-0.4 + k * step, side) for k in range(n_steps)]
+            k = 0
+            while k < n_steps:
+                if spots[k] is None:
+                    k += 1
+                    continue
+                e = k
+                while e + 1 < n_steps and spots[e + 1] is not None:
+                    e += 1
+                parts = max(1, math.ceil((e - k) * step / 1.3))
+                for i in range(parts + 1 if e > k else 1):
+                    x, y = spots[k + round(i * (e - k) / parts)]
+                    if all(math.hypot(x - qx, y - qy) >= 0.9 for qx, qy in placed) and legal(x, y):
+                        self.add_via(gnd, x, y, via[0], via[1], None)
+                        placed.append((x, y))
+                        added += 1
+                k = e + 1
+        # The ground beside the line as copper, not only as a pour: two ground tracks on each side, wherever
+        # nothing else is in the way. This is the coplanar ground of 5.1, and an autorouter, which knows
+        # nothing of RF-9, cannot enter the first millimetre beside the line.
+        step = 0.25
+        for side in (1, -1):
+            for k in (0, 1):
+                prev = None
+                t = -0.4
+                while t <= length + 0.4:
+                    off = half_at(t, side) + RF_GAP + RF_RAIL / 2 + 0.03 + k * (RF_RAIL - 0.05)
+                    p = (ax + ux * t + side * nx * off, ay + uy * t + side * ny * off)
+                    if not (0.5 < p[0] < BOARD_W - 0.5 and 0.5 < p[1] < BOARD_H - 0.5):
+                        p = None
+                    elif prev and not self.blocked(gnd, L6, prev[0], prev[1], p[0], p[1], RF_RAIL):
+                        self.add_track(gnd, L6, prev[0], prev[1], p[0], p[1], RF_RAIL, None)
+                    elif prev or self.blocked(gnd, L6, p[0], p[1], p[0], p[1], RF_RAIL):
+                        p = None if self.blocked(gnd, L6, p[0], p[1], p[0], p[1], RF_RAIL) else p
+                    prev = p
+                    t += step
         return added
 
     def route_pair(self, pname, nname, layer):
@@ -694,13 +794,13 @@ class Router:
             lib.rt_unite(root, joined)
         self.cur_pid = None
 
-    def route_net(self, name, record=True):
+    def route_net(self, name, record=True, rules=None):
         """Connect all pads of a net. Returns the number of connections that could not be made."""
         lib = self.lib
         net = self.net_id.get(name)
         if net is None or net not in self.comps:
             return 0
-        rules = net_rules(name)
+        rules = rules or net_rules(name)
         plane_mode = name in PLANES
         bad = set()
         while True:
@@ -1023,9 +1123,11 @@ class Router:
                 self.failed.append((name, miss))
         return rounds
 
-    def trim_tails(self):
+    def trim_tails(self, only=None):
         """Tidy up after routing: cut back track ends that stick out past the point where the track is
-        joined, remove tracks that end in the air, and remove vias that no longer join two layers."""
+        joined, remove tracks that end in the air, and remove vias that no longer join two layers.
+        only: the nets (ids) to tidy. With it, locked copper is left alone as well: what was laid by hand is
+        meant as drawn, including ends that reach past a joint."""
         changed = 0
         for _ in range(80):
             again = False
@@ -1039,6 +1141,8 @@ class Router:
                 pads_of.setdefault(p["net"], []).append(p)
             for i, t in enumerate(self.tracks):
                 net, l, x0, y0, x1, y1, w = t
+                if only is not None and (net not in only or t in self.critical):
+                    continue
                 same = [o for o in by[(net, l)] if o is not t]
                 vias = vias_of.get(net, [])
                 pads = [p for p in pads_of.get(net, []) if l in p["layers"]]
@@ -1093,7 +1197,7 @@ class Router:
             keep = []
             for v in self.vias:                    # a via must join copper on two layers
                 net, x, y, dia, drill = v
-                if self.net_name[net] in PLANES:
+                if self.net_name[net] in PLANES or (only is not None and (net not in only or v in self.critical)):
                     keep.append(v)
                     continue
                 layers = {t[1] for t in self.tracks if t[0] == net and
@@ -1266,7 +1370,6 @@ def add_all_zones(board):
     add_zone(board, "+3V3", pcbnew.In3_Cu, hole=win[1] if win else None)   # ...is left out of the +3V3 plane
     add_zone(board, "GND", pcbnew.F_Cu)
     add_zone(board, "GND", pcbnew.B_Cu)
-    add_pour(board, "VDD_4G", pcbnew.B_Cu, VDD_4G_AREA)       # Air780E supply: a pour, not just a track
     return win
 
 
@@ -1359,27 +1462,39 @@ def main():
                 for n, comps in r.comps.items())
     special = RF | USB | PWR_HI | PWR_LO | set(PLANES) | {"+3V3"}
     t0 = time.time()
+
+    # ---- the base (layout-spec.md section 2, step 3): everything here ends up locked ----------------------
+    misfits = power.lay(r)                                    # supply copper, switching regulators, their grounds
+    for m in misfits:
+        print("  DOES NOT FIT:", m)
+    if misfits:
+        raise SystemExit("power.py: the hand-laid copper does not fit this placement")
+    print(f"supply copper: {len(r.tracks)} segments, {len(r.vias)} vias laid by hand", flush=True)
     r.preroute_decoupling()                                   # ESP32: capacitors before the pin
-    for name in sorted(n for n in multi if n in RF):          # antenna line first, then its ground vias
+    for name in sorted(n for n in multi if n in RF):          # antenna line, then its ground fence
         r.route_net(name)
     print(f"antenna line: {r.stitch_rf()} ground vias beside it", flush=True)
     r.paint_rf_moat()
     for pname, nname, layer in COUPLED:                       # long USB pair side by side
         ok = r.route_pair(pname, nname, layer)
         print(f"pair {pname} / {nname}: {'laid side by side' if ok else 'no room for a coupled run'}", flush=True)
+    for name in sorted(n for n in multi if n in PWR_HI):      # what the supply nets still lack: thin branches
+        r.route_net(name, rules=BRANCH)
+    # a stub and a via for every ground and +3V3 pad, capacitors first (DEC-2); before the short USB hops,
+    # which would otherwise shut in the decoupling capacitors of the parts they connect
+    r.route_net("GND")
+    print(f"+3V3: {r.decouple_first('+3V3')} supply pins joined to their capacitor instead of a via", flush=True)
+    r.route_net("+3V3")
     for name in sorted((n for n in multi if n in USB), key=size.get):
         r.route_net(name)
-    r.critical = set(r.tracks) | set(r.vias)                  # everything so far is locked in the board file
+    r.trim_tails(only={r.net_id[n] for n in USB if n in r.net_id})   # the ends of the coupled run
+    print(f"base: {len(r.tracks)} segments, {len(r.vias)} vias, {time.time() - t0:.0f} s; "
+          f"not done: {r.failed or 'nothing'}", flush=True)
+    r.critical = set(r.tracks) | set(r.vias)                  # locked in the board file
+
     if NEGOTIATE:
-        # fixed first: supply and planes; then every other net together, by negotiation
-        for name in sorted((n for n in multi if n in PWR_HI), key=size.get) + ["GND"]:
-            r.route_net(name)
-        print(f"+3V3: {r.decouple_first('+3V3')} supply pins joined to their capacitor instead of a via", flush=True)
-        r.route_net("+3V3")
         movable = (sorted((n for n in multi if n in PWR_LO), key=size.get)   # the wider supply tracks first
                    + sorted((n for n in multi if n not in special), key=size.get))
-        print(f"fixed nets laid, {sum(m for _, m in r.failed)} of their connections open, {time.time() - t0:.0f} s; "
-              f"negotiating the other {len(movable)} nets", flush=True)
         r.build_maps(frozen=set(r.net_name))                  # everything laid so far is fixed from here on
         rounds = r.negotiate(movable)
         dropped = r.neg_finish(movable)
@@ -1388,15 +1503,11 @@ def main():
         for name, _ in r.open_nets():                         # what is open gets one more try, strictly
             r.route_net(name, record=False)
         r.failed = r.open_nets()
-    else:
-        for name in sorted((n for n in multi if n in PWR_HI), key=size.get):
-            r.route_net(name)
+    elif SIGNALS:
         made, short = r.local_first([n for n in multi if n not in RF | USB | PWR_HI | set(PLANES)])
         print(f"short connections first: {made} of {short} made", flush=True)
-        for name in sorted((n for n in multi if n in PWR_LO), key=size.get) + ["GND"]:
-            r.route_net(name)
-        print(f"+3V3: {r.decouple_first('+3V3')} supply pins joined to their capacitor instead of a via", flush=True)
-        order = ["+3V3"] + sorted((n for n in multi if n not in special), key=size.get)
+        order = (sorted((n for n in multi if n in PWR_LO), key=size.get)
+                 + sorted((n for n in multi if n not in special), key=size.get))
         for k, name in enumerate(order):
             t1 = time.time()
             miss = r.route_net(name)
@@ -1407,16 +1518,21 @@ def main():
         rounds = r.rip_up()
         print(f"rip-up: {rounds} rounds; {r.walled} attempts found no way through even with other tracks pushed "
               f"aside", flush=True)
+    else:
+        r.failed = r.open_nets()                              # the signals: for Freerouting
     missing = sum(m for _, m in r.failed)
-    print(f"trimmed {r.trim_tails()} track ends", flush=True)
+    if SIGNALS:
+        print(f"trimmed {r.trim_tails()} track ends", flush=True)
     length = sum(math.hypot(t[4] - t[2], t[5] - t[3]) for t in r.tracks)
     print(f"routing: {total - missing} of {total} connections, {len(r.tracks)} segments, {len(r.vias)} vias, "
           f"{length:.0f} mm of track, {time.time() - t0:.0f} s")
-    for name, m in r.failed:
+    base_open = [(n, m) for n, m in r.failed if n in RF | USB | PWR_HI | set(PLANES)]
+    for name, m in (r.failed if SIGNALS else base_open):
         print(f"  NOT ROUTED {name}: {m}")
-    diag = r.diagnose()
-    print(f"open pad groups: {len(diag)}, of which {sum(1 for d in diag if d['walled'])} are shut in by fixed copper",
-          flush=True)
+    if not SIGNALS:
+        print(f"left for the autorouter: {missing - sum(m for _, m in base_open)} connections in "
+              f"{len(r.failed) - len(base_open)} nets")
+    diag = r.diagnose() if SIGNALS else []
     with open(os.path.join(OUT, "build", "open.json"), "w", encoding="utf-8") as f:
         json.dump(diag, f, ensure_ascii=False, indent=0)
     usb = []
@@ -1438,7 +1554,7 @@ def main():
     pcbnew.SaveBoard(path, board)
     with open(os.path.join(OUT, "build", "routing.json"), "w", encoding="utf-8") as f:
         json.dump(dict(total=total, missing=missing, failed=r.failed, vias=len(r.vias), length=round(length), usb=usb,
-                       l4_signals=L4_SIGNALS), f,
+                       l4_signals=L4_SIGNALS, source="route.py" if SIGNALS else "route.py, base only"), f,
                   ensure_ascii=False)
     return 0
 

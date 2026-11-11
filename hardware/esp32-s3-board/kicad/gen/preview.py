@@ -32,6 +32,11 @@ LABELS = {
     "喇叭焊盘": "喇\n叭",
     "SY6970QCC": "充电\nSY6970",
     "1µH 4A": "电感",
+    "AO3401A": "4G\n开关",
+    "220µF 钽": "220µF",
+    "SY8089AAAC（可换 TLV62569DBV）": "3.3V\n降压",
+    "MAX98357A": "功放",
+    "SY7200AABC": "背光\n升压",
     "按键排线 A": "按键\nA 6P",
     "按键排线 B": "按键 B 6P",
     "TF 卡座（带检测）": "TF 卡座",
@@ -82,9 +87,11 @@ def draw(side, items, title, path):
         x2, y2 = px(it["x2"], it["y2"])
         x1, x2 = min(x1, x2), max(x1, x2)
         this = it["side"] == side
-        if this:
+        if this and it["value"] not in LABELS:             # a small part with a fixed spot: outline only
+            d.rectangle([x1, y1, x2, y2], fill=(232, 238, 255), outline=(110, 130, 220), width=1)
+        elif this:
             d.rectangle([x1, y1, x2, y2], fill=(214, 226, 255), outline=(30, 60, 200), width=3)
-            label = LABELS.get(it["value"], it["value"])
+            label = LABELS[it["value"]]
             f = font if (x2 - x1) > 5 * S else small
             box = d.multiline_textbbox((0, 0), label, font=f, align="center")
             d.multiline_text(((x1 + x2) / 2 - (box[2] - box[0]) / 2, (y1 + y2) / 2 - (box[3] - box[1]) / 2 - 4),

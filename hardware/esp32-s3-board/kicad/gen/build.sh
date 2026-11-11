@@ -14,7 +14,7 @@ kicad-cli sch export pdf -o "$out/$name.pdf" "$out/$name.kicad_sch" >/dev/null
 
 "$py_kicad" "$here/footprints.py" "$out"
 "$py_kicad" "$here/board.py" "$out"
-"$py_kicad" "$here/route.py" "$out" 2>&1 | grep -v "Debug: Adding"      # takes about five minutes
+"$py_kicad" "$here/route.py" "$out" 2>&1 | grep -v "Debug: Adding"      # the locked base; SIGNALS=1 also routes the signals
 "$py_kicad" "$here/preview.py" "$out" 2>&1 | grep -v "Debug: Adding"
 "$py_kicad" "$here/freeroute.py" "$out" 2>&1 | grep -v -e "Debug: Adding" -e "memory leak"   # refresh freerouting/*.dsn
 kicad-cli pcb drc --severity-all --schematic-parity --format report -o "$out/build/drc.rpt" "$out/$name.kicad_pcb" >/dev/null || true
