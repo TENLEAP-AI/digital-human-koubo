@@ -105,8 +105,8 @@ def draw(side, items, title, path):
 if __name__ == "__main__":
     with open(os.path.join(OUT, "build", "placement.json"), encoding="utf-8") as f:
         items = json.load(f)
-    draw("F", items, "正面（低的一面）：前摄、按键、TF 卡、麦克风；其余小元件之后也放这一面",
+    draw("F", items, "正面（低的一面）：前摄、按键、麦克风；其余小元件之后也放这一面",
          os.path.join(OUT, "placement-front.png"))
-    draw("B", items, "背面（高的一面，从背面看）：两个模组、Type-C、SIM 卡、屏和后摄排线、电池",
+    draw("B", items, "背面（高的一面，从背面看）：两个模组；下边缘从左到右是 TF 卡、Type-C、SIM 卡",
          os.path.join(OUT, "placement-back.png"))
     print("wrote placement-front.png, placement-back.png")

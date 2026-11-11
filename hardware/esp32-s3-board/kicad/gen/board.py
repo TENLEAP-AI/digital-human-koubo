@@ -54,24 +54,24 @@ DEFAULT_CLASS = {"clearance": 0.1, "track_width": 0.15, "via_diameter": 0.45, "v
 # key is matched against the part's value first, then against its footprint name.
 # rotation 0 = upright as seen from the front, on either side.
 PLACE = {
-    # back side: the two modules, Type-C, SIM and the display / rear camera connectors
-    "ESP32-S3-WROOM-1U-N16R8": (54.0, 16.2, 0, "B"),
-    "zeebuddy:Air780E": (33.0, 12.6, 180, "B"),
+    # back side: the two modules; Type-C, SIM and TF along the bottom edge; display / rear camera connectors
+    "ESP32-S3-WROOM-1U-N16R8": (50.6, 10.5, 0, "B"),
+    "zeebuddy:Air780E": (30.6, 14.7, 90, "B"),            # antenna pad ends up bottom-left, next to the socket
     "Type-C 16P": (32.0, 29.8, 0, "B"),
     "Nano SIM 卡座": (12.76, 26.3, 0, "B"),
-    "屏排线座 22P 0.5mm": (16.2, 2.75, 180, "B"),
+    "TF 卡座（带检测）": (50.9, 27.45, 180, "B"),
     "触摸排线座 6P（脚位待定）": (5.0, 2.75, 180, "B"),
-    "后摄 OV2640": (50.5, 2.75, 180, "B"),
-    "IPEX 座": (41.0, 25.7, 0, "B"),
+    "屏排线座 22P 0.5mm": (16.2, 2.75, 180, "B"),
+    "后摄 OV2640": (32.0, 2.75, 180, "B"),
+    "IPEX 座": (23.4, 29.6, 0, "B"),              # leaves room above it for the matching network
     "电池焊盘": (2.11, 8.7, 0, "B"),
     "喇叭焊盘": (1.27, 19.22, 0, "B"),
     "zeebuddy:SY6970_QFN-24_4x4mm": (11.0, 11.6, 0, "B"),
-    "1µH 4A": (17.6, 11.6, 90, "B"),
-    # front side: front camera, keys, TF card, microphone, download pads
+    "1µH 4A": (17.5, 11.6, 90, "B"),
+    # front side: front camera, keys, microphone, download pads
     "前摄 30 万（型号待定）": (20.0, 2.75, 180, "F"),
     "按键排线 B": (49.4, 2.75, 180, "F"),
     "按键排线 A": (60.4, 25.0, 90, "F"),
-    "TF 卡座（带检测）": (12.6, 26.9, 180, "F"),
     "zeebuddy:MSM261S4030H0R": (51.0, 31.3, 90, "F"),
     "下载 / 调试焊盘": (42.5, 32.4, 0, "F"),
 }
@@ -228,12 +228,16 @@ def main():
     print(f"board: {len(parts)} footprints, {len(placed)} placed, {named} nets -> {os.path.basename(path)}")
     for p in problems:
         print("  CHECK", p)
-    for ref, key in (("U9", "35"), ("U9", "1"), ("U4", "1")):
-        if ref in placed:
-            for pad in placed[ref].Pads():
+    for fpid, key, what in (("zeebuddy:Air780E", "35", "Air780E antenna pad"),
+                            ("RF_Module:ESP32-S3-WROOM-1U", "1", "ESP32 module pad 1"),
+                            ("Connector_Coaxial:U.FL_Hirose_U.FL-R-SMT-1_Vertical", "1", "antenna socket centre pad")):
+        for ref, fp in placed.items():
+            if parts[ref]["footprint"] != fpid:
+                continue
+            for pad in fp.Pads():
                 if pad.GetNumber() == key:
                     pos = pad.GetPosition()
-                    print(f"  {ref} pad {key} at ({pcbnew.ToMM(pos.x) - OX:.2f}, {pcbnew.ToMM(pos.y) - OY:.2f})")
+                    print(f"  {what} at ({pcbnew.ToMM(pos.x) - OX:.2f}, {pcbnew.ToMM(pos.y) - OY:.2f})")
                     break
     return 0
 
