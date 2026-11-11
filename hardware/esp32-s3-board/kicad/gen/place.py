@@ -107,13 +107,17 @@ GROUPS = [
     # ---------------- front ----------------
     ("F", 1.9, 0.7, ["R53 R54 C31 C32", "R61 R55 R56 R57", "C33 R58 R59 R60"]),           # LCD / touch
     ("F", 0.8, 5.9, ["R6", "R7", "D2", "R8"]),                                            # charger LED, pull-ups
-    ("F", 16.0, 5.8, ["C46 C47", "R29 R30", "C48 C49", "R66 R67", "R71 R72", "R73"]),     # front camera options; Air780E switch gate
+    # Below the front camera connector (pads end at y = 5.25) a band of about 2 mm stays free of parts: its 0.5 mm
+    # pins need the room to get out. C46 / C47 and Q2 used to sit in it.
+    ("F", 16.0, 7.31, ["R29 R30", "C48 C49", "R66 R67", "R71 R72", "R73"]),               # front camera options; Air780E switch gate
+    ("F", 21.5, 7.88, ["C46", "C47"], 0.3, 0.12),
+    ("F", 15.4, 14.75, ["Q2"]),                                                           # Air780E supply switch driver
     ("F", 11.6, 18.5, ["R45 R46 R47 R48", "C24 C25 C26 C27", "U10 C28"]),                 # SIM
     ("F", 16.37, 26.0, ["TP5 TP6 TP7"]),                                                  # 3.3 V and ground test pads
-    ("F", 21.3, 6.2, ["Q2 Q3 Q4 Q5"]),                                                    # Air780E control
-    ("F", 23.7, 10.19, ["R31 R32 R33 R34 R35 R36 C23",
-                        "R42 R37 R38 R39 R40 R41",
-                        "R44 R43 D4"]),
+    ("F", 25.55, 7.1, ["Q3 Q4 Q5"]),                                                      # Air780E control
+    ("F", 23.7, 10.8, ["R31 R32 R33 R34 R35 R36 C23",
+                       "R42 R37 R38 R39 R40 R41",
+                       "R44 R43 D4"], 0.3, 0.2),
     ("F", 21.3, 14.78, ["Q6"]),
     ("F", 29.6, 14.9, ["TP11 TP12 TP13 TP14 TP15", "TP16 TP17 TP18 TP19 TP20", "TP10"]),  # Air780E test pads
     ("F", 39.0, 6.0, ["R51", "R52"]),                                                     # UART0 / LCD sync
