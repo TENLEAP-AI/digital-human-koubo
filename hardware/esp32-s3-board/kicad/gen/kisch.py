@@ -454,7 +454,7 @@ class Sheet:
             y += pitch
         return refs
 
-    def tp(self, x, y, net, fp="TestPoint:TestPoint_Pad_D1.0mm"):
+    def tp(self, x, y, net, fp="zeebuddy:TestPad_D1.0mm"):
         """Test point; the pad hangs below its net label."""
         x, y = snap(x), snap(y)
         return self.place("Connector:TestPoint", x, y, {"1": net}, value="TP", rot=180, fp=fp, in_bom=False,

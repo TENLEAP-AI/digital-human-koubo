@@ -255,6 +255,14 @@ def wire_pads(name, descr, pads, size):
     fp.save()
 
 
+def test_pad():
+    fp = FP("TestPad_D1.0mm", "Ø1.0 测试点，外框比 KiCad 自带的小，省地方", ref_y=-1.2, val_y=1.2)
+    fp.fp.SetAttributes(pcbnew.FP_SMD | pcbnew.FP_EXCLUDE_FROM_BOM)
+    fp.pad(1, 0, 0, 1.0, 1.0, "circle", paste=False)
+    fp.courtyard(-0.6, -0.6, 0.6, 0.6)
+    fp.save()
+
+
 def prog_pads():
     fp = FP("ProgPads_1x06", "6 个下载 / 调试焊盘，间距 1.5 mm：3V3、GND、EN、IO0、TXD0、RXD0", ref_y=-1.6, val_y=1.6)
     for i in range(6):
@@ -275,6 +283,7 @@ if __name__ == "__main__":
               [(2, 0, -2.21, "-"), (3, 0, 0, ""), (1, 0, 2.2, "+")], (2.58, 1.2))
     wire_pads("SpeakerPads", "喇叭焊线焊盘，位置和尺寸同参考主板", [(1, 0, -1.7, ""), (2, 0, 1.7, "")], (1.7, 1.2))
     prog_pads()
+    test_pad()
     with open(os.path.join(OUT, "fp-lib-table"), "w", encoding="utf-8") as f:
         f.write('(fp_lib_table\n  (version 7)\n  (lib (name "zeebuddy")(type "KiCad")'
                 '(uri "${KIPRJMOD}/zeebuddy.pretty")(options "")(descr "Project footprints"))\n)\n')

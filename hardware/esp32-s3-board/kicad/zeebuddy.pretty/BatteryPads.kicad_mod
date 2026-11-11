@@ -7,7 +7,7 @@
 	(property "Reference" "REF**"
 		(at 0 -3.81 0)
 		(layer "F.SilkS")
-		(uuid "2fc1eff3-c113-4c96-bad6-47119c8d3727")
+		(uuid "7e43f069-d0fe-4e70-974c-a930e6079285")
 		(effects
 			(font
 				(size 0.8 0.8)
@@ -18,7 +18,7 @@
 	(property "Value" "BatteryPads"
 		(at 0 3.8 0)
 		(layer "F.Fab")
-		(uuid "40f756c1-160b-4501-99f8-9cab9797b2d0")
+		(uuid "ab5b96c0-3d24-457f-9f5c-c8481a587538")
 		(effects
 			(font
 				(size 0.8 0.8)
@@ -30,7 +30,7 @@
 		(at 0 0 0)
 		(layer "F.Fab")
 		(hide yes)
-		(uuid "ae1818f7-36b3-4b5b-ba50-098075695764")
+		(uuid "b0e3b6a9-b7e8-43eb-a7ef-d5162ff0afea")
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -42,7 +42,7 @@
 		(at 0 0 0)
 		(layer "F.Fab")
 		(hide yes)
-		(uuid "7cd7b500-e260-4030-a6a7-4d49ee49b5da")
+		(uuid "c0ecdd05-1ce7-4f46-897d-4311b539b22c")
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -60,12 +60,12 @@
 		)
 		(fill no)
 		(layer "F.CrtYd")
-		(uuid "a0ae86ba-f527-4029-bda1-073272addb4c")
+		(uuid "06abe394-d48b-4752-8e19-9df782bf9eab")
 	)
 	(fp_text user "+"
 		(at 1.99 2.2 0)
 		(layer "F.SilkS")
-		(uuid "94af9a23-c825-4e4f-b549-60d14a5a01e8")
+		(uuid "b2658b30-6662-4833-8a6a-2de173db5c21")
 		(effects
 			(font
 				(size 0.8 0.8)
@@ -76,7 +76,7 @@
 	(fp_text user "-"
 		(at 1.99 -2.21 0)
 		(layer "F.SilkS")
-		(uuid "a23e1029-ee70-4d50-a955-263cf4a4a31c")
+		(uuid "ed402c7b-6f5f-4407-8561-05c770b5138b")
 		(effects
 			(font
 				(size 0.8 0.8)
@@ -89,21 +89,21 @@
 		(size 2.58 1.2)
 		(layers "F.Cu" "F.Mask")
 		(thermal_bridge_angle 45)
-		(uuid "5bc0cece-3cca-453b-8455-d3734796728b")
+		(uuid "9b7d6def-7895-4796-b2de-9ef02ce64c85")
 	)
 	(pad "2" smd rect
 		(at 0 -2.21)
 		(size 2.58 1.2)
 		(layers "F.Cu" "F.Mask")
 		(thermal_bridge_angle 45)
-		(uuid "33f063aa-6acc-4cd0-983c-df2a00374864")
+		(uuid "e1be5a6e-b9ee-4c80-a17e-79dc61ae2407")
 	)
 	(pad "3" smd rect
 		(at 0 0)
 		(size 2.58 1.2)
 		(layers "F.Cu" "F.Mask")
 		(thermal_bridge_angle 45)
-		(uuid "a17eb7b8-be0e-40a6-8c6a-1ee734ae3c62")
+		(uuid "20ffb00d-c3de-45e4-b0b2-9da83ad0167c")
 	)
 	(embedded_fonts no)
 )

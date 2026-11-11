@@ -2210,7 +2210,7 @@
 		(uuid "b886bd0a-3ca6-58c2-9d63-12cf437dc582")
 		(property "Reference" "TP10" (at 232.94 178.56 0) (effects (font (size 1.27 1.27)) (justify right)))
 		(property "Value" "TP" (at 231.14 175.26 0) (effects (font (size 1.27 1.27)) (hide yes)))
-		(property "Footprint" "TestPoint:TestPoint_Pad_D1.0mm"
+		(property "Footprint" "zeebuddy:TestPad_D1.0mm"
 			(at 226.06 175.26 0)
 			(effects (font (size 1.27 1.27)) (hide yes))
 		)

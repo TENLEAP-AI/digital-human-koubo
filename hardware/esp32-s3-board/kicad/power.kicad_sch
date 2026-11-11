@@ -3530,7 +3530,7 @@
 		(uuid "945e6ec4-ae33-56ab-8902-40e6ef8f2c75")
 		(property "Reference" "TP1" (at 347.24 46.48 0) (effects (font (size 1.27 1.27)) (justify right)))
 		(property "Value" "TP" (at 345.44 43.18 0) (effects (font (size 1.27 1.27)) (hide yes)))
-		(property "Footprint" "TestPoint:TestPoint_Pad_D1.0mm"
+		(property "Footprint" "zeebuddy:TestPad_D1.0mm"
 			(at 340.36 43.18 0)
 			(effects (font (size 1.27 1.27)) (hide yes))
 		)
@@ -4518,7 +4518,7 @@
 		(uuid "49fd5ac3-112f-58d9-b93e-baf0410c3394")
 		(property "Reference" "TP2" (at 342.16 173.48 0) (effects (font (size 1.27 1.27)) (justify right)))
 		(property "Value" "TP" (at 340.36 170.18 0) (effects (font (size 1.27 1.27)) (hide yes)))
-		(property "Footprint" "TestPoint:TestPoint_Pad_D1.0mm"
+		(property "Footprint" "zeebuddy:TestPad_D1.0mm"
 			(at 335.28 170.18 0)
 			(effects (font (size 1.27 1.27)) (hide yes))
 		)
@@ -4580,7 +4580,7 @@
 		(uuid "2ba440c3-25d9-5b2e-b543-ae48e6427845")
 		(property "Reference" "TP3" (at 352.32 173.48 0) (effects (font (size 1.27 1.27)) (justify right)))
 		(property "Value" "TP" (at 350.52 170.18 0) (effects (font (size 1.27 1.27)) (hide yes)))
-		(property "Footprint" "TestPoint:TestPoint_Pad_D1.0mm"
+		(property "Footprint" "zeebuddy:TestPad_D1.0mm"
 			(at 345.44 170.18 0)
 			(effects (font (size 1.27 1.27)) (hide yes))
 		)
@@ -4642,7 +4642,7 @@
 		(uuid "852ff364-dd27-5ee0-870c-1a9b9fe24dad")
 		(property "Reference" "TP4" (at 362.48 173.48 0) (effects (font (size 1.27 1.27)) (justify right)))
 		(property "Value" "TP" (at 360.68 170.18 0) (effects (font (size 1.27 1.27)) (hide yes)))
-		(property "Footprint" "TestPoint:TestPoint_Pad_D1.0mm"
+		(property "Footprint" "zeebuddy:TestPad_D1.0mm"
 			(at 355.6 170.18 0)
 			(effects (font (size 1.27 1.27)) (hide yes))
 		)
@@ -4704,7 +4704,7 @@
 		(uuid "68b3e0da-a490-58dd-b4cb-7e4c5b53d016")
 		(property "Reference" "TP5" (at 372.64 173.48 0) (effects (font (size 1.27 1.27)) (justify right)))
 		(property "Value" "TP" (at 370.84 170.18 0) (effects (font (size 1.27 1.27)) (hide yes)))
-		(property "Footprint" "TestPoint:TestPoint_Pad_D1.0mm"
+		(property "Footprint" "zeebuddy:TestPad_D1.0mm"
 			(at 365.76 170.18 0)
 			(effects (font (size 1.27 1.27)) (hide yes))
 		)
@@ -4766,7 +4766,7 @@
 		(uuid "925d36c5-2615-55fb-949d-a93039c183e2")
 		(property "Reference" "TP6" (at 382.8 173.48 0) (effects (font (size 1.27 1.27)) (justify right)))
 		(property "Value" "TP" (at 381 170.18 0) (effects (font (size 1.27 1.27)) (hide yes)))
-		(property "Footprint" "TestPoint:TestPoint_Pad_D1.0mm"
+		(property "Footprint" "zeebuddy:TestPad_D1.0mm"
 			(at 375.92 170.18 0)
 			(effects (font (size 1.27 1.27)) (hide yes))
 		)
@@ -4798,7 +4798,7 @@
 		(uuid "d7e2f033-44c3-55eb-bdbf-7e465d228b81")
 		(property "Reference" "TP7" (at 392.96 173.48 0) (effects (font (size 1.27 1.27)) (justify right)))
 		(property "Value" "TP" (at 391.16 170.18 0) (effects (font (size 1.27 1.27)) (hide yes)))
-		(property "Footprint" "TestPoint:TestPoint_Pad_D1.0mm"
+		(property "Footprint" "zeebuddy:TestPad_D1.0mm"
 			(at 386.08 170.18 0)
 			(effects (font (size 1.27 1.27)) (hide yes))
 		)

@@ -2250,7 +2250,7 @@
 		(uuid "4f8067e9-d9b1-5549-a2a6-3100f6fa20b3")
 		(property "Reference" "TP8" (at 34.82 153.16 0) (effects (font (size 1.27 1.27)) (justify right)))
 		(property "Value" "TP" (at 33.02 149.86 0) (effects (font (size 1.27 1.27)) (hide yes)))
-		(property "Footprint" "TestPoint:TestPoint_Pad_D1.0mm"
+		(property "Footprint" "zeebuddy:TestPad_D1.0mm"
 			(at 27.94 149.86 0)
 			(effects (font (size 1.27 1.27)) (hide yes))
 		)
@@ -2285,7 +2285,7 @@
 		(uuid "38bdf825-a0eb-5a14-85e0-527a0db4c586")
 		(property "Reference" "TP9" (at 44.98 153.16 0) (effects (font (size 1.27 1.27)) (justify right)))
 		(property "Value" "TP" (at 43.18 149.86 0) (effects (font (size 1.27 1.27)) (hide yes)))
-		(property "Footprint" "TestPoint:TestPoint_Pad_D1.0mm"
+		(property "Footprint" "zeebuddy:TestPad_D1.0mm"
 			(at 38.1 149.86 0)
 			(effects (font (size 1.27 1.27)) (hide yes))
 		)

@@ -13,6 +13,7 @@ import sys
 
 import pcbnew
 
+from place import GROUPS, MAIN
 from sexpr import find, first, parse
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -49,33 +50,6 @@ RULES = {"min_clearance": 0.09, "min_track_width": 0.09, "min_copper_edge_cleara
          "min_hole_clearance": 0.2}
 DEFAULT_CLASS = {"clearance": 0.1, "track_width": 0.15, "via_diameter": 0.45, "via_drill": 0.2,
                  "diff_pair_width": 0.15, "diff_pair_gap": 0.15}
-
-# ---- placement of the main parts: key -> (x, y, rotation, side) --------------------------------
-# key is matched against the part's value first, then against its footprint name.
-# rotation 0 = upright as seen from the front, on either side.
-PLACE = {
-    # back side: the two modules; Type-C, SIM and TF along the bottom edge; display / rear camera connectors
-    "ESP32-S3-WROOM-1U-N16R8": (50.6, 10.5, 0, "B"),
-    "zeebuddy:Air780E": (30.6, 14.7, 90, "B"),            # antenna pad ends up bottom-left, next to the socket
-    "Type-C 16P": (32.0, 29.8, 0, "B"),
-    "Nano SIM 卡座": (12.76, 26.3, 0, "B"),
-    "TF 卡座（带检测）": (50.9, 27.45, 180, "B"),
-    "触摸排线座 6P（脚位待定）": (5.0, 2.75, 180, "B"),
-    "屏排线座 22P 0.5mm": (16.2, 2.75, 180, "B"),
-    "后摄 OV2640": (32.0, 2.75, 180, "B"),
-    "IPEX 座": (23.4, 29.6, 0, "B"),              # leaves room above it for the matching network
-    "电池焊盘": (2.11, 8.7, 0, "B"),
-    "喇叭焊盘": (1.27, 19.22, 0, "B"),
-    "zeebuddy:SY6970_QFN-24_4x4mm": (11.0, 11.6, 0, "B"),
-    "1µH 4A": (17.5, 11.6, 90, "B"),
-    # front side: front camera, keys, microphone, download pads
-    "前摄 30 万（型号待定）": (20.0, 2.75, 180, "F"),
-    "按键排线 B": (49.4, 2.75, 180, "F"),
-    "按键排线 A": (60.4, 25.0, 90, "F"),
-    "zeebuddy:MSM261S4030H0R": (51.0, 31.3, 90, "F"),
-    "下载 / 调试焊盘": (42.5, 32.4, 0, "F"),
-}
-
 
 def arc_mid(cx, cy, x0, y0, x1, y1):
     a0, a1 = math.atan2(y0 - cy, x0 - cx), math.atan2(y1 - cy, x1 - cx)
@@ -114,6 +88,17 @@ def load_footprint(fpid):
     return fp
 
 
+def pose(fp, x, y, rot, side):
+    """Put a footprint at (x, y); rot 0 = upright as seen from the front, on either side."""
+    on_back = fp.GetLayer() == pcbnew.B_Cu
+    fp.SetOrientationDegrees(0)
+    fp.SetPosition(V(x, y))
+    if (side == "B") != on_back:
+        fp.Flip(fp.GetPosition(), pcbnew.FLIP_DIRECTION_LEFT_RIGHT)
+    # on the back, KiCad's own angle is 180 for a part that is upright when seen from the front
+    fp.SetOrientationDegrees(rot + 180 if side == "B" else rot)
+
+
 def bbox_mm(fp):
     c = fp.GetCourtyard(pcbnew.F_CrtYd if fp.GetLayer() == pcbnew.F_Cu else pcbnew.B_CrtYd)
     bb = c.BBox() if c.OutlineCount() else fp.GetBoundingBox(False)
@@ -144,7 +129,7 @@ def main():
         for node in find(n, "node"):
             pad_net[(first(node, "ref")[1], first(node, "pin")[1])] = name
 
-    problems, placed, summary = [], {}, []
+    problems, placed, summary, loaded = [], {}, [], {}
     holes = list(HOLES)
     park = {}
     for ref in sorted(parts, key=lambda r: (parts[r]["sheetfile"], "".join(c for c in r if c.isalpha()),
@@ -158,6 +143,11 @@ def main():
         fp.SetSheetname("/" + info["sheetname"] + "/")
         if info["dnp"]:
             fp.SetDNP(True)
+        # the board is too dense for designators on the silkscreen: keep them on the fabrication layer
+        fp.Reference().SetLayer(pcbnew.F_Fab)
+        fp.Reference().SetTextSize(pcbnew.VECTOR2I(MM(0.5), MM(0.5)))
+        fp.Reference().SetTextThickness(MM(0.08))
+        fp.Value().SetVisible(False)
         board.Add(fp)
 
         pad_names = {p.GetNumber() for p in fp.Pads()}
@@ -172,22 +162,41 @@ def main():
         if extra:
             problems.append(f"{ref} ({info['footprint']}): pads without a schematic pin: {' '.join(extra)}")
 
-        spot = PLACE.get(info["value"]) or PLACE.get(info["footprint"])
+        spot = MAIN.get(info["value"]) or MAIN.get(info["footprint"])
         if info["footprint"] == "zeebuddy:MountingHole_1.6mm_Pad":
             spot = holes.pop(0) + (0, "F")
         elif info["footprint"] == "zeebuddy:MountingHole_1.6mm_NPTH":
             spot = HOLE_NPTH + (0, "F")
+        loaded[ref] = fp
         if spot:
-            x, y, rot, side = spot
-            fp.SetPosition(V(x, y))
-            if side == "B":
-                fp.Flip(fp.GetPosition(), pcbnew.FLIP_DIRECTION_LEFT_RIGHT)
-            # on the back, KiCad's own angle is 180 for a part that is upright when seen from the front
-            fp.SetOrientationDegrees(rot + 180 if side == "B" else rot)
+            pose(fp, *spot)
             placed[ref] = fp
-            summary.append((ref, info["value"], side) + bbox_mm(fp))
-        else:
-            park.setdefault(info["sheetname"], []).append(fp)
+            summary.append((ref, info["value"], spot[3]) + bbox_mm(fp))
+
+    # small parts: pack each group's rows left to right, rows stacked downwards
+    for side, gx, gy, rows, *gaps in GROUPS:
+        gap, row_gap = gaps if gaps else (0.3, 0.5)
+        y = gy
+        for row in rows:
+            x, row_h = gx, 0.0
+            for item in row.split():
+                ref, _, rot = item.partition("@")
+                rot = int(rot or 0)
+                if ref not in loaded:
+                    raise SystemExit(f"placement: unknown reference {ref}")
+                if ref in placed:
+                    raise SystemExit(f"placement: {ref} is placed twice")
+                fp = loaded[ref]
+                pose(fp, 0, 0, rot, side)
+                l, t, r, b = bbox_mm(fp)
+                pose(fp, x - l, y - t, rot, side)
+                x += (r - l) + gap
+                row_h = max(row_h, b - t)
+                placed[ref] = fp
+            y += row_h + row_gap
+    for ref, fp in loaded.items():
+        if ref not in placed:
+            park.setdefault(parts[ref]["sheetname"], []).append(fp)
 
     # park the rest below the board, one block per schematic sheet
     y0 = H + 12.0
@@ -217,6 +226,9 @@ def main():
     with open(pro, encoding="utf-8") as f:
         project = json.load(f)
     project["board"]["design_settings"]["rules"].update(RULES)
+    project["board"]["design_settings"]["rule_severities"].update(
+        {"silk_overlap": "ignore", "silk_over_copper": "ignore", "silk_edge_clearance": "ignore",
+         "text_height": "ignore", "text_thickness": "ignore"})
     project["net_settings"]["classes"][0].update(DEFAULT_CLASS)
     with open(pro, "w", encoding="utf-8") as f:
         json.dump(project, f, indent=2, ensure_ascii=False)

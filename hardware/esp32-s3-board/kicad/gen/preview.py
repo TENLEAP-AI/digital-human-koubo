@@ -110,3 +110,50 @@ if __name__ == "__main__":
     draw("B", items, "背面（高的一面，从背面看）：两个模组；下边缘从左到右是 TF 卡、Type-C、SIM 卡",
          os.path.join(OUT, "placement-back.png"))
     print("wrote placement-front.png, placement-back.png")
+
+
+def draw_routing(path):
+    """Picture of the routed tracks: front red, inner layer green, back blue, pads grey."""
+    import pcbnew
+    from board import NAME, OX, OY
+    board = pcbnew.LoadBoard(os.path.join(OUT, NAME + ".kicad_pcb"))
+    s = 30
+    img = Image.new("RGB", (int((W + 2 * MARGIN) * s), int((H + 2 * MARGIN + 3) * s)), "white")
+    d = ImageDraw.Draw(img)
+
+    def px(x, y):
+        return ((MARGIN + x) * s, (MARGIN + 2 + y) * s)
+
+    d.polygon([px(*p) for p in outline_points()], fill=(250, 250, 246), outline="black", width=3)
+    for fp in board.GetFootprints():
+        for pad in fp.Pads():
+            bb = pad.GetBoundingBox()
+            box = [px(pcbnew.ToMM(bb.GetLeft()) - OX, pcbnew.ToMM(bb.GetTop()) - OY),
+                   px(pcbnew.ToMM(bb.GetRight()) - OX, pcbnew.ToMM(bb.GetBottom()) - OY)]
+            front = pad.IsOnLayer(pcbnew.F_Cu)
+            d.rectangle(box, fill=(205, 205, 205) if front else (228, 228, 236))
+    colors = {pcbnew.B_Cu: (40, 90, 220), pcbnew.In2_Cu: (40, 160, 70), pcbnew.F_Cu: (215, 50, 40)}
+    tracks = [t for t in board.GetTracks() if t.Type() != pcbnew.PCB_VIA_T]
+    for layer in (pcbnew.B_Cu, pcbnew.In2_Cu, pcbnew.F_Cu):
+        for t in tracks:
+            if t.GetLayer() != layer:
+                continue
+            a, b = t.GetStart(), t.GetEnd()
+            d.line([px(pcbnew.ToMM(a.x) - OX, pcbnew.ToMM(a.y) - OY), px(pcbnew.ToMM(b.x) - OX, pcbnew.ToMM(b.y) - OY)],
+                   fill=colors[layer], width=max(2, int(pcbnew.ToMM(t.GetWidth()) * s)))
+    for t in board.GetTracks():
+        if t.Type() == pcbnew.PCB_VIA_T:
+            c = t.GetPosition()
+            x, y = px(pcbnew.ToMM(c.x) - OX, pcbnew.ToMM(c.y) - OY)
+            d.ellipse([x - 6, y - 6, x + 6, y + 6], fill=(90, 90, 90))
+    font = ImageFont.truetype(FONT, 30)
+    with open(os.path.join(OUT, "build", "routing.json"), encoding="utf-8") as f:
+        st = json.load(f)
+    d.text((MARGIN * s, 0.5 * s), f"布线进度：{st['total'] - st['missing']} / {st['total']} 个连接（从正面看）"
+           "    红 = 正面，绿 = 第三层，蓝 = 背面，灰点 = 过孔", fill="black", font=font)
+    img.save(path)
+
+
+if __name__ == "__main__" and os.path.exists(os.path.join(OUT, "build", "routing.json")):
+    draw_routing(os.path.join(OUT, "routing.png"))
+    print("wrote routing.png")

@@ -7,7 +7,7 @@
 	(property "Reference" "REF**"
 		(at 0 -3.3 0)
 		(layer "F.SilkS")
-		(uuid "1c5fac13-ef47-41f0-8da6-9baa22bdbee0")
+		(uuid "8fa1e0fe-33cb-4f69-b5d2-ed9f31908986")
 		(effects
 			(font
 				(size 0.8 0.8)
@@ -18,7 +18,7 @@
 	(property "Value" "SpeakerPads"
 		(at 0 3.3 0)
 		(layer "F.Fab")
-		(uuid "97db9c4b-6765-4ddd-9ba9-3da4c28b869c")
+		(uuid "c3eda4ba-6508-4f18-adc8-84aab6d26db5")
 		(effects
 			(font
 				(size 0.8 0.8)
@@ -30,7 +30,7 @@
 		(at 0 0 0)
 		(layer "F.Fab")
 		(hide yes)
-		(uuid "fbc4b291-9294-4eb3-b195-b3a7131a8ab5")
+		(uuid "0551a412-8154-42d8-b412-130767bc18e8")
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -42,7 +42,7 @@
 		(at 0 0 0)
 		(layer "F.Fab")
 		(hide yes)
-		(uuid "f6a1ccd1-4628-4927-8942-e844ba2cacd0")
+		(uuid "f048813a-3aff-4c1d-904b-7490ec4d109b")
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -60,21 +60,21 @@
 		)
 		(fill no)
 		(layer "F.CrtYd")
-		(uuid "e5a67c0e-458e-4a93-8c8f-2e31cdd396a5")
+		(uuid "2ef117de-be33-490d-b930-1b5d93609dd1")
 	)
 	(pad "1" smd rect
 		(at 0 -1.7)
 		(size 1.7 1.2)
 		(layers "F.Cu" "F.Mask")
 		(thermal_bridge_angle 45)
-		(uuid "7c5b0f11-513c-45c8-b05b-fa27427c63b9")
+		(uuid "0308d3b8-40d9-46b6-bfea-3ed402f03a0d")
 	)
 	(pad "2" smd rect
 		(at 0 1.7)
 		(size 1.7 1.2)
 		(layers "F.Cu" "F.Mask")
 		(thermal_bridge_angle 45)
-		(uuid "ff699b39-1f3a-470f-8a7f-6c5620bf583b")
+		(uuid "ae11913d-0d01-415f-bc70-5fa6b56b002d")
 	)
 	(embedded_fonts no)
 )
