@@ -282,12 +282,15 @@ def mcu():
 # camera connector and the camera bus switches; chip B is left of the middle, next to the display, touch and rear
 # camera connectors, the charger, the amplifier and the Air780E. (TP_INT and CHG_INT used to be on A, CAMF_PWDN and
 # CAM_SEL on B: four tracks of 30 .. 65 mm across the whole board.)
+# Chip B sits over the antenna line on the back and holds the line's ground vias in its centre pad and below its
+# bottom row: P07 and P11 (pins 8 and 11) are shut in by them and stay unused.
 EXP_A = {"P00": "KEY1", "P01": "KEY2", "P02": "KEY3", "P03": "KEY4", "P04": "KEY5", "P05": "KEY6",
-         "P06": "CAMF_PWDN", "P07": "SD_DET", "P10": "CAM_SEL", "P11": "LTE_STATUS_N"}
+         "P06": "CAMF_PWDN", "P07": "SD_DET", "P10": "CAM_SEL", "P11": "LTE_STATUS_N",
+         "P12": "CAM_RST", "P13": "EXP_SPARE"}
 EXP_B = {"P00": "LCD_RST", "P01": "LCD_CS", "P02": "LCD_SCL", "P03": "LCD_SDA", "P04": "TP_RST",
-         "P05": "CAM_PWR_EN", "P06": "CAMR_PWDN", "P07": "TP_INT", "P10": "CHG_INT", "P11": "CAM_RST",
+         "P05": "CAM_PWR_EN", "P06": "CAMR_PWDN", "P10": "CHG_INT",
          "P12": "PA_EN", "P13": "LTE_PWR_EN", "P14": "LTE_PWRKEY_EN", "P15": "LTE_RESET_EN",
-         "P16": "USB_SEL", "P17": "EXP_SPARE"}
+         "P16": "USB_SEL", "P17": "TP_INT"}
 
 
 def expander():
@@ -298,12 +301,13 @@ def expander():
     sh.frame(12.7, 17.78, 175.26, 248.92, "两颗 16 位 I²C 扩展芯片")
     sh.place("Interface_Expansion:TCA9555RTWR", 91.44, 78.74,
              dict(common, A0="GND", A1="GND", A2="GND", **EXP_A),
-             nc=["P12", "P13", "P14", "P15", "P16", "P17"], value=EXP_VALUE)
+             nc=["P14", "P15", "P16", "P17"], value=EXP_VALUE)
     sh.place("Interface_Expansion:TCA9555RTWR", 91.44, 185.42,
-             dict(common, A0="GND", A1="+3V3", A2="GND", **EXP_B), value=EXP_VALUE)
-    sh.text(15.24, 121.92, "上：地址 0x20，在板子右侧。按键、TF 卡检测、4G 状态是输入；前摄 PWDN、摄像头切换是输出。\n"
-                           "    没用到的 P12 ~ P17 固件里设成输出，避免悬空的输入脚乱触发中断。\n"
-                           "下：地址 0x22，在板子中间偏左。触摸中断、充电中断是输入，其余是输出。不用 0x21，前摄常见型号占这个地址。\n"
+             dict(common, A0="GND", A1="+3V3", A2="GND", **EXP_B), nc=["P07", "P11"], value=EXP_VALUE)
+    sh.text(15.24, 121.92, "上：地址 0x20，在板子右侧。按键、TF 卡检测、4G 状态是输入；前摄 PWDN、摄像头切换、摄像头复位、备用脚是输出。\n"
+                           "    没用到的 P14 ~ P17 固件里设成输出，避免悬空的输入脚乱触发中断。\n"
+                           "下：地址 0x22，在板子中间偏左。触摸中断、充电中断是输入，其余是输出。P07、P11 不用（被天线线的地孔围住，\n"
+                           "    线出不来），固件里设成输出。不用 0x21，前摄常见型号占这个地址。\n"
                            "两颗的 INT 并在一起：任何一个输入脚变化都会把 INT 拉低。信号按器件在板上的位置分配，不按输入输出分。", 1.3)
     sh.text(15.24, 231.14, "XL9555 上电后所有脚是输入，芯片内部每个脚有 100 kΩ 上拉。可换脚位相同的 TCA9555RTWR（没有内部上拉）。\n"
                            "需要默认为低的输出都在各自的页上加了能压过它的下拉（2.2k ~ 10k）。", 1.3)

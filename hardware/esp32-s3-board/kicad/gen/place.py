@@ -120,12 +120,13 @@ GROUPS = [
     ("F", 16.37, 26.0, ["TP5 TP6 TP7"]),                                                  # 3.3 V and ground test pads
     ("F", 25.55, 7.1, ["Q3 Q4 Q5"]),                                                      # Air780E control
     ("F", 23.7, 10.8, ["R31 R32 R33 R34 R35 R36 C23",
-                       "R42 R37 R38 R39 R40 R41",
-                       "R44 R43 D4"], 0.3, 0.2),
+                       "R42 R37 R38 R39 R40 R41 R43",        # R43 (not fitted): beside module pin 100
+                       "R44 D4"], 0.3, 0.2),
     ("F", 21.3, 14.78, ["Q6"]),
-    ("F", 29.6, 14.9, ["TP11 TP12 TP13 TP14 TP15", "TP16", "TP10"]),                      # Air780E test pads ...
+    ("F", 29.6, 14.9, ["TP11 TP12 TP13 TP14 TP15", "TP16"]),                              # Air780E test pads ...
+    ("F", 61.3, 11.85, ["TP10"]),                     # spare expander output, beside chip A
     ("F", 25.55, 14.9, ["TP20", "TP19"]),             # ... debug UART: beside module pins 39 / 38 (they were 13 mm away)
-    ("F", 37.55, 12.6, ["TP17", "TP18"]),             # ... main UART: beside module pins 17 / 18
+    ("F", 37.55, 13.3, ["TP17", "TP18"]),             # ... main UART: beside module pins 17 / 18
     ("F", 39.0, 6.0, ["R51", "R52", "R70"]),                                              # UART0 / LCD sync; CAM_SEL pull-down
     ("F", 21.9, 20.0, ["U8 C17@90 U6 C15@90 R17@90"]),      # expander B, USB switch; the pad under U8 takes the
                                                             # ground vias beside the antenna line on the back (RF-5)
@@ -135,11 +136,11 @@ GROUPS = [
     # and rear camera connectors on the back have their pads at y = 4.05 .. 5.25: the front stays free from there down
     # to y = 7, so that their pins can drop a via right below the pad.
     ("F", 11.5, 0.6, ["U15"]),
-    ("F", 15.95, 0.6, ["C44", "C39", "C40"], 0.3, 0.3),
+    ("F", 15.95, 0.6, ["C39", "C40", "C44"], 0.3, 0.3),          # output capacitors on top, level with the output pin
     ("F", 18.12, 0.6, ["U16"]),
-    ("F", 22.57, 0.6, ["C45", "C42"], 0.3, 0.3),
+    ("F", 22.57, 0.6, ["C42", "C43", "C45"], 0.3, 0.3),
     ("F", 24.74, 0.6, ["Y1"]),
-    ("F", 29.29, 0.6, ["C43", "C41"], 0.3, 0.3),
+    ("F", 29.29, 0.6, ["C41"], 0.3, 0.3),
     ("F", 31.46, 0.6, ["R63", "R64"], 0.3, 0.3),                                          # clock series resistors, at the oscillator
     ("F", 33.67, 0.6, ["R68", "R69", "R65"], 0.3, 0.3),
     # 2.5 mm below the camera connector's pads (they end at y = 5.25) stays free: room for its pins to get out

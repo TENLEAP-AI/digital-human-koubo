@@ -178,6 +178,14 @@ PATH = {
     "VDD_4G": [(1.4, 1.8), (2.6, 2.6), (1.7, 0.3)],                # at the drain, capacitor pad -> pins, the two pins
 }
 
+# ---- TF socket (back, bottom edge) under the microphone (front): the pins can only get out through the 1 mm
+# between the microphone's two pad rows (y = 30.8 .. 31.8). Left to itself the +3V3 stub of pin 4 runs 3 mm to
+# the right to find a via and shuts in pin 5 (SD_CLK_R). Both go straight up instead.
+t("+3V3", B, 0.3, (51.1, 32.6), (51.1, 32.0), (50.95, 31.3))
+v("+3V3", 50.95, 31.3, 0.45, 0.2)
+t("SD_CLK_R", B, 0.15, (52.2, 32.6), (52.2, 32.2), (51.9, 31.35))
+v("SD_CLK_R", 51.9, 31.35, 0.45, 0.2)
+
 
 def lay(r):
     """Put the copper into the router. Returns the list of pieces that do not fit (empty when all is well)."""

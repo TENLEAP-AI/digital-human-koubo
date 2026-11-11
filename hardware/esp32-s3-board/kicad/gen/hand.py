@@ -8,22 +8,37 @@ written. --try only reports.
 
 HAND is a list of (net, steps). A step is ("F" | "L3" | "B", width, [(x, y), ...]) for a track or
 ("via", x, y) for a 0.45 / 0.2 mm via. Coordinates as in place.py: millimetres from the board's top-left corner.
+
+RIP is a list of (net, (x, y)) or (net, (x, y), radius). Without a radius the stretch of that net's track that
+passes nearest to the point is taken out first (from one pad or junction to the next); with a radius only the
+pieces of that net that lie wholly within it (vias too). Locked copper is never touched. A net that lost copper
+must get it back, by a HAND entry or by AUTO.
+
+AUTO is a list of nets that the grid router connects after the hand-laid pieces are in: for a connection that
+only needed an opening, or to close what RIP opened.
 """
 import json
+import math
 import os
 import sys
 
 import pcbnew
 
 from board import NAME, OX, OY
-from route import ROUTE_LAYERS, Router, add_all_zones, strip_copper
+from route import ROUTE_LAYERS, Router, add_all_zones, pt_seg, strip_copper
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 args = [a for a in sys.argv[1:] if not a.startswith("--")]
 OUT = args[0] if args else os.path.join(HERE, "..")
 LAYER = {"F": 0, "L3": 1, "B": 3}
 
+RIP = [
+]
+
 HAND = [
+]
+
+AUTO = [
 ]
 
 
@@ -49,6 +64,38 @@ def load(path):
             r.critical.add(item)
     r.build_maps(frozen=set(r.net_name))
     return r
+
+
+def rip(r, rips=RIP):
+    """Take out the stretches named in RIP. Returns what could not be found."""
+    from finish import number_paths
+    number_paths(r)
+    bad = []
+    for name, (x, y), *rad in rips:
+        net = r.net_id[name]
+        if rad:
+            near = lambda px, py: math.hypot(px - x, py - y) <= rad[0]
+            n = len(r.tracks) + len(r.vias)
+            r.tracks = [t for t in r.tracks if not (t[0] == net and t not in r.critical and near(t[2], t[3]) and near(t[4], t[5]))]
+            r.vias = [v for v in r.vias if not (v[0] == net and v not in r.critical and near(v[1], v[2]))]
+            print(f"  taken out: {name} within {rad[0]} mm of ({x}, {y}), {n - len(r.tracks) - len(r.vias)} pieces")
+            continue
+        best = None
+        for t in r.tracks:
+            if t[0] != net or t in r.critical:
+                continue
+            d = pt_seg(x, y, t[2], t[3], t[4], t[5])
+            if best is None or d < best[0]:
+                best = (d, t)
+        if best is None or best[0] > 0.3:
+            bad.append(f"{name}: no track of this net within 0.3 mm of ({x}, {y})")
+            continue
+        pid = r.pid[best[1]]
+        n = len(r.tracks) + len(r.vias)
+        r.remove_paths({pid})
+        print(f"  taken out: {name} near ({x}, {y}), {n - len(r.tracks) - len(r.vias)} pieces")
+    r.build_maps(frozen=set(r.net_name))
+    return bad
 
 
 def lay(r, hand=HAND):
@@ -77,12 +124,17 @@ def main():
     path = os.path.join(OUT, NAME + ".kicad_pcb")
     r = load(path)
     before = sum(m for _, m in r.open_nets())
-    bad = lay(r)
+    bad = rip(r) + lay(r)
     for b in bad:
         print("  DOES NOT FIT:", b)
     r.build_maps(frozen=set(r.net_name))
+    for name in AUTO:
+        if r.route_net(name, record=False):
+            print(f"  AUTO could not finish {name}")
+    r.build_maps(frozen=set(r.net_name))
     left = r.open_nets()
-    print(f"by hand: {len(HAND)} connections laid, open {before} -> {sum(m for _, m in left)}")
+    print(f"by hand: {len(RIP)} stretches taken out, {len(HAND)} nets laid, {len(AUTO)} finished by the grid router; "
+          f"open {before} -> {sum(m for _, m in left)}")
     for name, m in left:
         print(f"  NOT ROUTED {name}: {m}")
     if bad or "--try" in sys.argv:
