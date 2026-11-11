@@ -458,15 +458,16 @@ def display():
         ("R", "LCD_G0", "GND", "0R"),
         ("R", "LCD_G1", "GND", "0R"),
         ("R", "LCD_G2", "GND", "0R"),
-        ("R", "LCD_G0", "SD_CLK", "0R", "dnp"),
-        ("R", "LCD_G1", "SD_CMD", "0R", "dnp"),
-        ("R", "LCD_G2", "SD_D0", "0R", "dnp"),
     ])
+    # R58 .. R60 were three unfitted 0R links from G0 .. G2 to the TF card lines (all 8 data lines, but then no TF
+    # card). The first board uses 5 data lines and keeps the TF card (decided 2026-11-11); the links are gone: each
+    # dragged a 40 mm track across the whole board. Their numbers are not used again, so every later R keeps its own.
+    d.refs["R"] += 3
     sh.caps(180.34, 50.8, "LCD_VCI", ["1µF", "100nF"], pitch=12.7)
     sh.text(96.52, 121.92,
-            "数据线只接高 5 位（G3 ~ G7），低 3 位默认经 0R 接地。\n"
-            "想试 8 位全接：拆掉接地的 3 颗 0R，贴上去 TF 卡线的 3 颗，\n"
-            "此时不能用 TF 卡。\n"
+            "数据线只接高 5 位（G3 ~ G7），低 3 位经 0R 接地。\n"
+            "首版不做 8 位全接：那要借 TF 卡的 3 根线，两者不能同时用。\n"
+            "要 8 位全接又保留 TF 卡，需要重新分配 ESP32 的引脚。\n"
             "屏的复位有下拉：扩展芯片初始化之前屏保持复位，\n"
             "上电时串口 0 打印的启动信息不会被屏当成同步信号。\n"
             "屏的三线 SPI（CS、SCL、SDA）和复位在扩展芯片上。", 1.3)

@@ -108,7 +108,7 @@ GROUPS = [
     ("B", 61.3, 3.2, ["C13@180", "C12@90", "R12", "C14@180"], *T),      # ESP32: 3V3 decoupling (3V3 pads face pin 2), EN
     ("B", 61.3, 16.8, ["R19@180", "R18@180"], *T),                      # ESP32 USB series resistors, in pin order
     # ---------------- front ----------------
-    ("F", 1.9, 0.7, ["R53 R54 C31 C32", "R61 R55 R56 R57", "C33 R58 R59 R60"]),           # LCD / touch
+    ("F", 1.9, 0.7, ["R53 R54 C31 C32", "R61 R55 R56 R57", "C33"]),           # LCD / touch
     ("F", 0.8, 5.9, ["R6", "R7", "D2", "R8"]),                                            # charger LED, pull-ups
     # Below the front camera connector (pads end at y = 5.25) a band of about 2 mm stays free of parts: its 0.5 mm
     # pins need the room to get out. C46 / C47 and Q2 used to sit in it.
