@@ -4,10 +4,11 @@ ESP32-S3-WROOM-1U-N16R8 + Air780E 的主板，第一版，**草稿**：原理图
 **布线没有完成，还不能投板。**引脚分配按 `../docs/requirements.md` 的方案三。
 
 > **当前状态**：六层、板厚 1.6 mm，按 [`../docs/layout-spec.md`](../docs/layout-spec.md)（V0.3）在做。
-> - `zeebuddy-mainboard.kicad_pcb` 现在是**第二轮的底子**：电源铜皮、三个开关电源、天线线、USB、
->   每个地和 3.3 V 焊盘的过孔都已经做好并锁定；KiCad 检查 0 条违规；剩 **243 处信号连接**还没布。
-> - 下一步：用 `freerouting/zeebuddy-mainboard.dsn` 在 Freerouting 里布信号线（见"第二轮"一节），
->   把结果交回来导入、收尾。
+> - `zeebuddy-mainboard.kicad_pcb` 是**第二轮的结果**：底子（电源铜皮、三个开关电源、天线线、USB、
+>   每个地和 3.3 V 焊盘的过孔）已锁定，信号线由 Freerouting 布了 20 分钟再收尾。
+>   576 处连接通了 **538 处**，KiCad 检查 0 条违规，**还剩 38 处信号线没连**。
+> - 剩下的 38 处是"线出不来"：多数在上边缘的三个排线座（屏、前摄、后摄），引脚正下方紧贴着元件和电源铜带。
+>   这要靠调整摆放解决，不是再多跑几轮能解决的（见"第二轮"一节）。
 > - 还没达标的：USB 四段里三段的等长（USB-3）；另有 3 处和规范的出入等确认（见规范的"待定问题"）。
 
 ## 文件
@@ -24,10 +25,11 @@ ESP32-S3-WROOM-1U-N16R8 + Air780E 的主板，第一版，**草稿**：原理图
 | `camera.kicad_sch` | 6 前后摄像头、总线切换、摄像头电源 |
 | `audio_tf.kicad_sch` | 7 麦克风、功放、TF 卡 |
 | `zeebuddy.kicad_sym` | 工程自带的符号（Air780E、排线座等） |
-| `zeebuddy-mainboard.kicad_pcb` | PCB：六层，外形、螺丝孔、213 个元件全部摆好；电源、地、天线线、USB 已布好并锁定，信号线未布 |
+| `zeebuddy-mainboard.kicad_pcb` | PCB：六层，外形、螺丝孔、213 个元件全部摆好；电源、地、天线线、USB 已布好并锁定，信号线布了 205 / 243 处 |
 | `placement-front.png` / `placement-back.png` | 正反两面主要器件的摆放示意图 |
 | `routing.png` | 当前布线的示意图 |
-| `freerouting/zeebuddy-mainboard.dsn` | **第二轮**给 Freerouting 用的板子文件（底子已锁定，只剩信号线） |
+| `freerouting/zeebuddy-mainboard.dsn` | **第二轮**给 Freerouting 用的板子文件（底子作为障碍，只有信号线要布） |
+| `freerouting/zeebuddy-mainboard.ses` | 第二轮 Freerouting 的结果（2.5.0，限时 20 分钟） |
 | `freerouting/round1.ses` | 第一轮的布线结果，存档用。它对应的是旧摆放（提交 `2e952f9`），不能导入现在的板子 |
 | `zeebuddy.pretty/` | 工程自带的封装（Air780E、SY6970、麦克风和几个占位封装） |
 | `gen/` | 生成原理图、封装库和 PCB 的脚本，见下面"PCB 是怎么生成的" |
@@ -56,7 +58,7 @@ gen/build.sh
 - PCB 与原理图一致性：213 个封装、全部焊盘的网络都与原理图一致。
 - KiCad DRC：元件之间没有重叠，没有超出板边；已布的线没有间距、短路、孔距、板边类的违规。
   有 1 个提示：天线座封装与库里的不一致（我把它自带的禁布区从"所有层"改成了只在背面，是有意的）。
-  剩下 243 个"未连接"，就是还没布的信号线。
+  剩下 38 个"未连接"，是还没布通的信号线。
 
 这些只说明"图和脚本一致、没有悬空或短接、摆放不打架"，**不代表电路经过了实物验证**。
 
@@ -141,37 +143,57 @@ gen/build.sh
   按 2 A 算会掉 0.12 V 以上，占了"跌落 ≤300 mV"预算的四成。这是原理图层面的事，这次没有动，
   打样前值得换一颗导通电阻更低的管子。
 
-### 第二轮：用 Freerouting 布信号线（在自己的电脑上）
+### 第二轮：用 Freerouting 布信号线
 
-`freerouting/zeebuddy-mainboard.dsn` 里，底子的 850 多段线和过孔都是**锁定**的，Freerouting 不会动；
-两层地和 3.3 V 那一层标成了电源层，它不会在上面走信号线，只用第 1、3、6 层。留给它的是 243 处信号连接。
+**结果（2026-11-11，Freerouting 2.5.0，限时 20 分钟）**
 
-和第一轮相比，这份文件补了三处：通孔在内层标成了障碍；板子外形往里收了 0.32 mm（留出板边间距）；
-天线线两侧用锁定的地线占住。
+| 步骤 | 没连上的信号连接 |
+|---|---|
+| 交给 Freerouting 之前 | 243 |
+| Freerouting 跑 8 轮（20 分钟到点停） | 48 |
+| `finish.py` 清理并补线之后 | **38** |
 
-1. **拿到板子文件。** 从仓库下载 `hardware/esp32-s3-board/kicad/freerouting/zeebuddy-mainboard.dsn`（或者用我发过去的那份）。
-2. **打开。** Freerouting 菜单 `文件 → 打开`，选这个 `.dsn`。能看到板子外形、元件焊盘和已经锁定的电源铜皮。
-   它可能提示"已有若干处违规"，那是它按自己的规则检查锁定的线得出的，可以不管。
-3. **开始自动布线。** 点工具栏上的魔术棒图标。窗口下方显示还剩多少条没连上。
-4. **等它停。** 未连接数降到 0、或者连续很多轮不再减少，就可以停了（点一下鼠标会中断）。
-5. **保存结果。** 菜单 `文件 → 另存为`，存成 `zeebuddy-mainboard.ses`。
-6. **交回来。** 把这个 `.ses` 发给我，或者放进 `freerouting/` 目录后运行：
+导入后 KiCad 检查 0 条违规（没有短路、没有间距问题），底子一条没动。
 
-   ```bash
-   /usr/bin/python3.12 gen/freeroute.py . --ses freerouting/zeebuddy-mainboard.ses
-   /usr/bin/python3.12 gen/finish.py .
-   /usr/bin/python3.12 gen/check.py .
-   ```
+**剩下的 38 处卡在哪里。** 全部是焊盘被围住、线出不来：
+
+| 位置 | 数量 | 原因 |
+|---|---|---|
+| 前摄像头排线座 J11（正面，上边缘） | 12 | 引脚下方 0.5 mm 就是一排电容电阻和它们的过孔 |
+| 屏排线座 J8（背面，上边缘） | 5 | 引脚下方 1 mm 是 2 mm 宽的系统电源铜带；J8 和 J11 正反两面有 6 mm 重叠，过孔互相占位 |
+| 后摄像头排线座 J10（背面，上边缘） | 3 | 同上 |
+| 其余（充电芯片、SIM、测试点、扩展芯片、J11 下方那排电阻等） | 18 | 零散的被围住的焊盘 |
+
+结论：这是摆放的问题。排线座是 0.5 mm 间距，出线需要引脚外侧有 1.5 ~ 2 mm 的空带打两排错开的过孔，
+现在没有留。下一轮要先在这三个排线座下方清出空带（或者把 J8、J11 错开），再重做底子、重跑。
+
+**交接文件的做法（脚本自动完成）**
+
+- 底子里已经连好的 25 个网络（地、3.3 V、各路电源、天线、USB）**不作为网络**交给 Freerouting：
+  它们的铜变成禁布区，焊盘不带网络。Freerouting 看到的只有障碍和 243 处信号连接。
+  （第一次直接把它们当锁定的线交过去，Freerouting 每一轮都去尝试连接地和 3.3 V 的 250 多个焊盘，
+  30 分钟没走完第一轮。）
+- 地和 3.3 V 各留一个焊盘，这样三层平面还在文件里，Freerouting 才不会在平面层上走信号线
+  （去掉平面试过一次：它在平面层上布了 160 段线，全部和过孔短路）。
+- 通孔在内层补了铜；板子外形往里收 0.32 mm；天线线两侧用地线占住。
+- 运行时加时间上限（`--router.job_timeout`）：Freerouting 只在停下时才写结果，不限时会为最后几十处跑一个小时以上。
+
+**重跑的命令**
+
+```bash
+/usr/bin/python3.12 gen/freeroute.py .                       # 生成 .dsn
+java -jar freerouting-2.5.0.jar -de freerouting/zeebuddy-mainboard.dsn -do freerouting/zeebuddy-mainboard.ses \
+     --router.autorouter.max_passes=40 --router.job_timeout=00:20:00 -mt 1 --gui.enabled=false
+/usr/bin/python3.12 gen/freeroute.py . --ses freerouting/zeebuddy-mainboard.ses   # 导入
+/usr/bin/python3.12 gen/finish.py .                          # 清理、补线
+/usr/bin/python3.12 gen/check.py .                           # 检查表
+```
 
 注意：
 
-- Freerouting **不会**把 USB 当差分对来走，所以 USB 是先在这边画好再锁定的，不要在 Freerouting 里解锁它们。
+- Freerouting **不会**把 USB 当差分对来走，所以 USB 是先在这边画好再锁定的。
 - `.dsn` 由 `gen/freeroute.py` 生成；元件位置或底子变了要重新生成，旧的 `.ses` 就不能用了。
-- 不想点界面也可以用一条命令：
-
-  ```bash
-  java -jar freerouting-版本号.jar -de zeebuddy-mainboard.dsn -do zeebuddy-mainboard.ses -mp 100
-  ```
+- 用界面跑也可以（`文件 → 打开` 选 `.dsn`，点自动布线，停下后 `文件 → 另存为` 存成 `.ses`），但界面没有时间上限，要自己看着停。
 
 ### 以前几轮的记录
 
