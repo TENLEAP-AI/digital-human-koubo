@@ -225,7 +225,8 @@ static inline int via_ok(int net, int x, int y, int nvp, const int *vprobe) {
     return 1;
 }
 
-int rt_via_ok(int net, int x, int y, int nvp, const int *vprobe) { return via_ok(net, x, y, nvp, vprobe); }
+int rt_via_ok(int net, int x, int y, int nvp, const int *vprobe) { rip_mode = 0; return via_ok(net, x, y, nvp, vprobe); }
+int rt_usable(int net, int l, int x, int y, int np, const int *probe) { rip_mode = 0; return usable(net, l, x, y, np, probe); }
 
 static const int DX[8] = {1, 1, 0, -1, -1, -1, 0, 1};
 static const int DY[8] = {0, 1, 1, 1, 0, -1, -1, -1};

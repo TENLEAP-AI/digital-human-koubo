@@ -16,6 +16,7 @@ kicad-cli sch export pdf -o "$out/$name.pdf" "$out/$name.kicad_sch" >/dev/null
 "$py_kicad" "$here/board.py" "$out"
 "$py_kicad" "$here/route.py" "$out" 2>&1 | grep -v "Debug: Adding"      # takes about five minutes
 "$py_kicad" "$here/preview.py" "$out" 2>&1 | grep -v "Debug: Adding"
+"$py_kicad" "$here/freeroute.py" "$out" 2>&1 | grep -v -e "Debug: Adding" -e "memory leak"   # refresh freerouting/*.dsn
 kicad-cli pcb drc --severity-all --schematic-parity --format report -o "$out/build/drc.rpt" "$out/$name.kicad_pcb" >/dev/null || true
 echo "DRC (unconnected items = connections the router has not made yet):"
 grep -E "^\[" "$out/build/drc.rpt" | sed 's/\]:.*/]/' | sort | uniq -c || true

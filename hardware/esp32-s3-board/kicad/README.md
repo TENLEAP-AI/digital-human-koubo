@@ -1,7 +1,13 @@
 # Zeebuddy 主板 V1（KiCad 9）
 
 ESP32-S3-WROOM-1U-N16R8 + Air780E 的主板，第一版，**草稿**：原理图已画完，PCB 元件全部摆好，
-**布线完成了 85%（599 个连接里的 508 个），还不能投板。**引脚分配按 `../docs/requirements.md` 的方案三。
+**布线没有完成，还不能投板。**引脚分配按 `../docs/requirements.md` 的方案三。
+
+> **当前状态（布线暂停）**：正在考虑从四层改成六层，布线做到一半停下了。
+> - 这一版的 `zeebuddy-mainboard.kicad_pcb` **只有摆放，没有走线**（布线程序重跑到一半被中止）。
+>   上一个提交里的 PCB 是旧摆放、布通 508 / 599 的版本。
+> - 下文的布线数字来自中止前最后一次完整运行（四层），重新运行 `gen/build.sh` 可以得到那个结果。
+> - `freerouting/zeebuddy-mainboard.dsn` 还是**旧摆放**的，先不要用，层数定了以后重新生成。
 
 ## 文件
 
@@ -17,10 +23,10 @@ ESP32-S3-WROOM-1U-N16R8 + Air780E 的主板，第一版，**草稿**：原理图
 | `camera.kicad_sch` | 6 前后摄像头、总线切换、摄像头电源 |
 | `audio_tf.kicad_sch` | 7 麦克风、功放、TF 卡 |
 | `zeebuddy.kicad_sym` | 工程自带的符号（Air780E、排线座等） |
-| `zeebuddy-mainboard.kicad_pcb` | PCB：外形、螺丝孔、213 个元件全部摆好，已布 85% 的线 |
+| `zeebuddy-mainboard.kicad_pcb` | PCB：外形、螺丝孔、213 个元件全部摆好；这一版没有走线（见上面的当前状态） |
 | `placement-front.png` / `placement-back.png` | 正反两面主要器件的摆放示意图 |
 | `routing.png` | 当前布线的示意图 |
-| `freerouting/zeebuddy-mainboard.dsn` | 给 Freerouting 用的板子文件（已摆放、未布线） |
+| `freerouting/zeebuddy-mainboard.dsn` | 给 Freerouting 用的板子文件。**目前是旧摆放的，要重新生成后才能用** |
 | `zeebuddy.pretty/` | 工程自带的封装（Air780E、SY6970、麦克风和几个占位封装） |
 | `gen/` | 生成原理图、封装库和 PCB 的脚本 |
 
@@ -48,8 +54,8 @@ gen/build.sh
 - 网表比对：833 个引脚全部与脚本里写的连接一致。
 - KiCad ERC：0 个错误，1 个警告（功放散热焊盘接地，符号库里这个脚的类型是"未指定"，可以忽略）。
 - PCB 与原理图一致性：213 个封装、全部焊盘的网络都与原理图一致。
-- KiCad DRC：元件之间没有重叠，没有超出板边；已布的线没有间距、短路、孔距类的违规。
-  剩下 90 个"未连接"，就是还没布通的那些连接。
+- KiCad DRC（中止前最后一次完整运行）：元件之间没有重叠，没有超出板边；已布的线没有间距、短路、孔距类的违规，
+  有 2 个 0.05 mm 线头的警告（去掉它们的代码已写，还没跑完验证）。剩下 92 个"未连接"，就是还没布通的那些连接。
 
 这些只说明"图和脚本一致、没有悬空或短接、摆放不打架"，**不代表电路经过了实物验证**。
 
@@ -58,21 +64,62 @@ gen/build.sh
 - 四层：正面和背面走信号，第二层整层是地，第三层走 3.3 V 和一部分信号（空余处铺 3.3 V）。
 - 规则按嘉立创四层板的常规能力：线宽线距 0.15 / 0.10 mm，过孔 0.45 / 0.2 mm。
 - 自动布线是自己写的网格搜索程序（带拆线重布），不是成熟的商用或开源布线器。
-  它布通了 599 个连接里的 508 个；剩下 91 个分布在 67 个网络上，主要是横跨整板的摄像头、屏、I²C 这些线。
+  它布通了 579 个连接里的 484 个；剩下的主要是横跨整板的摄像头、屏、I²C 这些线。
   没布通的清单在 `build/routing.json`（运行 `gen/build.sh` 后生成）。
-- 4G 天线走线按 0.35 mm 画，50 Ω 的实际线宽要按板厂的叠层再算。
-- USB 没有按差分对走，电源线宽、去耦电容到引脚的距离等都还没有人工检查。
+- 下面四类关键走线由脚本按规则先画，并在 PCB 文件里**锁定**（KiCad 里显示小锁，自动布线不会动它们）。
 
-### 用 Freerouting 接着布
+### 四条布线规则的落实情况
 
-`freerouting/zeebuddy-mainboard.dsn` 是给开源自动布线器 Freerouting 用的板子文件（元件已摆好、没有走线，
-地和 3.3 V 两个内层按平面导出，电源和天线的线宽按网络类导出）。两种用法：
+| 规则 | 已经做的 | 量出来的结果 | 还差什么 |
+|---|---|---|---|
+| Air780E 供电短而宽、敷铜、220 µF 紧贴引脚 | 背面一整块 VDD_4G 敷铜，把电源开关输出、220 µF（C19）和模组的两个供电脚连成一片；C19 转了方向，正极一端朝着供电脚；小电容 C22 放在正面、正对供电脚 | 敷铜约 27 mm²；C19 正极焊盘到供电脚 1.9 mm | 敷铜之外还有 0.6 mm 的线接到正面的 C18、D3 等；电源开关之前的那段（VSYS）还是 0.6 mm 的线，没有敷铜 |
+| 4G 天线 50 Ω | 天线线只走背面、不打孔，线宽 0.35 mm，离其它铜 0.3 mm 以上，两侧打地孔；它正下方的第三层铺一块地并禁止走线（规则区）——**这一项代码已写，运行被中止，还没验证** | 全长 8.7 mm（模组脚 → 匹配元件 → 天线座），旁边 5 个地孔 | **0.35 mm 是按线到下方地层约 0.2 mm 估的，必须用板厂的阻抗计算器按实际叠层重算**；下单时要选阻抗控制 |
+| USB 等长、成对走 | ESP32 到切换芯片的长段（约 29 mm）在第三层并排走，线宽 0.2、间距 0.15 mm；其余几段很短，各自走 | 四段的长度差：Type-C 段 1.5 mm、ESP32 侧短段 0、ESP32 长段 0.9 mm、Air780E 段 2.2 mm（按整个网络的铜长算，含测试点的分支） | 短的三段没有并排走，也没有做等长补偿；差分阻抗（90 Ω）没有按叠层算 |
+| ESP32 去耦电容靠近引脚，先过电容再进芯片 | 22 µF（C12）和 100 nF（C13）放在 3V3 脚旁边；供电从过孔出来先到 C12，再到 C13，再进引脚，0.4 mm 线 | C12、C13 到引脚 1.7 / 1.4 mm；3V3 脚上没有别的过孔绕过电容 | — |
 
-- 在自己的电脑上：用 Freerouting 打开这个 `.dsn`，自动布线，保存出 `.ses` 文件放回仓库，然后运行
-  `/usr/bin/python3.12 gen/freeroute.py . --ses 文件.ses` 导入并铺铜。
-- 在有 Freerouting 的环境里：`/usr/bin/python3.12 gen/freeroute.py . --jar freerouting.jar` 一步完成。
+关于"天线下方所有层净空"：这块板上**没有板载天线**，4G 和 Wi-Fi 都是通过 IPEX 座接外置天线。
+净空的要求针对的是天线本体，也就是外置天线在外壳里贴的位置（附近不要有电池、屏的金属背板、喇叭）。
+板上从模组到天线座的这段线是传输线，做法正相反：下面要有完整的地，才能保证 50 Ω。
 
-`.dsn` 由 `gen/freeroute.py` 生成；元件位置变了要重新生成。
+### 用 Freerouting 接着布（在自己的电脑上）
+
+**仓库里现在的 `.dsn` 是旧摆放的，下面的步骤要等它重新生成之后再用。**
+
+`freerouting/zeebuddy-mainboard.dsn` 是给开源自动布线器 Freerouting 用的板子文件：元件已摆好；
+天线线、USB、ESP32 去耦这几段关键走线已经画好并且**锁定**（Freerouting 不会动它们）；其余的线留给它布。
+第二层（地）标成了电源层，Freerouting 不会在上面走信号线。
+
+1. **装 Freerouting。** 打开 https://github.com/freerouting/freerouting/releases ，在最新版本下面：
+   - 下载自己系统（Windows / macOS / Linux）的安装包，安装后打开；
+   - 或者下载 `freerouting-版本号.jar`，先装 Java（https://adoptium.net/temurin/releases/ ，选 JRE 25），
+     然后在终端 / 命令提示符里运行 `java -jar freerouting-版本号.jar`。
+     macOS 用 jar 时要从"终端"启动，从访达双击不行。
+2. **拿到板子文件。** 从仓库下载 `hardware/esp32-s3-board/kicad/freerouting/zeebuddy-mainboard.dsn`。
+3. **打开。** Freerouting 菜单 `File → Open...`，选这个 `.dsn`。能看到板子外形、元件焊盘和已经锁定的几段线。
+4. **开始自动布线。** 点工具栏上的魔术棒图标（Autorouter）。它会一轮一轮地布，窗口下方显示还剩多少条没连上
+   （unrouted）。这块板子比较挤，可能要十几分钟到一两个小时。
+5. **等它停。** 未连接数降到 0、或者连续很多轮不再减少，就可以停了（再点一下鼠标会中断自动布线）。
+6. **保存结果。** 菜单 `File → Save as...`，存成 `zeebuddy-mainboard.ses`（文件名以 `.ses` 结尾）。
+7. **交回来。** 把这个 `.ses` 放进仓库的 `hardware/esp32-s3-board/kicad/freerouting/` 目录（或者直接发给我），
+   然后运行下面的命令导入、铺铜：
+
+   ```bash
+   /usr/bin/python3.12 gen/freeroute.py . --ses freerouting/zeebuddy-mainboard.ses
+   ```
+
+   之后跑一遍 DRC，看还剩什么没连上、有没有违规。
+
+注意：
+
+- Freerouting **不会**把 USB 当差分对来走，所以 USB 是先在这边画好再锁定的，不要在 Freerouting 里解锁它们。
+- 如果有 KiCad，也可以不用上面的脚本：在 PCB 编辑器里 `文件 → 导入 → Specctra Session` 导入 `.ses`。
+  但那样导入的是仓库里现有的板子，要先确认它和 `.dsn` 是同一版摆放。
+- `.dsn` 由 `gen/freeroute.py` 生成；元件位置变了要重新生成，旧的 `.ses` 就不能用了。
+- 不想点界面也可以用一条命令（第 3 ~ 6 步合成一步，布完自动保存）：
+
+  ```bash
+  java -jar freerouting-版本号.jar -de zeebuddy-mainboard.dsn -do zeebuddy-mainboard.ses -mp 100
+  ```
 
 ## PCB 摆放
 

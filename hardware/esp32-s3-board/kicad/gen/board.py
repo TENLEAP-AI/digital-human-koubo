@@ -57,7 +57,9 @@ NET_CLASSES = {
     "Power": (dict(track_width=0.3, via_diameter=0.5, via_drill=0.25),
               ["+3V3", "+2V8", "+1V2", "BUCK_SW", "BL_SW", "LCD_LEDA", "LCD_LEDK", "PA_OUTP", "PA_OUTN", "SPK_P",
                "SPK_N", "CHG_REGN", "CHG_BTST", "SIM_VDD", "LCD_VCI", "CAMF_IOVDD", "CAMF_DVDD", "GND"]),
-    "RF": (dict(track_width=0.35), ["LTE_ANT", "LTE_ANT_C"]),
+    "RF": (dict(track_width=0.35, clearance=0.3), ["LTE_ANT", "LTE_ANT_C"]),
+    "USB": (dict(track_width=0.2, diff_pair_width=0.2, diff_pair_gap=0.15),
+            ["USBC_DP", "USBC_DM", "ESP_DP", "ESP_DM", "ESP_USB_DP", "ESP_USB_DM", "LTE_USB_DP", "LTE_USB_DM"]),
 }
 
 def arc_mid(cx, cy, x0, y0, x1, y1):

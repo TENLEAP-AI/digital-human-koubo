@@ -39,11 +39,11 @@ GROUPS = [
     # ---------------- back ----------------
     ("B", 4.3, 6.0, ["C3 C4 C1 C2"], *T),                               # charger: PMID, REGN, BTST, VBUS
     ("B", 4.3, 14.7, ["C7 C5 C6", "R3 R5 R4"], *T),                     # charger: BAT, SYS, ILIM, NTC
-    ("B", 17.0, 8.7, ["C19@90"]),                                       # 220 uF next to the Air780E supply pads
+    ("B", 17.0, 8.7, ["C19@270"]),                                      # 220 uF, + pad level with the Air780E supply pads
     ("B", 17.8, 5.7, ["C20", "C21"], *T),
     ("B", 17.0, 14.0, ["Q1@90"]),                                       # Air780E load switch
-    ("B", 61.3, 3.2, ["C13", "C12@90", "R12", "C14"], *T),              # ESP32: 3V3 decoupling, EN
-    ("B", 61.3, 16.8, ["R18", "R19"], *T),                              # ESP32 USB series resistors
+    ("B", 61.3, 3.2, ["C13@180", "C12@90", "R12", "C14@180"], *T),      # ESP32: 3V3 decoupling (3V3 pads face pin 2), EN
+    ("B", 61.3, 16.8, ["R19@180", "R18@180"], *T),                      # ESP32 USB series resistors, in pin order
     ("B", 21.0, 24.1, ["C29", "C30"], *T),                              # antenna matching, shunt parts
     ("B", 23.4, 24.2, ["R49@90"]),                                      # antenna matching, series part
     # ---------------- front ----------------
@@ -57,8 +57,8 @@ GROUPS = [
     ("F", 11.6, 26.0, ["TP2 TP3 TP4 TP5 TP6 TP7"]),                                       # power test pads
     ("F", 21.3, 6.2, ["Q2 Q3 Q4 Q5",                                                      # Air780E control
                       "R31 R32 R33 R34 R35 R36 C23",
-                      "R37 R38 R39 R40 R41 R42 D4",
-                      "R43 R44 R29 R30 C18 C22",
+                      "C22 R37 R38 R39 R40 R41 R42",                                  # C22 sits opposite the supply pads
+                      "R43 R44 R29 R30 C18 D4",
                       "Q6 D3"]),
     ("F", 29.6, 14.9, ["TP11 TP12 TP13 TP14 TP15", "TP16 TP17 TP18 TP19 TP20", "TP10"]),  # Air780E test pads
     ("F", 39.0, 6.0, ["R51", "R52"]),                                                     # UART0 / LCD sync
