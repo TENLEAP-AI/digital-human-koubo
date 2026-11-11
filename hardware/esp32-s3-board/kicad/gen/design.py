@@ -133,13 +133,13 @@ def power():
     sh.place("Power_Protection:USBLC6-2SC6", 106.68, 50.8,
              {"I/O1": "USBC_DP", "I/O2": "USBC_DM", "GND": "GND"}, nc=["VBUS"])
     sh.hlist(106.68, 81.28, [("R", "USBC_CC1", "GND", "5.1k"), ("R", "USBC_CC2", "GND", "5.1k")])
-    sh.D(88.9, 114.3, "GND", "VBUS", "TVS 12V", "Device:D_TVS", "up", fp="Diode_SMD:D_SOD-123F")
-    sh.text(15.24, 121.92, "VBUS 可能被快充适配器抬到 9 ~ 12 V（充电芯片自己握手）。\n"
-                           "VBUS 上的电容和 TVS 按 25 V / 12 V 选；ESD 管的 VBUS 脚不接。", 1.3)
+    sh.D(88.9, 114.3, "GND", "VBUS", "TVS 5V", "Device:D_TVS", "up", fp="Diode_SMD:D_SOD-123F")
+    sh.text(15.24, 121.92, "USB 数据线只去 ESD 管和 USB 切换芯片，不接充电芯片，\n"
+                           "所以不会触发快充升压，VBUS 一直是 5 V。", 1.3)
 
     sh.frame(142.24, 17.78, 406.4, 132.08, "充电和电源路径（SY6970，I²C 地址 0x6A）")
     sh.place(CHARGER, 198.12, 66.04,
-             {"BUS": "VBUS", "DP": "USBC_DP", "DM": "USBC_DM", "SCL": "I2C_SCL", "SDA": "I2C_SDA",
+             {"BUS": "VBUS", "DP": "CHG_DPDM", "DM": "CHG_DPDM", "SCL": "I2C_SCL", "SDA": "I2C_SDA",
               "INT": "CHG_INT", "OTG": "GND", "~{CE}": "GND", "~{QON}": "CHG_QON", "ILIM": "CHG_ILIM",
               "STAT": "CHG_STAT", "PMID": "CHG_PMID", "LX": "CHG_SW", "BST": "CHG_BTST", "SYS": "VSYS",
               "BAT": "VBAT", "REGN": "CHG_REGN", "NTC": "CHG_TS", "PGND": "GND"}, nc=["DSEL"])
@@ -160,11 +160,13 @@ def power():
     sh.caps(373.38, 111.76, "VSYS", [("10µF", FP_0603), ("10µF", FP_0603)])
     sh.caps(162.56, 104.14, "VBAT", [("10µF", FP_0603)])
     sh.tp(345.44, 43.18, "CHG_QON")
-    sh.text(144.78, 120.65,
+    sh.text(144.78, 117.5,
             "没接电池温度电阻：NTC 脚用两颗 10k 固定在正常窗口。OTG、CE 接地：不用反向升压，充电默认打开。\n"
-            "输入限流 = 360 / 200 Ω ≈ 1.8 A。外围元件值按 SY6970 数据手册（1 µH、PMID ≥ 6.8 µF）。\n"
-            "电池 2000 mAh。芯片上电默认充电电流 2.048 A（约 1C），固件启动后要设成 1 A（0.5C），\n"
-            "并处理好 40 秒的 I²C 看门狗（定时喂或关掉），否则会回到默认值。", 1.3)
+            "电池 2000 mAh，最大充电 0.5C = 1 A。芯片上电默认的充电电流是 2.048 A，所以默认状态靠硬件压住输入功率：\n"
+            "  ILIM = 680 Ω → 输入约 0.53 A（360 / 680），5 V 下最多约 3 W，电池电流最坏约 0.94 A；\n"
+            "  DP、DM 互相短接、不接 USB 数据线 → 不会和快充适配器握手，VBUS 一直是 5 V。\n"
+            "固件运行时：充电电流设 960 mA，关掉 ILIM 脚的限制并把输入限流设到 1.5 ~ 2 A，定时喂 I²C 看门狗。\n"
+            "固件死机后看门狗 40 秒超时，芯片回到默认状态，重新受上面的硬件限制（这一点打样后要实测确认）。", 1.3)
 
     sh.frame(12.7, 137.16, 213.36, 248.92, "电池座和 3.3 V 降压")
     sh.place("Connector_Generic:Conn_01x02", 48.26, 162.56, {"1": "VBAT", "2": "GND"}, value="电池焊盘",
@@ -598,7 +600,7 @@ def audio_tf():
 
 
 # ---- values taken from the datasheets ----------------------------------------------
-RILIM = "200R 1%"     # SY6970: IINMAX = K / R, K = 360 A·Ω typ -> about 1.8 A
+RILIM = "680R 1%"     # SY6970: IINMAX = K / R, K = 360 A·Ω typ -> about 0.53 A (see the note on the sheet)
 TS_TOP = "10k"        # 50 % of REGN sits between the 44.75 % and 68.25 % thresholds
 TS_BOT = "10k"
 EXP_VALUE = "XL9555QF24"
@@ -653,7 +655,7 @@ if __name__ == "__main__":
          "1. 屏 LB28BOE47：背光电压电流、VCI 电压、排线间距和上下接、8 根数据线里哪几根有效、能否只用 DE。\n"
          "2. 触摸屏：芯片型号、排线脚位。\n"
          "3. 前摄：型号、排线脚位、10 脚要不要供电。\n"
-         "4. 电池（2000 mAh）：电芯规格书允许的最大充电电流、电池座型号、有没有温度电阻脚。\n"
+         "4. 电池（2000 mAh，最大充电 0.5C）：电池座型号、有没有温度电阻脚。\n"
          "5. 按键：排线脚位，是否包含开关机键。\n"
          "6. 各连接器的具体型号（Type-C、SIM 卡座、TF 卡座、排线座、电池座、喇叭座）。\n"
          "7. 220 µF 钽电容的高度是否放得进外壳。", 1.5),

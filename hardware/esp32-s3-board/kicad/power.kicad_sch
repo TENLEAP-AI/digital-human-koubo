@@ -1478,7 +1478,7 @@
 			(effects (font (size 1.27 1.27)) (hide yes))
 		)
 	)
-	(global_label "USBC_DP"
+	(global_label "CHG_DPDM"
 		(shape passive)
 		(at 180.34 52.07 180)
 		(effects (font (size 1.27 1.27)) (justify right))
@@ -1488,7 +1488,7 @@
 			(effects (font (size 1.27 1.27)) (hide yes))
 		)
 	)
-	(global_label "USBC_DM"
+	(global_label "CHG_DPDM"
 		(shape passive)
 		(at 180.34 54.61 180)
 		(effects (font (size 1.27 1.27)) (justify right))
@@ -2391,7 +2391,7 @@
 		(dnp no)
 		(uuid "ba8b69e2-b65b-5df4-b0e8-a588c25ad28d")
 		(property "Reference" "D1" (at 91.44 113.2 90) (effects (font (size 1.27 1.27)) (justify left)))
-		(property "Value" "TVS 12V" (at 91.44 115.4 90) (effects (font (size 1.27 1.27)) (justify left)))
+		(property "Value" "TVS 5V" (at 91.44 115.4 90) (effects (font (size 1.27 1.27)) (justify left)))
 		(property "Footprint" "Diode_SMD:D_SOD-123F"
 			(at 88.9 114.3 0)
 			(effects (font (size 1.27 1.27)) (hide yes))
@@ -2476,7 +2476,7 @@
 			)
 		)
 	)
-	(text "VBUS 可能被快充适配器抬到 9 ~ 12 V（充电芯片自己握手）。\nVBUS 上的电容和 TVS 按 25 V / 12 V 选；ESD 管的 VBUS 脚不接。"
+	(text "USB 数据线只去 ESD 管和 USB 切换芯片，不接充电芯片，\n所以不会触发快充升压，VBUS 一直是 5 V。"
 		(exclude_from_sim no)
 		(at 15.24 121.92 0)
 		(effects (font (size 1.3 1.3)) (justify left top))
@@ -2743,7 +2743,7 @@
 		(dnp no)
 		(uuid "0f206087-2a10-5274-b487-0f104df7dea9")
 		(property "Reference" "R3" (at 274.32 48.26 90) (effects (font (size 1.27 1.27))))
-		(property "Value" "200R 1%" (at 274.32 53.34 90) (effects (font (size 1.27 1.27))))
+		(property "Value" "680R 1%" (at 274.32 53.34 90) (effects (font (size 1.27 1.27))))
 		(property "Footprint" "Resistor_SMD:R_0402_1005Metric"
 			(at 274.32 52.578 90)
 			(effects (font (size 1.27 1.27)) (hide yes))
@@ -3554,9 +3554,9 @@
 		(stroke (width 0) (type default))
 		(uuid "18556250-efad-552b-a752-585711df6c3a")
 	)
-	(text "没接电池温度电阻：NTC 脚用两颗 10k 固定在正常窗口。OTG、CE 接地：不用反向升压，充电默认打开。\n输入限流 = 360 / 200 Ω ≈ 1.8 A。外围元件值按 SY6970 数据手册（1 µH、PMID ≥ 6.8 µF）。\n电池 2000 mAh。芯片上电默认充电电流 2.048 A（约 1C），固件启动后要设成 1 A（0.5C），\n并处理好 40 秒的 I²C 看门狗（定时喂或关掉），否则会回到默认值。"
+	(text "没接电池温度电阻：NTC 脚用两颗 10k 固定在正常窗口。OTG、CE 接地：不用反向升压，充电默认打开。\n电池 2000 mAh，最大充电 0.5C = 1 A。芯片上电默认的充电电流是 2.048 A，所以默认状态靠硬件压住输入功率：\n  ILIM = 680 Ω → 输入约 0.53 A（360 / 680），5 V 下最多约 3 W，电池电流最坏约 0.94 A；\n  DP、DM 互相短接、不接 USB 数据线 → 不会和快充适配器握手，VBUS 一直是 5 V。\n固件运行时：充电电流设 960 mA，关掉 ILIM 脚的限制并把输入限流设到 1.5 ~ 2 A，定时喂 I²C 看门狗。\n固件死机后看门狗 40 秒超时，芯片回到默认状态，重新受上面的硬件限制（这一点打样后要实测确认）。"
 		(exclude_from_sim no)
-		(at 144.78 120.65 0)
+		(at 144.78 117.5 0)
 		(effects (font (size 1.3 1.3)) (justify left top))
 		(uuid "83c52d40-0e5c-563c-89b9-5bc345742fef")
 	)
