@@ -135,6 +135,8 @@ class Router:
         self.critical = set()      # tracks and vias of the nets routed by rule: exported locked
         self.pid, self.cur_pid, self.next_pid = {}, None, 1   # track / via tuple -> id of the path it was laid in
         self.comp_of = {}          # track / via tuple -> component id (refreshed by build_maps)
+        self.wide_copper = False   # copper that was not laid on this grid (imported tracks): mark it wider, so
+                                   # that pieces meeting off the grid are still seen as joined
         self.neg = False           # negotiated routing in progress: new copper is counted, it does not block
         self.cur_items = None      # where add_track / add_via note what they laid while negotiating
         self.mov = {}              # net id -> [("t", track) | ("v", via)] of the nets being negotiated
@@ -175,6 +177,8 @@ class Router:
                     name = f"nonet-{fp.GetReference()}-{pad.GetNumber()}"
                 net = self.nid(name)
                 pth = attr == pcbnew.PAD_ATTRIB_PTH
+                if pth:
+                    on = list(range(NL))          # the hole goes through every layer, with or without copper there
                 round_pad = pad.GetShape() == pcbnew.PAD_SHAPE_CIRCLE
                 self.pads.append(dict(net=net, layers=on, rect=rect, pth=pth, round=round_pad,
                                       ref=fp.GetReference(), num=pad.GetNumber()))
@@ -382,7 +386,7 @@ class Router:
             return comp
         extra = RF_EXTRA if self.net_name[net] in RF else 0.0
         lib.rt_paint_seg(l, *a, (width / 2 + R0 + extra) / G, net, 0, 0)
-        lib.rt_paint_seg(l, *a, 0.6, net, 1, comp)
+        lib.rt_paint_seg(l, *a, max(0.6, width / 2 / G - 0.4) if self.wide_copper else 0.6, net, 1, comp)
         t = (net, l, x0, y0, x1, y1, width)
         self.tracks.append(t)
         self.comp_of[t] = comp
@@ -403,7 +407,7 @@ class Router:
             return comp
         for l in range(NL):
             lib.rt_paint_seg(l, cx, cy, cx, cy, (dia / 2 + R0) / G, net, 0, 0)
-            lib.rt_paint_seg(l, cx, cy, cx, cy, 0.6, net, 1, comp)
+            lib.rt_paint_seg(l, cx, cy, cx, cy, max(0.6, dia / 2 / G - 1.0) if self.wide_copper else 0.6, net, 1, comp)
         lib.rt_viablock_rect(cx, cy, cx, cy, (drill / 2 + HOLE_CLR + 0.15 + MARGIN) / G)
         v = (net, x, y, dia, drill)
         self.vias.append(v)
@@ -1254,6 +1258,18 @@ def add_rf_ground(board):
     return (wx0, wy0, wx1, wy1), (ix0, iy0, ix1, iy1)
 
 
+def add_all_zones(board):
+    """The pours and rule areas of the finished board. Returns what add_rf_ground returns."""
+    add_zone(board, "GND", pcbnew.In1_Cu)
+    add_zone(board, "GND", pcbnew.In4_Cu)
+    win = add_rf_ground(board)                                 # ground under the antenna socket's opening...
+    add_zone(board, "+3V3", pcbnew.In3_Cu, hole=win[1] if win else None)   # ...is left out of the +3V3 plane
+    add_zone(board, "GND", pcbnew.F_Cu)
+    add_zone(board, "GND", pcbnew.B_Cu)
+    add_pour(board, "VDD_4G", pcbnew.B_Cu, VDD_4G_AREA)       # Air780E supply: a pour, not just a track
+    return win
+
+
 def strip_copper(src, dst, keep_locked=False):
     """Copy a .kicad_pcb without its tracks, vias and zones (optionally keeping the locked tracks and vias).
     Done on the file text: removing filled zones through the pcbnew Python API is not reliable."""
@@ -1412,13 +1428,7 @@ def main():
         print(f"  USB {pname} {ln[pname]:.1f} mm, {nname} {ln[nname]:.1f} mm, difference {abs(ln[pname] - ln[nname]):.1f} mm")
 
     r.export()
-    add_zone(board, "GND", pcbnew.In1_Cu)
-    add_zone(board, "GND", pcbnew.In4_Cu)
-    add_zone(board, "+3V3", pcbnew.In3_Cu)
-    add_zone(board, "GND", pcbnew.F_Cu)
-    add_zone(board, "GND", pcbnew.B_Cu)
-    add_pour(board, "VDD_4G", pcbnew.B_Cu, VDD_4G_AREA)       # Air780E supply: a pour, not just a track
-    win = add_rf_ground(board)
+    win = add_all_zones(board)
     if win:
         print("antenna socket: In4 opening %.2f x %.2f mm, In3 ground %.2f x %.2f mm"
               % (win[0][2] - win[0][0], win[0][3] - win[0][1], win[1][2] - win[1][0], win[1][3] - win[1][1]))

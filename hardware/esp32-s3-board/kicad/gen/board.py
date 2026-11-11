@@ -114,6 +114,21 @@ def pose(fp, x, y, rot, side):
     fp.SetOrientationDegrees(rot + 180 if side == "B" else rot)
 
 
+def keepouts_on_own_side(board):
+    """A library footprint may carry a keep-out on every copper layer (the U.FL socket does). Under a part
+    on this board a keep-out only makes sense on the side the part sits on; on the other layers it would
+    cut holes into the ground planes and forbid tracks that have nothing to do with the part."""
+    n = 0
+    for fp in board.GetFootprints():
+        for z in fp.Zones():
+            if z.GetIsRuleArea() and sum(1 for l in z.GetLayerSet().Seq() if pcbnew.IsCopperLayer(l)) > 1:
+                own = pcbnew.LSET()
+                own.AddLayer(fp.GetLayer())
+                z.SetLayerSet(own)
+                n += 1
+    return n
+
+
 def bbox_mm(fp):
     c = fp.GetCourtyard(pcbnew.F_CrtYd if fp.GetLayer() == pcbnew.F_Cu else pcbnew.B_CrtYd)
     bb = c.BBox() if c.OutlineCount() else fp.GetBoundingBox(False)
@@ -235,6 +250,7 @@ def main():
             row_h = max(row_h, h)
         y0 += row_h + 6.0
 
+    keepouts_on_own_side(board)
     path = os.path.join(OUT, NAME + ".kicad_pcb")
     pcbnew.SaveBoard(path, board)
     pro = os.path.join(OUT, NAME + ".kicad_pro")
