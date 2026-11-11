@@ -1,0 +1,80 @@
+(footprint "SpeakerPads"
+	(version 20241229)
+	(generator "pcbnew")
+	(generator_version "9.0")
+	(layer "F.Cu")
+	(descr "喇叭焊线焊盘，位置和尺寸同参考主板")
+	(property "Reference" "REF**"
+		(at 0 -3.3 0)
+		(layer "F.SilkS")
+		(uuid "6286c054-9a2a-48d0-b5ce-261d9194b9a1")
+		(effects
+			(font
+				(size 0.8 0.8)
+				(thickness 0.12)
+			)
+		)
+	)
+	(property "Value" "SpeakerPads"
+		(at 0 3.3 0)
+		(layer "F.Fab")
+		(uuid "4f7f5830-918c-499d-8bb3-a07849cbe301")
+		(effects
+			(font
+				(size 0.8 0.8)
+				(thickness 0.12)
+			)
+		)
+	)
+	(property "Datasheet" ""
+		(at 0 0 0)
+		(layer "F.Fab")
+		(hide yes)
+		(uuid "045c32ee-d3eb-4e5b-b7db-6e03756f92d2")
+		(effects
+			(font
+				(size 1.27 1.27)
+				(thickness 0.15)
+			)
+		)
+	)
+	(property "Description" ""
+		(at 0 0 0)
+		(layer "F.Fab")
+		(hide yes)
+		(uuid "a63eb9a9-d000-46b1-bec6-c0abd76038f2")
+		(effects
+			(font
+				(size 1.27 1.27)
+				(thickness 0.15)
+			)
+		)
+	)
+	(attr smd)
+	(fp_rect
+		(start -1.1 -2.55)
+		(end 1.1 2.55)
+		(stroke
+			(width 0.05)
+			(type default)
+		)
+		(fill no)
+		(layer "F.CrtYd")
+		(uuid "5171d241-dd1b-4bb7-bc44-2d82bdedb225")
+	)
+	(pad "1" smd rect
+		(at 0 -1.7)
+		(size 1.7 1.2)
+		(layers "F.Cu" "F.Mask")
+		(thermal_bridge_angle 45)
+		(uuid "2fa055b8-0472-4e41-ac63-6bd005f53b7d")
+	)
+	(pad "2" smd rect
+		(at 0 1.7)
+		(size 1.7 1.2)
+		(layers "F.Cu" "F.Mask")
+		(thermal_bridge_angle 45)
+		(uuid "44e29708-98e9-4170-8b9b-05750aede769")
+	)
+	(embedded_fonts no)
+)

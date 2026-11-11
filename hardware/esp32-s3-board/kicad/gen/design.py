@@ -24,7 +24,9 @@ d.rail("VDD_4G")   # Air780E supply after the load switch
 FP_0603 = "Capacitor_SMD:C_0603_1608Metric"
 FP_0805 = "Capacitor_SMD:C_0805_2012Metric"
 FP_SOT23 = "Package_TO_SOT_SMD:SOT-23"
-FP_FPC = "Connector_FFC-FPC:Hirose_FH12-%dS-0.5SH_1x%02d-1MP_P0.50mm_Horizontal"
+FP_FPC = "zeebuddy:FPC_0.5mm_%dP_Placeholder"
+FP_L_SMALL = "Inductor_SMD:L_Changjiang_FNR252012S"
+FP_L_BIG = "Inductor_SMD:L_Sunlord_MWSA0402S"
 
 # ---- project symbols --------------------------------------------------------
 AIR780_GND = [1, 10, 27, 34, 36, 37, 40, 41, 45, 46, 47, 48, 70, 71, 72, 73, 88, 89, 90, 91, 92, 93, 94, 95]
@@ -51,7 +53,7 @@ AIR780E = d.define(box_symbol(
            (65, "USIM2_VDD", "power_out"), (63, "USIM2_RST", "output"), (62, "USIM2_CLK", "output"),
            (64, "USIM2_DAT", "bidirectional"), None, None, None, None, None, None, None, None, None, None,
            None, None, None, (AIR780_GND, "GND", "power_in")],
-    hidden_nc=AIR780_NC, minw=40.64,
+    hidden_nc=AIR780_NC, minw=40.64, fp="zeebuddy:Air780E",
     desc="合宙 Air780E / Air780EEN Cat.1 模组，AT 方式的管脚定义（LGA-109，两个型号封装相同）",
     datasheet="https://docs.openluat.com/air780e/product/"))
 
@@ -66,7 +68,7 @@ MUX3257 = d.define(box_symbol(
 def fpc(name, pins, desc):
     """Single-row FPC connector with named pins and the two mounting tabs."""
     return d.define(box_symbol(name, "J", [], [(i + 1, n) for i, n in enumerate(pins)] + [("MP", "SHELL")],
-                               fp=FP_FPC % (len(pins), len(pins)), desc=desc, minw=15.24))
+                               fp=FP_FPC % len(pins), desc=desc, minw=15.24))
 
 
 LCD_PINS = ["LEDA", "LEDK", "SDA", "SCL", "NC", "VCI", "G7", "G6", "G5", "G4", "G3", "G2", "G1", "G0",
@@ -89,7 +91,7 @@ CHARGER = d.define(box_symbol(
            (23, "PMID"), ([19, 20], "LX"), (21, "BST"), None,
            ([15, 16], "SYS"), ([13, 14], "BAT"), None,
            (22, "REGN"), (11, "NTC")],
-    fp="Package_DFN_QFN:QFN-24-1EP_4x4mm_P0.5mm_EP2.65x2.65mm", minw=25.4,
+    fp="zeebuddy:SY6970_QFN-24_4x4mm", minw=25.4,
     desc="矽力杰 I²C 开关充电芯片，带电源路径和电压电流检测，QFN4x4-24，脚位与 BQ25895RTW 相同",
     datasheet="https://www.electronics-lab.com/wp-content/uploads/2023/12/SY6970-.pdf"))
 
@@ -97,7 +99,7 @@ MIC = d.define(box_symbol(
     "MSM261S4030H0R", "MK",
     left=[(8, "VDD", "power_in"), (4, "CHIPEN", "input"), (5, "L/R", "input"), (1, "GND", "power_in")],
     right=[(3, "WS", "input"), (6, "SCK", "input"), (7, "SD", "output")],
-    hidden_nc=[2], minw=20.32,
+    hidden_nc=[2], minw=20.32, fp="zeebuddy:MSM261S4030H0R",
     desc="敏芯 I²S 硅麦，4 × 3 × 1.25 mm，顶部进音",
     datasheet="https://www.waveshare.com/w/upload/0/01/MSM261S4030H0R.pdf"))
 
@@ -111,9 +113,10 @@ WLED = d.define(box_symbol(
 
 NANO_SIM = d.define(box_symbol(
     "NanoSIM_PushPush", "J",
-    [("C1", "VCC"), ("C2", "RST"), ("C3", "CLK"), ("C7", "IO"), ("C6", "VPP"), ("CD", "DET"),
-     ("C5", "GND"), ("SH", "SHELL")], [],
-    desc="Nano SIM 自弹卡座，带插卡检测。具体型号和检测脚极性待定", minw=15.24))
+    [("1", "VCC"), ("2", "RST"), ("3", "CLK"), ("7", "IO"), ("6", "VPP"), ("SW", "DET"),
+     ("5", "GND"), ("SH", "SHELL")], [],
+    fp="Connector_Card:nanoSIM_GCT_SIM8060-6-1-14-00",
+    desc="Nano SIM 自弹卡座，带插卡检测。具体型号和检测脚极性待定，封装先用 GCT SIM8060 占位", minw=15.24))
 
 
 # =============================================================================
@@ -142,7 +145,7 @@ def power():
               "BAT": "VBAT", "REGN": "CHG_REGN", "NTC": "CHG_TS", "PGND": "GND"}, nc=["DSEL"])
     sh.hlist(274.32, 33.02, [
         ("C", "CHG_BTST", "CHG_SW", "47nF"),
-        ("L", "CHG_SW", "VSYS", "1µH 4A", "", "Inductor_SMD:L_Sunlord_MWSA0402S"),
+        ("L", "CHG_SW", "VSYS", "1µH 4A", "", FP_L_BIG),
         ("R", "CHG_ILIM", "GND", RILIM),
         ("R", "CHG_REGN", "CHG_TS", TS_TOP),
         ("R", "CHG_TS", "GND", TS_BOT),
@@ -164,12 +167,13 @@ def power():
             "并处理好 40 秒的 I²C 看门狗（定时喂或关掉），否则会回到默认值。", 1.3)
 
     sh.frame(12.7, 137.16, 213.36, 248.92, "电池座和 3.3 V 降压")
-    sh.place("Connector_Generic:Conn_01x02", 48.26, 162.56, {"1": "VBAT", "2": "GND"}, value="电池座")
+    sh.place("Connector_Generic:Conn_01x02", 48.26, 162.56, {"1": "VBAT", "2": "GND"}, value="电池焊盘",
+             fp="zeebuddy:BatteryPads")
     sh.place("Regulator_Switching:TLV62569DBV", 111.76, 162.56,
              {"VIN": "VSYS", "EN": "BUCK_EN", "SW": "BUCK_SW", "FB": "BUCK_FB", "GND": "GND"},
-             value="SY8089AAAC（可换 TLV62569DBV）")
+             value="SY8089AAAC（可换 TLV62569DBV）", fp="Package_TO_SOT_SMD:SOT-23-5")
     sh.hlist(175.26, 152.4, [
-        ("L", "BUCK_SW", "+3V3", "2.2µH 2A", "", "Inductor_SMD:L_Sunlord_MWSA0402S"),
+        ("L", "BUCK_SW", "+3V3", "2.2µH 2A", "", FP_L_SMALL),
         ("R", "+3V3", "BUCK_FB", "100k 1%"),
         ("C", "+3V3", "BUCK_FB", "22pF"),
         ("R", "BUCK_FB", "GND", "22.1k 1%"),
@@ -185,7 +189,12 @@ def power():
     for i, net in enumerate(["VBUS", "VBAT", "VSYS", "+3V3", "GND", "GND"]):
         sh.tp(340.36 + i * 10.16, 170.18, net)
     for i in range(4):
-        sh.place("Mechanical:MountingHole", 238.76 + i * 20.32, 236.22, {}, value="Ø1.6 螺丝孔")
+        if i == 0:      # the top-right hole is only 1.2 mm from the board edge: no room for a copper ring
+            sh.place("Mechanical:MountingHole", 238.76, 228.6, {}, value="Ø1.6 螺丝孔（无铜环）",
+                     fp="zeebuddy:MountingHole_1.6mm_NPTH")
+            continue
+        sh.place("Mechanical:MountingHole_Pad", 238.76 + i * 20.32, 228.6, {"1": "GND"}, value="Ø1.6 螺丝孔",
+                 fp="zeebuddy:MountingHole_1.6mm_Pad")
     return sh
 
 
@@ -221,11 +230,13 @@ def mcu():
     ])
     sh.tp(33.02, 149.86, "I2C_SDA")
     sh.tp(43.18, 149.86, "I2C_SCL")
-    sh.place("Switch:SW_Push", 58.42, 165.1, {"1": "ESP_EN", "2": "GND"}, value="复位")
-    sh.place("Switch:SW_Push", 58.42, 177.8, {"1": "I2S_BCLK", "2": "GND"}, value="BOOT（GPIO0）")
+    sh.place("Switch:SW_Push", 58.42, 165.1, {"1": "ESP_EN", "2": "GND"}, value="复位",
+             fp="Button_Switch_SMD:SW_SPST_B3U-1000P")
+    sh.place("Switch:SW_Push", 58.42, 177.8, {"1": "I2S_BCLK", "2": "GND"}, value="BOOT（GPIO0）",
+             fp="Button_Switch_SMD:SW_SPST_B3U-1000P")
     sh.place("Connector_Generic:Conn_01x06", 68.58, 200.66,
              {"1": "+3V3", "2": "GND", "3": "ESP_EN", "4": "I2S_BCLK", "5": "U0TXD", "6": "U0RXD"},
-             value="下载 / 调试焊盘")
+             value="下载 / 调试焊盘", fp="zeebuddy:ProgPads_1x06")
     sh.place("Power_Supervisor:LM809", 116.84, 190.5, {"VCC": "+3V3", "GND": "GND", "~{RESET}": "ESP_EN"},
              value="803 型 3.08V 开漏", dnp=True, fp=FP_SOT23)
     sh.text(96.52, 209.55, "预留的复位监控芯片：电池供电时 3.3 V 可能缓慢下降，\n"
@@ -332,6 +343,7 @@ def cellular():
         ("R", "LTE_PWR_B", "GND", "10k"),
     ])
     sh.place("Device:C_Polarized", 132.08, 88.9, {"1": "VDD_4G", "2": "GND"}, value="220µF 钽",
+             fp="Capacitor_Tantalum_SMD:CP_EIA-3528-21_Kemet-B",
              prop_pos={"Reference": (134.4, 87.8, 0, "left"), "Value": (134.4, 90.0, 0, "left")})
     sh.caps(149.86, 88.9, "VDD_4G", ["100nF", "33pF"], pitch=10.16)
     sh.caps(170.18, 88.9, "VDD_4G", ["10pF"])
@@ -388,8 +400,8 @@ def cellular():
 
     sh.frame(297.18, 17.78, 406.4, 180.34, "SIM 卡（Nano SIM 自弹卡座）")
     sh.place(NANO_SIM, 381, 45.72,
-             {"C1": "SIM_VDD", "C2": "SIM_RST_C", "C3": "SIM_CLK_C", "C7": "SIM_DAT_C", "CD": "SIM_DET",
-              "C5": "GND", "SH": "GND"}, nc=["C6"], value="Nano SIM 卡座")
+             {"1": "SIM_VDD", "2": "SIM_RST_C", "3": "SIM_CLK_C", "7": "SIM_DAT_C", "SW": "SIM_DET",
+              "5": "GND", "SH": "GND"}, nc=["6"], value="Nano SIM 卡座")
     sh.hlist(350.52, 71.12, [
         ("R", "SIM_RST", "SIM_RST_C", "22R"),
         ("R", "SIM_CLK", "SIM_CLK_C", "22R"),
@@ -555,7 +567,8 @@ def audio_tf():
         ("R", "PA_GAIN", "GND", "0R", "dnp"),
         ("R", "PA_EN", "GND", "2.2k"),
     ])
-    sh.place("Connector_Generic:Conn_01x02", 373.38, 48.26, {"1": "SPK_P", "2": "SPK_N"}, value="喇叭")
+    sh.place("Connector_Generic:Conn_01x02", 373.38, 48.26, {"1": "SPK_P", "2": "SPK_N"}, value="喇叭焊盘",
+             fp="zeebuddy:SpeakerPads")
     sh.caps(160.02, 109.22, "VSYS", [("10µF", FP_0603), "100nF"], pitch=12.7)
     sh.text(233.68, 96.52,
             "功放直接用电池电压供电，输出功率比用 3.3 V 大。\n"
@@ -564,10 +577,11 @@ def audio_tf():
             "增益脚悬空 = 9 dB；贴 0R 接地 = 12 dB。", 1.3)
 
     sh.frame(12.7, 137.16, 406.4, 248.92, "TF 卡（SD 一线模式：CLK、CMD、D0）")
-    sh.place("Connector:Micro_SD_Card_Det1", 111.76, 195.58,
+    sh.place("Connector:Micro_SD_Card_Det_Hirose_DM3AT", 111.76, 195.58,
              {"DAT2": "SD_D2", "DAT3/CD": "SD_D3", "CMD": "SD_CMD", "VDD": "+3V3", "CLK": "SD_CLK_R",
-              "VSS": "GND", "DAT0": "SD_D0", "DAT1": "SD_D1", "DET": "SD_DET", "SHIELD": "GND"},
-             value="TF 卡座（带检测）")
+              "VSS": "GND", "DAT0": "SD_D0", "DAT1": "SD_D1", "DET_B": "SD_DET", "DET_A": "GND",
+              "SHIELD": "GND"},
+             value="TF 卡座（带检测）", fp="Connector_Card:microSD_HC_Molex_104031-0811")
     sh.hlist(220.98, 162.56, [
         ("R", "SD_CLK", "SD_CLK_R", "22R"),
         ("R", "+3V3", "SD_CMD", "10k"),
@@ -607,7 +621,7 @@ def backlight(sh):
              {"IN": "VSYS", "EN/PWM": "LCD_BL_PWM", "GND": "GND", "LX": "BL_SW", "OVP": "LCD_LEDA",
               "FB": "LCD_LEDK"})
     sh.hlist(350.52, 96.52, [
-        ("L", "VSYS", "BL_SW", "22µH", "", "Inductor_SMD:L_Sunlord_MWSA0402S"),
+        ("L", "VSYS", "BL_SW", "22µH", "", FP_L_SMALL),
         ("R", "LCD_LEDK", "GND", "5.1R 1%"),
     ])
     sh.D(350.52, 119.38, "BL_SW", "LCD_LEDA", "肖特基 40V", "Device:D_Schottky", "right",

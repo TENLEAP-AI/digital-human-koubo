@@ -1,0 +1,73 @@
+(footprint "MountingHole_1.6mm_NPTH"
+	(version 20241229)
+	(generator "pcbnew")
+	(generator_version "9.0")
+	(layer "F.Cu")
+	(descr "Ø1.6 螺丝孔，无铜环（离板边太近）")
+	(property "Reference" "REF**"
+		(at 0 -2.6 0)
+		(layer "F.SilkS")
+		(uuid "525126dd-ea93-4af3-9b58-8f030bb824e2")
+		(effects
+			(font
+				(size 0.8 0.8)
+				(thickness 0.12)
+			)
+		)
+	)
+	(property "Value" "MountingHole_1.6mm_NPTH"
+		(at 0 2.6 0)
+		(layer "F.Fab")
+		(uuid "1209739f-236a-4696-9fcd-c8e206d56f2e")
+		(effects
+			(font
+				(size 0.8 0.8)
+				(thickness 0.12)
+			)
+		)
+	)
+	(property "Datasheet" ""
+		(at 0 0 0)
+		(layer "F.Fab")
+		(hide yes)
+		(uuid "5a8de214-7b37-46c2-b0fb-83776973ada6")
+		(effects
+			(font
+				(size 1.27 1.27)
+				(thickness 0.15)
+			)
+		)
+	)
+	(property "Description" ""
+		(at 0 0 0)
+		(layer "F.Fab")
+		(hide yes)
+		(uuid "ca978f2a-bc4f-4ac5-a2ac-cd8ce2452b9d")
+		(effects
+			(font
+				(size 1.27 1.27)
+				(thickness 0.15)
+			)
+		)
+	)
+	(attr through_hole)
+	(fp_circle
+		(center 0 0)
+		(end 1.8 0)
+		(stroke
+			(width 0.1)
+			(type default)
+		)
+		(fill no)
+		(layer "Cmts.User")
+		(uuid "9dc3a840-21af-419a-87f6-85bf3332b5d5")
+	)
+	(pad "" np_thru_hole circle
+		(at 0 0)
+		(size 1.6 1.6)
+		(drill 1.6)
+		(layers "*.Cu" "*.Mask")
+		(uuid "c8277ee7-590b-49df-95c9-90f996ee31f5")
+	)
+	(embedded_fonts no)
+)

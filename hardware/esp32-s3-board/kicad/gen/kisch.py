@@ -133,6 +133,7 @@ class Design:
         self.refs = {}
         self.custom = {}
         self.expect = {}      # (ref, pin) -> net name, or None for no-connect
+        self.parts = {}       # ref -> symbol uuid, sheet, footprint ... (used to build the PCB)
         self.net_sheets = {}  # net -> set of sheet names
         self.root_text = []
 
@@ -186,6 +187,10 @@ class Design:
         with open(os.path.join(outdir, "build", "expected_nets.json"), "w", encoding="utf-8") as f:
             json.dump({f"{r}.{p}": n for (r, p), n in sorted(self.expect.items())}, f, indent=0,
                       ensure_ascii=False)
+        parts = {ref: dict(info, pins={p: n for (r, p), n in self.expect.items() if r == ref})
+                 for ref, info in self.parts.items()}
+        with open(os.path.join(outdir, "build", "parts.json"), "w", encoding="utf-8") as f:
+            json.dump(parts, f, indent=0, ensure_ascii=False)
 
     def title_block(self, title):
         return [S("title_block"), [S("title"), title], [S("date"), self.date], [S("rev"), self.rev],
@@ -284,13 +289,17 @@ class Sheet:
         self.attach(net, x + 10.16, y, 0, 1 if net == "GND" else -1, stub=0 if net in POWER else 2.54)
 
     # ---- symbols ----------------------------------------------------------
-    def _instance(self, lib_id, x, y, rot, ref, value, fp, fields, power=False, dnp=False, prop_pos=None):
+    def _instance(self, lib_id, x, y, rot, ref, value, fp, fields, power=False, dnp=False, prop_pos=None,
+                  in_bom=True):
         sym = self.d.symbol(lib_id)
         self.libsyms[lib_id] = sym
+        sym_uuid = self._u("sym")
         node = [S("symbol"), [S("lib_id"), lib_id], [S("at"), r2(x), r2(y), rot], [S("unit"), 1],
-                [S("exclude_from_sim"), S("no")], [S("in_bom"), S("no" if power else "yes")],
+                [S("exclude_from_sim"), S("no")], [S("in_bom"), S("no" if power or not in_bom else "yes")],
                 [S("on_board"), S("yes")], [S("dnp"), S("yes" if dnp else "no")],
-                [S("uuid"), self._u("sym")]]
+                [S("uuid"), sym_uuid]]
+        info = dict(uuid=sym_uuid, sheet=self.uuid, sheetname=self.title, sheetfile=self.fname,
+                    lib_id=lib_id, value=value, dnp=dnp, footprint="")
         for prop in find(sym, "property"):
             name = prop[1]
             if name.startswith("ki_"):
@@ -302,6 +311,8 @@ class Sheet:
                 val = value
             elif name == "Footprint" and fp is not None:
                 val = fp
+            if name == "Footprint":
+                info["footprint"] = val
             at = first(prop, "at")
             px, py, pa = float(at[1]), float(at[2]), int(float(at[3])) if len(at) > 3 else 0
             eff = copy.deepcopy(first(prop, "effects"))
@@ -323,10 +334,12 @@ class Sheet:
                                       [S("path"), f"/{self.d.root_uuid}/{self.uuid}",
                                        [S("reference"), ref], [S("unit"), 1]]]])
         self.items.append(node)
+        if not power:
+            self.d.parts[ref] = info
         return sym
 
     def place(self, lib_id, x, y, nets, value=None, ref=None, rot=0, fp=None, nc=(), stub=2.54,
-              dnp=False, fields=None, prop_pos=None):
+              dnp=False, fields=None, prop_pos=None, in_bom=True):
         """Place a symbol. nets maps pin number or pin name -> net. nc lists unconnected pins
         ('*' = every pin not in nets)."""
         x, y = snap(x), snap(y)
@@ -339,7 +352,7 @@ class Sheet:
         if value is None:
             value = [p for p in find(sym, "property") if p[1] == "Value"][0][2]
         self._instance(lib_id, x, y, rot, ref, value + (" (不贴)" if dnp else ""), fp, fields or {},
-                       dnp=dnp, prop_pos=prop_pos)
+                       dnp=dnp, prop_pos=prop_pos, in_bom=in_bom)
         numbers = {p["number"] for p in pins}
         names = {p["name"] for p in pins}
         for key in list(nets) + [k for k in nc if k != "*"]:
@@ -404,7 +417,8 @@ class Sheet:
                     fp = "Capacitor_SMD:C_0603_1608Metric"
             self.C(x + i * pitch, y, net, gnd, val, fp=fp)
 
-    def D(self, x, y, anode, cathode, value, lib_id="Device:D", point="down", fp=None, dnp=False):
+    def D(self, x, y, anode, cathode, value, lib_id="Device:D", point="down", fp="Diode_SMD:D_SOD-323",
+          dnp=False):
         """Diode-like part (pin 1 = K, pin 2 = A). point: direction of current flow on the page."""
         x, y = snap(x), snap(y)
         rot = {"left": 0, "down": 90, "right": 180, "up": 270}[point]
@@ -443,7 +457,7 @@ class Sheet:
     def tp(self, x, y, net, fp="TestPoint:TestPoint_Pad_D1.0mm"):
         """Test point; the pad hangs below its net label."""
         x, y = snap(x), snap(y)
-        return self.place("Connector:TestPoint", x, y, {"1": net}, value="TP", rot=180, fp=fp,
+        return self.place("Connector:TestPoint", x, y, {"1": net}, value="TP", rot=180, fp=fp, in_bom=False,
                           prop_pos={"Reference": (x + 1.8, y + 3.3, 0, "right"), "Value": None})
 
     # ---- output -----------------------------------------------------------

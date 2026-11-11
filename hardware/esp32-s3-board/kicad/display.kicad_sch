@@ -281,7 +281,7 @@
 				(at -7.62 -31.75 0)
 				(effects (font (size 1.27 1.27)) (justify left top))
 			)
-			(property "Footprint" "Connector_FFC-FPC:Hirose_FH12-22S-0.5SH_1x22-1MP_P0.50mm_Horizontal"
+			(property "Footprint" "zeebuddy:FPC_0.5mm_22P_Placeholder"
 				(at 0 0 0)
 				(effects (font (size 1.27 1.27)) (hide yes))
 			)
@@ -526,7 +526,7 @@
 				(at -7.62 -11.43 0)
 				(effects (font (size 1.27 1.27)) (justify left top))
 			)
-			(property "Footprint" "Connector_FFC-FPC:Hirose_FH12-6S-0.5SH_1x06-1MP_P0.50mm_Horizontal"
+			(property "Footprint" "zeebuddy:FPC_0.5mm_6P_Placeholder"
 				(at 0 0 0)
 				(effects (font (size 1.27 1.27)) (hide yes))
 			)
@@ -1328,7 +1328,7 @@
 			(at 30.48 105.41 0)
 			(effects (font (size 1.27 1.27)) (justify left top))
 		)
-		(property "Footprint" "Connector_FFC-FPC:Hirose_FH12-22S-0.5SH_1x22-1MP_P0.50mm_Horizontal"
+		(property "Footprint" "zeebuddy:FPC_0.5mm_22P_Placeholder"
 			(at 38.1 73.66 0)
 			(effects (font (size 1.27 1.27)) (hide yes))
 		)
@@ -1951,7 +1951,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "bfb01c2d-f9c0-518f-98f7-906112d64152")
-		(property "Reference" "#PWR80" (at 180.34 63.5 0) (effects (font (size 1.27 1.27)) (hide yes)))
+		(property "Reference" "#PWR83" (at 180.34 63.5 0) (effects (font (size 1.27 1.27)) (hide yes)))
 		(property "Value" "GND" (at 180.34 60.96 0) (effects (font (size 1.27 1.27))))
 		(property "Footprint" "" (at 180.34 57.15 0) (effects (font (size 1.27 1.27)) (hide yes)))
 		(property "Datasheet" "" (at 180.34 57.15 0) (effects (font (size 1.27 1.27)) (hide yes)))
@@ -1963,7 +1963,7 @@
 		(instances
 			(project "zeebuddy-mainboard"
 				(path "/7aeefa69-ecae-5622-92cc-4aeb9ca26e29/72d8b70c-6a09-5074-81b9-3c57a242f61f"
-					(reference "#PWR80")
+					(reference "#PWR83")
 					(unit 1)
 				)
 			)
@@ -2019,7 +2019,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "439f1eee-2463-5b6c-ba78-416571c32288")
-		(property "Reference" "#PWR81" (at 193.04 63.5 0) (effects (font (size 1.27 1.27)) (hide yes)))
+		(property "Reference" "#PWR84" (at 193.04 63.5 0) (effects (font (size 1.27 1.27)) (hide yes)))
 		(property "Value" "GND" (at 193.04 60.96 0) (effects (font (size 1.27 1.27))))
 		(property "Footprint" "" (at 193.04 57.15 0) (effects (font (size 1.27 1.27)) (hide yes)))
 		(property "Datasheet" "" (at 193.04 57.15 0) (effects (font (size 1.27 1.27)) (hide yes)))
@@ -2031,7 +2031,7 @@
 		(instances
 			(project "zeebuddy-mainboard"
 				(path "/7aeefa69-ecae-5622-92cc-4aeb9ca26e29/72d8b70c-6a09-5074-81b9-3c57a242f61f"
-					(reference "#PWR81")
+					(reference "#PWR84")
 					(unit 1)
 				)
 			)
@@ -2060,7 +2060,7 @@
 			(at 30.48 201.93 0)
 			(effects (font (size 1.27 1.27)) (justify left top))
 		)
-		(property "Footprint" "Connector_FFC-FPC:Hirose_FH12-6S-0.5SH_1x06-1MP_P0.50mm_Horizontal"
+		(property "Footprint" "zeebuddy:FPC_0.5mm_6P_Placeholder"
 			(at 38.1 190.5 0)
 			(effects (font (size 1.27 1.27)) (hide yes))
 		)
@@ -2206,7 +2206,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "f08ad46f-7d4e-5643-abf4-e9f1b2940857")
-		(property "Reference" "#PWR82" (at 180.34 190.5 0) (effects (font (size 1.27 1.27)) (hide yes)))
+		(property "Reference" "#PWR85" (at 180.34 190.5 0) (effects (font (size 1.27 1.27)) (hide yes)))
 		(property "Value" "+3V3" (at 180.34 183.134 0) (effects (font (size 1.27 1.27))))
 		(property "Footprint" "" (at 180.34 186.69 0) (effects (font (size 1.27 1.27)) (hide yes)))
 		(property "Datasheet" "" (at 180.34 186.69 0) (effects (font (size 1.27 1.27)) (hide yes)))
@@ -2218,7 +2218,7 @@
 		(instances
 			(project "zeebuddy-mainboard"
 				(path "/7aeefa69-ecae-5622-92cc-4aeb9ca26e29/72d8b70c-6a09-5074-81b9-3c57a242f61f"
-					(reference "#PWR82")
+					(reference "#PWR85")
 					(unit 1)
 				)
 			)
@@ -2238,7 +2238,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "f825f12f-c74e-54f8-a4a4-eeb3c24cc78d")
-		(property "Reference" "#PWR83" (at 180.34 205.74 0) (effects (font (size 1.27 1.27)) (hide yes)))
+		(property "Reference" "#PWR86" (at 180.34 205.74 0) (effects (font (size 1.27 1.27)) (hide yes)))
 		(property "Value" "GND" (at 180.34 203.2 0) (effects (font (size 1.27 1.27))))
 		(property "Footprint" "" (at 180.34 199.39 0) (effects (font (size 1.27 1.27)) (hide yes)))
 		(property "Datasheet" "" (at 180.34 199.39 0) (effects (font (size 1.27 1.27)) (hide yes)))
@@ -2250,7 +2250,7 @@
 		(instances
 			(project "zeebuddy-mainboard"
 				(path "/7aeefa69-ecae-5622-92cc-4aeb9ca26e29/72d8b70c-6a09-5074-81b9-3c57a242f61f"
-					(reference "#PWR83")
+					(reference "#PWR86")
 					(unit 1)
 				)
 			)
@@ -2360,7 +2360,7 @@
 		(uuid "ecfdb30e-1a5d-5393-bf0f-08408d09f8ea")
 		(property "Reference" "L3" (at 350.52 93.98 90) (effects (font (size 1.27 1.27))))
 		(property "Value" "22µH" (at 350.52 99.06 90) (effects (font (size 1.27 1.27))))
-		(property "Footprint" "Inductor_SMD:L_Sunlord_MWSA0402S"
+		(property "Footprint" "Inductor_SMD:L_Changjiang_FNR252012S"
 			(at 350.52 96.52 0)
 			(effects (font (size 1.27 1.27)) (hide yes))
 		)
@@ -2514,7 +2514,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "0fd0f5da-77bc-51f2-8b58-867cabff6d8f")
-		(property "Reference" "#PWR84" (at 243.84 109.22 0) (effects (font (size 1.27 1.27)) (hide yes)))
+		(property "Reference" "#PWR87" (at 243.84 109.22 0) (effects (font (size 1.27 1.27)) (hide yes)))
 		(property "Value" "VSYS" (at 243.84 101.854 0) (effects (font (size 1.27 1.27))))
 		(property "Footprint" "" (at 243.84 105.41 0) (effects (font (size 1.27 1.27)) (hide yes)))
 		(property "Datasheet" "" (at 243.84 105.41 0) (effects (font (size 1.27 1.27)) (hide yes)))
@@ -2526,7 +2526,7 @@
 		(instances
 			(project "zeebuddy-mainboard"
 				(path "/7aeefa69-ecae-5622-92cc-4aeb9ca26e29/72d8b70c-6a09-5074-81b9-3c57a242f61f"
-					(reference "#PWR84")
+					(reference "#PWR87")
 					(unit 1)
 				)
 			)
@@ -2546,7 +2546,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "f858c024-d570-595f-80a1-18eb84ec7872")
-		(property "Reference" "#PWR85" (at 243.84 124.46 0) (effects (font (size 1.27 1.27)) (hide yes)))
+		(property "Reference" "#PWR88" (at 243.84 124.46 0) (effects (font (size 1.27 1.27)) (hide yes)))
 		(property "Value" "GND" (at 243.84 121.92 0) (effects (font (size 1.27 1.27))))
 		(property "Footprint" "" (at 243.84 118.11 0) (effects (font (size 1.27 1.27)) (hide yes)))
 		(property "Datasheet" "" (at 243.84 118.11 0) (effects (font (size 1.27 1.27)) (hide yes)))
@@ -2558,7 +2558,7 @@
 		(instances
 			(project "zeebuddy-mainboard"
 				(path "/7aeefa69-ecae-5622-92cc-4aeb9ca26e29/72d8b70c-6a09-5074-81b9-3c57a242f61f"
-					(reference "#PWR85")
+					(reference "#PWR88")
 					(unit 1)
 				)
 			)
@@ -2614,7 +2614,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "ac918231-cd0c-5be4-8fb4-76a2889939bd")
-		(property "Reference" "#PWR86" (at 269.24 124.46 0) (effects (font (size 1.27 1.27)) (hide yes)))
+		(property "Reference" "#PWR89" (at 269.24 124.46 0) (effects (font (size 1.27 1.27)) (hide yes)))
 		(property "Value" "GND" (at 269.24 121.92 0) (effects (font (size 1.27 1.27))))
 		(property "Footprint" "" (at 269.24 118.11 0) (effects (font (size 1.27 1.27)) (hide yes)))
 		(property "Datasheet" "" (at 269.24 118.11 0) (effects (font (size 1.27 1.27)) (hide yes)))
@@ -2626,7 +2626,7 @@
 		(instances
 			(project "zeebuddy-mainboard"
 				(path "/7aeefa69-ecae-5622-92cc-4aeb9ca26e29/72d8b70c-6a09-5074-81b9-3c57a242f61f"
-					(reference "#PWR86")
+					(reference "#PWR89")
 					(unit 1)
 				)
 			)

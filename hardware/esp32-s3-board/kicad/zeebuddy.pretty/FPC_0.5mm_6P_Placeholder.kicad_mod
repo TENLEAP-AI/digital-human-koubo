@@ -1,0 +1,176 @@
+(footprint "FPC_0.5mm_6P_Placeholder"
+	(version 20241229)
+	(generator "pcbnew")
+	(generator_version "9.0")
+	(layer "F.Cu")
+	(descr "0.5 mm 间距 6 脚翻盖排线座的占位封装，具体型号待定，画板前要换")
+	(property "Reference" "REF**"
+		(at 0 -3.6 0)
+		(layer "F.SilkS")
+		(uuid "3b6076ca-a73f-4e33-b028-6ceb3c28eb66")
+		(effects
+			(font
+				(size 0.8 0.8)
+				(thickness 0.12)
+			)
+		)
+	)
+	(property "Value" "FPC_0.5mm_6P_Placeholder"
+		(at 0 3.2 0)
+		(layer "F.Fab")
+		(uuid "bd142dd1-0adf-4047-913d-1168e0237332")
+		(effects
+			(font
+				(size 0.8 0.8)
+				(thickness 0.12)
+			)
+		)
+	)
+	(property "Datasheet" ""
+		(at 0 0 0)
+		(layer "F.Fab")
+		(hide yes)
+		(uuid "bbe26165-e763-443e-a0d1-11cb88e307da")
+		(effects
+			(font
+				(size 1.27 1.27)
+				(thickness 0.15)
+			)
+		)
+	)
+	(property "Description" ""
+		(at 0 0 0)
+		(layer "F.Fab")
+		(hide yes)
+		(uuid "96ae8753-5a62-422f-9a6e-c47707195322")
+		(effects
+			(font
+				(size 1.27 1.27)
+				(thickness 0.15)
+			)
+		)
+	)
+	(attr smd)
+	(fp_line
+		(start -3.25 2.25)
+		(end 3.25 2.25)
+		(stroke
+			(width 0.12)
+			(type default)
+		)
+		(layer "F.SilkS")
+		(uuid "4c0d4545-d5ba-4d33-b6d9-ec175ad0edcd")
+	)
+	(fp_circle
+		(center -1.85 -2.8)
+		(end -1.75 -2.8)
+		(stroke
+			(width 0.2)
+			(type default)
+		)
+		(fill no)
+		(layer "F.SilkS")
+		(uuid "21e15a78-7cf2-404a-b453-6494397ae3d2")
+	)
+	(fp_rect
+		(start -3.5 -2.75)
+		(end 3.5 2.35)
+		(stroke
+			(width 0.05)
+			(type default)
+		)
+		(fill no)
+		(layer "F.CrtYd")
+		(uuid "b1deb33b-7fcb-43e2-acb2-14141273eb07")
+	)
+	(fp_rect
+		(start -3.25 -1.6)
+		(end 3.25 2.1)
+		(stroke
+			(width 0.1)
+			(type default)
+		)
+		(fill no)
+		(layer "F.Fab")
+		(uuid "c056f7bd-095c-4269-8b9d-d216bb740cd0")
+	)
+	(fp_text user "排线从这一侧插入"
+		(at 0 2.9 0)
+		(layer "Cmts.User")
+		(uuid "fdd0fd91-0266-4174-9905-b6795c9df1b6")
+		(effects
+			(font
+				(size 0.5 0.5)
+				(thickness 0.075)
+			)
+		)
+	)
+	(fp_text user "占位"
+		(at 0 0.3 0)
+		(layer "F.Fab")
+		(uuid "53bb8936-7028-4442-8d0c-03e577053739")
+		(effects
+			(font
+				(size 0.7 0.7)
+				(thickness 0.105)
+			)
+		)
+	)
+	(pad "1" smd rect
+		(at -1.25 -1.9)
+		(size 0.3 1.2)
+		(layers "F.Cu" "F.Mask" "F.Paste")
+		(thermal_bridge_angle 45)
+		(uuid "a07c6c44-91f1-4d79-8b81-71cc616d6231")
+	)
+	(pad "2" smd rect
+		(at -0.75 -1.9)
+		(size 0.3 1.2)
+		(layers "F.Cu" "F.Mask" "F.Paste")
+		(thermal_bridge_angle 45)
+		(uuid "7759fabc-d512-46b0-ac63-654c9780c728")
+	)
+	(pad "3" smd rect
+		(at -0.25 -1.9)
+		(size 0.3 1.2)
+		(layers "F.Cu" "F.Mask" "F.Paste")
+		(thermal_bridge_angle 45)
+		(uuid "8d1a4365-c9cb-4109-a8c6-3b1a234fc4c6")
+	)
+	(pad "4" smd rect
+		(at 0.25 -1.9)
+		(size 0.3 1.2)
+		(layers "F.Cu" "F.Mask" "F.Paste")
+		(thermal_bridge_angle 45)
+		(uuid "47aae051-e926-4f28-96d2-647633492dd6")
+	)
+	(pad "5" smd rect
+		(at 0.75 -1.9)
+		(size 0.3 1.2)
+		(layers "F.Cu" "F.Mask" "F.Paste")
+		(thermal_bridge_angle 45)
+		(uuid "be964571-4c67-4f03-89ba-49592ec55572")
+	)
+	(pad "6" smd rect
+		(at 1.25 -1.9)
+		(size 0.3 1.2)
+		(layers "F.Cu" "F.Mask" "F.Paste")
+		(thermal_bridge_angle 45)
+		(uuid "0b0e0d4a-1cb2-4dc3-a666-901b42f2ee52")
+	)
+	(pad "MP" smd rect
+		(at -2.35 0.9)
+		(size 1.6 1.8)
+		(layers "F.Cu" "F.Mask" "F.Paste")
+		(thermal_bridge_angle 45)
+		(uuid "f0dae8b7-f2c8-40b5-b8c6-bb150add8950")
+	)
+	(pad "MP" smd rect
+		(at 2.35 0.9)
+		(size 1.6 1.8)
+		(layers "F.Cu" "F.Mask" "F.Paste")
+		(thermal_bridge_angle 45)
+		(uuid "37a3e00d-9937-4f60-99d2-17eb1c720407")
+	)
+	(embedded_fonts no)
+)

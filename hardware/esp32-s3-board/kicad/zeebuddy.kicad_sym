@@ -142,7 +142,7 @@
 			(at -20.32 -35.56 0)
 			(effects (font (size 1.27 1.27)) (justify left top))
 		)
-		(property "Footprint" "" (at 0 0 0) (effects (font (size 1.27 1.27)) (hide yes)))
+		(property "Footprint" "zeebuddy:Air780E" (at 0 0 0) (effects (font (size 1.27 1.27)) (hide yes)))
 		(property "Datasheet" "https://docs.openluat.com/air780e/product/"
 			(at 0 0 0)
 			(effects (font (size 1.27 1.27)) (hide yes))
@@ -907,7 +907,7 @@
 			(at -7.62 -34.29 0)
 			(effects (font (size 1.27 1.27)) (justify left top))
 		)
-		(property "Footprint" "Connector_FFC-FPC:Hirose_FH12-24S-0.5SH_1x24-1MP_P0.50mm_Horizontal"
+		(property "Footprint" "zeebuddy:FPC_0.5mm_24P_Placeholder"
 			(at 0 0 0)
 			(effects (font (size 1.27 1.27)) (hide yes))
 		)
@@ -1091,7 +1091,7 @@
 			(at -7.62 -11.43 0)
 			(effects (font (size 1.27 1.27)) (justify left top))
 		)
-		(property "Footprint" "Connector_FFC-FPC:Hirose_FH12-6S-0.5SH_1x06-1MP_P0.50mm_Horizontal"
+		(property "Footprint" "zeebuddy:FPC_0.5mm_6P_Placeholder"
 			(at 0 0 0)
 			(effects (font (size 1.27 1.27)) (hide yes))
 		)
@@ -1164,7 +1164,7 @@
 			(at -7.62 -31.75 0)
 			(effects (font (size 1.27 1.27)) (justify left top))
 		)
-		(property "Footprint" "Connector_FFC-FPC:Hirose_FH12-22S-0.5SH_1x22-1MP_P0.50mm_Horizontal"
+		(property "Footprint" "zeebuddy:FPC_0.5mm_22P_Placeholder"
 			(at 0 0 0)
 			(effects (font (size 1.27 1.27)) (hide yes))
 		)
@@ -1336,7 +1336,10 @@
 			(at -10.16 -7.62 0)
 			(effects (font (size 1.27 1.27)) (justify left top))
 		)
-		(property "Footprint" "" (at 0 0 0) (effects (font (size 1.27 1.27)) (hide yes)))
+		(property "Footprint" "zeebuddy:MSM261S4030H0R"
+			(at 0 0 0)
+			(effects (font (size 1.27 1.27)) (hide yes))
+		)
 		(property "Datasheet" "https://www.waveshare.com/w/upload/0/01/MSM261S4030H0R.pdf"
 			(at 0 0 0)
 			(effects (font (size 1.27 1.27)) (hide yes))
@@ -1419,9 +1422,12 @@
 			(at -10.16 -12.7 0)
 			(effects (font (size 1.27 1.27)) (justify left top))
 		)
-		(property "Footprint" "" (at 0 0 0) (effects (font (size 1.27 1.27)) (hide yes)))
+		(property "Footprint" "Connector_Card:nanoSIM_GCT_SIM8060-6-1-14-00"
+			(at 0 0 0)
+			(effects (font (size 1.27 1.27)) (hide yes))
+		)
 		(property "Datasheet" "~" (at 0 0 0) (effects (font (size 1.27 1.27)) (hide yes)))
-		(property "Description" "Nano SIM 自弹卡座，带插卡检测。具体型号和检测脚极性待定"
+		(property "Description" "Nano SIM 自弹卡座，带插卡检测。具体型号和检测脚极性待定，封装先用 GCT SIM8060 占位"
 			(at 0 0 0)
 			(effects (font (size 1.27 1.27)) (hide yes))
 		)
@@ -1438,43 +1444,43 @@
 				(at -12.7 8.89 0)
 				(length 2.54)
 				(name "VCC" (effects (font (size 1.27 1.27))))
-				(number "C1" (effects (font (size 1.27 1.27))))
+				(number "1" (effects (font (size 1.27 1.27))))
 			)
 			(pin passive line
 				(at -12.7 6.35 0)
 				(length 2.54)
 				(name "RST" (effects (font (size 1.27 1.27))))
-				(number "C2" (effects (font (size 1.27 1.27))))
+				(number "2" (effects (font (size 1.27 1.27))))
 			)
 			(pin passive line
 				(at -12.7 3.81 0)
 				(length 2.54)
 				(name "CLK" (effects (font (size 1.27 1.27))))
-				(number "C3" (effects (font (size 1.27 1.27))))
+				(number "3" (effects (font (size 1.27 1.27))))
 			)
 			(pin passive line
 				(at -12.7 1.27 0)
 				(length 2.54)
 				(name "IO" (effects (font (size 1.27 1.27))))
-				(number "C7" (effects (font (size 1.27 1.27))))
+				(number "7" (effects (font (size 1.27 1.27))))
 			)
 			(pin passive line
 				(at -12.7 -1.27 0)
 				(length 2.54)
 				(name "VPP" (effects (font (size 1.27 1.27))))
-				(number "C6" (effects (font (size 1.27 1.27))))
+				(number "6" (effects (font (size 1.27 1.27))))
 			)
 			(pin passive line
 				(at -12.7 -3.81 0)
 				(length 2.54)
 				(name "DET" (effects (font (size 1.27 1.27))))
-				(number "CD" (effects (font (size 1.27 1.27))))
+				(number "SW" (effects (font (size 1.27 1.27))))
 			)
 			(pin passive line
 				(at -12.7 -6.35 0)
 				(length 2.54)
 				(name "GND" (effects (font (size 1.27 1.27))))
-				(number "C5" (effects (font (size 1.27 1.27))))
+				(number "5" (effects (font (size 1.27 1.27))))
 			)
 			(pin passive line
 				(at -12.7 -8.89 0)
@@ -1498,7 +1504,7 @@
 			(at -12.7 -20.32 0)
 			(effects (font (size 1.27 1.27)) (justify left top))
 		)
-		(property "Footprint" "Package_DFN_QFN:QFN-24-1EP_4x4mm_P0.5mm_EP2.65x2.65mm"
+		(property "Footprint" "zeebuddy:SY6970_QFN-24_4x4mm"
 			(at 0 0 0)
 			(effects (font (size 1.27 1.27)) (hide yes))
 		)
@@ -1763,7 +1769,7 @@
 			(at -7.62 -11.43 0)
 			(effects (font (size 1.27 1.27)) (justify left top))
 		)
-		(property "Footprint" "Connector_FFC-FPC:Hirose_FH12-6S-0.5SH_1x06-1MP_P0.50mm_Horizontal"
+		(property "Footprint" "zeebuddy:FPC_0.5mm_6P_Placeholder"
 			(at 0 0 0)
 			(effects (font (size 1.27 1.27)) (hide yes))
 		)

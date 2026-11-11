@@ -1,0 +1,109 @@
+(footprint "BatteryPads"
+	(version 20241229)
+	(generator "pcbnew")
+	(generator_version "9.0")
+	(layer "F.Cu")
+	(descr "电池焊线焊盘，位置和尺寸同参考主板：1 = 正，2 = 负，3 = 温度电阻（没接）")
+	(property "Reference" "REF**"
+		(at 0 -3.81 0)
+		(layer "F.SilkS")
+		(uuid "450a0fcf-925f-4616-abec-9c61b812f6cb")
+		(effects
+			(font
+				(size 0.8 0.8)
+				(thickness 0.12)
+			)
+		)
+	)
+	(property "Value" "BatteryPads"
+		(at 0 3.8 0)
+		(layer "F.Fab")
+		(uuid "cc2bfc44-43fd-40bc-a6dd-598e21b15a1f")
+		(effects
+			(font
+				(size 0.8 0.8)
+				(thickness 0.12)
+			)
+		)
+	)
+	(property "Datasheet" ""
+		(at 0 0 0)
+		(layer "F.Fab")
+		(hide yes)
+		(uuid "f57b61a2-fbc6-4d19-b019-0a1d77f1f692")
+		(effects
+			(font
+				(size 1.27 1.27)
+				(thickness 0.15)
+			)
+		)
+	)
+	(property "Description" ""
+		(at 0 0 0)
+		(layer "F.Fab")
+		(hide yes)
+		(uuid "e6a913c8-1756-4d90-85f3-ad9870a4f64f")
+		(effects
+			(font
+				(size 1.27 1.27)
+				(thickness 0.15)
+			)
+		)
+	)
+	(attr smd)
+	(fp_rect
+		(start -1.54 -3.06)
+		(end 1.54 3.05)
+		(stroke
+			(width 0.05)
+			(type default)
+		)
+		(fill no)
+		(layer "F.CrtYd")
+		(uuid "f7b69814-fed1-4bf9-b4c8-d3d04247bdb9")
+	)
+	(fp_text user "-"
+		(at 1.99 -2.21 0)
+		(layer "F.SilkS")
+		(uuid "3c4921c8-b441-4c82-98ce-8e0ccf7c153c")
+		(effects
+			(font
+				(size 0.8 0.8)
+				(thickness 0.12)
+			)
+		)
+	)
+	(fp_text user "+"
+		(at 1.99 2.2 0)
+		(layer "F.SilkS")
+		(uuid "b944b815-38c5-4eb8-a0d8-88d78d0022f2")
+		(effects
+			(font
+				(size 0.8 0.8)
+				(thickness 0.12)
+			)
+		)
+	)
+	(pad "1" smd rect
+		(at 0 2.2)
+		(size 2.58 1.2)
+		(layers "F.Cu" "F.Mask")
+		(thermal_bridge_angle 45)
+		(uuid "5758c618-4491-4f25-8d40-362ec0f2548b")
+	)
+	(pad "2" smd rect
+		(at 0 -2.21)
+		(size 2.58 1.2)
+		(layers "F.Cu" "F.Mask")
+		(thermal_bridge_angle 45)
+		(uuid "7f3b9d51-60dd-4b68-888a-7ecee8e45c3d")
+	)
+	(pad "3" smd rect
+		(at 0 0)
+		(size 2.58 1.2)
+		(layers "F.Cu" "F.Mask")
+		(thermal_bridge_angle 45)
+		(uuid "14cb85e7-1039-48f7-ba5c-afe3316b9e46")
+	)
+	(embedded_fonts no)
+)
