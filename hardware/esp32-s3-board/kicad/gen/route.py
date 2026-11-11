@@ -124,6 +124,8 @@ class Router:
         self.vias = []             # (net id, x, y, diameter, drill)
         self.failed = []
         self.critical = set()      # tracks and vias of the nets routed by rule: exported locked
+        self.pid, self.cur_pid, self.next_pid = {}, None, 1   # track / via tuple -> id of the path it was laid in
+        self.comp_of = {}          # track / via tuple -> component id (refreshed by build_maps)
         self.masks = []
         self.outbuf = (ctypes.c_int32 * 20000)()
         self.load_pads()
@@ -270,23 +272,46 @@ class Router:
         self.tracks = [t for t in self.tracks if t[0] != net]
         self.vias = [v for v in self.vias if v[0] != net]
 
+    def remove_paths(self, pids):
+        self.tracks = [t for t in self.tracks if self.pid.get(t) not in pids]
+        self.vias = [v for v in self.vias if self.pid.get(v) not in pids]
+
+    def drop_orphans(self, nets):
+        """After paths were taken out: remove copper of these nets that no longer reaches any pad."""
+        lib = self.lib
+        roots = {}
+        for p in self.pads:
+            if p["net"] in nets:
+                roots.setdefault(p["net"], set()).add(lib.rt_find(p["comp"]))
+        keep = lambda item: item[0] not in nets or lib.rt_find(self.comp_of[item]) in roots.get(item[0], ())
+        n = len(self.tracks) + len(self.vias)
+        self.tracks = [t for t in self.tracks if keep(t)]
+        self.vias = [v for v in self.vias if keep(v)]
+        return n - len(self.tracks) - len(self.vias)
+
+    def count_open(self):
+        """Connections still missing, counted from the pads."""
+        lib = self.lib
+        groups = {}
+        for p in self.pads:
+            groups.setdefault(p["net"], set()).add(lib.rt_find(p["comp"]))
+        n = 0
+        for net, g in groups.items():
+            if self.net_name[net] in PLANES:
+                n += sum(1 for r in g if not lib.rt_plane(r))
+            else:
+                n += len(g) - 1
+        return n
+
     def conflicts(self, net, cells, width, rules):
-        """Nets whose tracks or vias are too close to a path found in rip-up mode."""
-        segs, via_pts = [], []
-        start = prev = cells[0]
-        for c in cells[1:]:
-            if c[0] != prev[0]:
-                segs.append((start[0], start[2] * G, start[1] * G, prev[2] * G, prev[1] * G))
-                via_pts.append((prev[2] * G, prev[1] * G))
-                start = c
-            prev = c
-        segs.append((start[0], start[2] * G, start[1] * G, prev[2] * G, prev[1] * G))
-        # the path between two layer changes is not straight: test it cell run by cell run
-        runs = []
-        run_start = cells[0]
-        last = cells[0]
+        """Tracks and vias of other nets that are too close to a path found in rip-up mode,
+        as a set of (net, path id); the id is None for copper that was not laid by commit()."""
+        via_pts, runs = [], []
+        run_start = last = cells[0]
         direction = None
         for c in cells[1:]:
+            if c[0] != last[0]:
+                via_pts.append((last[2] * G, last[1] * G))
             d = (c[0] - last[0], c[2] - last[2], c[1] - last[1])
             if d != direction and direction is not None:
                 if run_start[0] == last[0]:
@@ -298,31 +323,22 @@ class Router:
             runs.append((last[0], run_start[2] * G, run_start[1] * G, last[2] * G, last[1] * G))
         via = rules["via"] or (0.45, 0.2)
         hit = set()
-        for onet, l, x0, y0, x1, y1, w in self.tracks:
+        for t in self.tracks:
+            onet, l, x0, y0, x1, y1, w = t
             if onet == net:
                 continue
             need = w / 2 + width / 2 + CLR + MARGIN
-            for rl, a0, b0, a1, b1 in runs:
-                if rl == l and seg_seg(a0, b0, a1, b1, x0, y0, x1, y1) < need:
-                    hit.add(onet)
-                    break
-            else:
-                for vx, vy in via_pts:
-                    if pt_seg(vx, vy, x0, y0, x1, y1) < w / 2 + via[0] / 2 + CLR + MARGIN:
-                        hit.add(onet)
-                        break
-        for onet, x, y, dia, drill in self.vias:
+            if any(rl == l and seg_seg(a0, b0, a1, b1, x0, y0, x1, y1) < need for rl, a0, b0, a1, b1 in runs) or \
+                    any(pt_seg(vx, vy, x0, y0, x1, y1) < w / 2 + via[0] / 2 + CLR + MARGIN for vx, vy in via_pts):
+                hit.add((onet, self.pid.get(t)))
+        for v in self.vias:
+            onet, x, y, dia, drill = v
             if onet == net:
                 continue
-            for rl, a0, b0, a1, b1 in runs:
-                if pt_seg(x, y, a0, b0, a1, b1) < dia / 2 + width / 2 + CLR + MARGIN:
-                    hit.add(onet)
-                    break
-            else:
-                for vx, vy in via_pts:
-                    if math.hypot(vx - x, vy - y) < max(dia / 2 + via[0] / 2 + CLR, drill / 2 + via[1] / 2 + HOLE_CLR) + MARGIN:
-                        hit.add(onet)
-                        break
+            if any(pt_seg(x, y, a0, b0, a1, b1) < dia / 2 + width / 2 + CLR + MARGIN for rl, a0, b0, a1, b1 in runs) or \
+                    any(math.hypot(vx - x, vy - y) < max(dia / 2 + via[0] / 2 + CLR, drill / 2 + via[1] / 2 + HOLE_CLR) + MARGIN
+                        for vx, vy in via_pts):
+                hit.add((onet, self.pid.get(v)))
         return hit
 
     def add_track(self, net, l, x0, y0, x1, y1, width, comp):
@@ -334,7 +350,11 @@ class Router:
         extra = RF_EXTRA if self.net_name[net] in RF else 0.0
         lib.rt_paint_seg(l, *a, (width / 2 + R0 + extra) / G, net, 0, 0)
         lib.rt_paint_seg(l, *a, 0.6, net, 1, comp)
-        self.tracks.append((net, l, x0, y0, x1, y1, width))
+        t = (net, l, x0, y0, x1, y1, width)
+        self.tracks.append(t)
+        self.comp_of[t] = comp
+        if self.cur_pid is not None:
+            self.pid[t] = self.cur_pid
         return comp
 
     def add_via(self, net, x, y, dia, drill, comp):
@@ -347,7 +367,11 @@ class Router:
             lib.rt_paint_seg(l, cx, cy, cx, cy, (dia / 2 + R0) / G, net, 0, 0)
             lib.rt_paint_seg(l, cx, cy, cx, cy, 0.6, net, 1, comp)
         lib.rt_viablock_rect(cx, cy, cx, cy, (drill / 2 + HOLE_CLR + 0.15 + MARGIN) / G)
-        self.vias.append((net, x, y, dia, drill))
+        v = (net, x, y, dia, drill)
+        self.vias.append(v)
+        self.comp_of[v] = comp
+        if self.cur_pid is not None:
+            self.pid[v] = self.cur_pid
         return comp
 
     # ---- nets that need more than "connect the pads" -------------------------------------------
@@ -369,6 +393,40 @@ class Router:
                 if res:
                     self.commit(net, small["comp"], res[0], res[1], rules, width, False)
                     break
+
+    def local_first(self, names, reach=6.0):
+        """Short connections before long ones: for the given nets, join every pair of pads that are close
+        together (the short edges of each net's spanning tree), shortest first across all nets, so that a
+        pad is not walled in by long tracks before its own short connection is made."""
+        lib = self.lib
+        edges = []
+        for name in names:
+            net = self.net_id.get(name)
+            pads = [p for p in self.pads if p["net"] == net]
+            if len(pads) < 2:
+                continue
+            todo, tree = pads[1:], [pads[0]]
+            while todo:                                   # Prim: always add the pad closest to the tree
+                d, a, b = min(((rect_gap(t["rect"], q["rect"]), t, q) for t in tree for q in todo), key=lambda e: e[0])
+                todo.remove(b)
+                tree.append(b)
+                if d <= reach:
+                    edges.append((d, name, a, b))
+        made = 0
+        for d, name, a, b in sorted(edges, key=lambda e: e[0]):
+            if lib.rt_find(a["comp"]) == lib.rt_find(b["comp"]):
+                continue
+            net = self.net_id[name]
+            rules = net_rules(name)
+            box = (min(a["rect"][0], b["rect"][0]), min(a["rect"][1], b["rect"][1]),
+                   max(a["rect"][2], b["rect"][2]), max(a["rect"][3], b["rect"][3]))
+            for width in rules["widths"]:
+                res = self.search(net, lib.rt_find(a["comp"]), rules, width, False, box, 1.5)
+                if res:
+                    self.commit(net, lib.rt_find(a["comp"]), res[0], res[1], rules, width, False)
+                    made += 1
+                    break
+        return made, len(edges)
 
     def decouple_first(self, name):
         """DEC-2 for a plane net: every capacitor gets its via first; a supply pin with a capacitor of the same
@@ -568,6 +626,7 @@ class Router:
         via = rules["via"]
         end = cells[-1]
         joined = lib.rt_comp_at(end[0], end[2], end[1])      # read before the new track is painted over it
+        self.cur_pid, self.next_pid = self.next_pid, self.next_pid + 1
 
         def seg(a, b):
             if a != b:
@@ -591,6 +650,7 @@ class Router:
             lib.rt_set_plane(root)
         else:
             lib.rt_unite(root, joined)
+        self.cur_pid = None
 
     def route_net(self, name, record=True):
         """Connect all pads of a net. Returns the number of connections that could not be made."""
@@ -634,86 +694,99 @@ class Router:
             self.failed.append((name, missing))
         return missing
 
-    def rip_up(self, limit=300, pen=40, budget=240.0):
-        """Rip-up and reroute: let a failed net push through other nets' tracks, remove those nets,
-        route the failed one, then route the removed ones again."""
+    def rip_up(self, limit=1500, pen=40, budget=600.0):
+        """Rip-up and reroute: let a failed net push through other nets' tracks, take out only the paths
+        that are in the way, route the failed net, then reconnect the nets that lost a path.
+        The best state seen is the one that is kept."""
         lib = self.lib
         queue = []
         for name, _ in self.failed:
             if name not in queue:
                 queue.append(name)
-        self.failed = []
-        ripped, final = {}, {}
+        ripped = {}
         self.walled = 0
         frozen = {self.net_id[n] for n in RF | USB | PWR_HI | set(PLANES) if n in self.net_id}   # never pushed out
-        rounds = 0
+        best = (self.count_open(), list(self.tracks), list(self.vias))
+        rounds, stale = 0, 0
         t0 = time.time()
-        while queue and rounds < limit and time.time() - t0 < budget:
+        while queue and rounds < limit and time.time() - t0 < budget and stale < 250:
             name = queue.pop(0)
             net = self.net_id[name]
-            miss = self.route_net(name, record=False)
-            if not miss:
-                final.pop(name, None)
-                continue
-            final[name] = miss
-            if name in PLANES:
+            if not self.route_net(name, record=False) or name in PLANES:
                 continue
             rules = net_rules(name)
             width = rules["widths"][-1]
-            roots = sorted({lib.rt_find(c) for c in self.comps[net]})
-            victims = set()
-            for src in roots:
+            hits = set()
+            for src in sorted({lib.rt_find(c) for c in self.comps[net]}):
                 res = self.search(net, src, rules, width, False, None, None, rip_pen=pen)
                 if res:
-                    victims = {v for v in self.conflicts(net, res[0], width, rules) if v not in frozen}
-                    if victims:
+                    hits = {h for h in self.conflicts(net, res[0], width, rules) if h[0] not in frozen}
+                    if hits:
                         break
-            if not victims:
+            if not hits:
                 self.walled += 1                 # no way through even when other nets' tracks may be pushed out
                 continue
             rounds += 1
-            if rounds % 10 == 0:
-                print(f"  rip-up round {rounds}: {name} pushes out {len(victims)} nets, {len(queue)} queued, "
-                      f"{sum(final.values())} missing, {time.time() - t0:.0f} s", flush=True)
-            for v in victims:
+            stale += 1
+            victims = {v for v, _ in hits}
+            for v in {v for v, pid in hits if pid is None}:
                 self.remove_net(v)
+            self.remove_paths({pid for _, pid in hits if pid is not None})
+            for v in victims:
                 ripped[v] = ripped.get(v, 0) + 1
-                if ripped[v] >= 3:
+                if ripped[v] >= 8:
                     frozen.add(v)
             self.build_maps(frozen)
-            miss = self.route_net(name, record=False)
-            if miss:
-                final[name] = miss
+            if self.drop_orphans(victims):
+                self.build_maps(frozen)
+            if self.route_net(name, record=False):
                 queue.append(name)
-            else:
-                final.pop(name, None)
-            for v in victims:
-                vname = self.net_name[v]
-                if vname not in queue:
-                    queue.insert(0, vname)
-        for name in queue:
-            miss = self.route_net(name, record=False)
+            for v in victims:                    # reconnect what was taken out, before anything else
+                if self.route_net(self.net_name[v], record=False) and self.net_name[v] not in queue:
+                    queue.append(self.net_name[v])
+            now = self.count_open()
+            if now < best[0]:
+                best = (now, list(self.tracks), list(self.vias))
+                stale = 0
+            if rounds % 25 == 0:
+                print(f"  rip-up round {rounds}: {now} open (best {best[0]}), {len(queue)} queued, "
+                      f"{time.time() - t0:.0f} s", flush=True)
+        self.tracks, self.vias = best[1], best[2]
+        self.build_maps()
+        self.failed = []
+        for net in sorted(self.comps):
+            name = self.net_name[net]
+            groups = {lib.rt_find(p["comp"]) for p in self.pads if p["net"] == net}
+            miss = sum(1 for g in groups if not lib.rt_plane(g)) if name in PLANES else len(groups) - 1
             if miss:
-                final[name] = miss
-            else:
-                final.pop(name, None)
-        self.failed = sorted(final.items())
+                self.failed.append((name, miss))
         return rounds
 
     def trim_tails(self):
-        """Cut back track ends that stick out past the point where the track is joined (a via or another
-        track met it a little before its end)."""
+        """Tidy up after routing: cut back track ends that stick out past the point where the track is
+        joined, remove tracks that end in the air, and remove vias that no longer join two layers."""
         changed = 0
-        for _ in range(4):
+        for _ in range(80):
             again = False
+            by = {}
+            for t in self.tracks:
+                by.setdefault((t[0], t[1]), []).append(t)
+            vias_of, pads_of = {}, {}
+            for v in self.vias:
+                vias_of.setdefault(v[0], []).append(v)
+            for p in self.pads:
+                pads_of.setdefault(p["net"], []).append(p)
             for i, t in enumerate(self.tracks):
                 net, l, x0, y0, x1, y1, w = t
-                same = [o for j, o in enumerate(self.tracks) if j != i and o[0] == net and o[1] == l]
-                vias = [v for v in self.vias if v[0] == net]
-                pads = [p for p in self.pads if p["net"] == net and l in p["layers"]]
+                same = [o for o in by[(net, l)] if o is not t]
+                vias = vias_of.get(net, [])
+                pads = [p for p in pads_of.get(net, []) if l in p["layers"]]
 
-                def held(x, y):
-                    return (any(pt_seg(x, y, o[2], o[3], o[4], o[5]) <= o[6] / 2 for o in same)
+                def held(x, y, ox, oy):
+                    # a track that also covers this track's other end does not hold this end: the piece between
+                    # the two ends lies inside that track's copper and leads nowhere
+                    return (any(pt_seg(x, y, o[2], o[3], o[4], o[5]) <= o[6] / 2 < pt_seg(ox, oy, o[2], o[3], o[4], o[5])
+                                for o in same)
                             or any(math.hypot(x - v[1], y - v[2]) <= v[3] / 2 for v in vias)
                             or any(p["rect"][0] <= x <= p["rect"][2] and p["rect"][1] <= y <= p["rect"][3] for p in pads))
 
@@ -730,14 +803,18 @@ class Router:
                         joints.append(((v[1] - x0) * (x1 - x0) + (v[2] - y0) * (y1 - y0)) / length ** 2)
                 joints = [min(1.0, max(0.0, j)) for j in joints]
                 a, b = 0.0, 1.0
-                if not held(x0, y0) and joints:
+                free0, free1 = not held(x0, y0, x1, y1), not held(x1, y1, x0, y0)
+                if free0 and joints:
                     a = min(joints)
-                if not held(x1, y1) and joints:
+                if free1 and joints:
                     b = max(joints)
+                plane = self.net_name[net] in PLANES
+                if (free0 or free1) and not joints and not plane:
+                    a = b = 0.0                    # hangs on nothing at all
                 if (a, b) == (0.0, 1.0):
                     continue
                 if b - a <= 1e-9:                  # nothing but a tail: one end joined, the other in the air
-                    if self.net_name[net] in PLANES or self.net_name[net] == "+3V3":
+                    if plane:
                         continue                   # may end in a pour
                     self.critical.discard(t)
                     self.tracks[i] = (net, l, x0, y0, x0, y0, w)
@@ -752,9 +829,52 @@ class Router:
                 changed += 1
                 again = True
             self.tracks = [t for t in self.tracks if (t[2], t[3]) != (t[4], t[5])]
+            keep = []
+            for v in self.vias:                    # a via must join copper on two layers
+                net, x, y, dia, drill = v
+                if self.net_name[net] in PLANES:
+                    keep.append(v)
+                    continue
+                layers = {t[1] for t in self.tracks if t[0] == net and
+                          (math.hypot(t[2] - x, t[3] - y) <= dia / 2 or math.hypot(t[4] - x, t[5] - y) <= dia / 2)}
+                for p in pads_of.get(net, []):
+                    if p["rect"][0] <= x <= p["rect"][2] and p["rect"][1] <= y <= p["rect"][3]:
+                        layers |= set(p["layers"])
+                if len(layers) >= 2:
+                    keep.append(v)
+                else:
+                    self.critical.discard(v)
+                    changed += 1
+                    again = True
+            self.vias = keep
             if not again:
                 break
         return changed
+
+    def diagnose(self):
+        """For every connection that is still open: is the pad group shut in by fixed things (pads, locked
+        tracks, plane vias), or only by other nets' tracks that a better router could move?"""
+        lib = self.lib
+        out = []
+        for name, _ in self.failed:
+            net = self.net_id[name]
+            rules = net_rules(name)
+            groups = {}
+            for p in self.pads:
+                if p["net"] == net:
+                    groups.setdefault(lib.rt_find(p["comp"]), []).append(p)
+            if name in PLANES:
+                open_groups = [g for g in groups if not lib.rt_plane(g)]
+            else:
+                open_groups = sorted(groups, key=lambda g: len(groups[g]))[:-1]
+            for g in open_groups:
+                res = self.search(net, g, rules, rules["widths"][-1], name in PLANES, None, None, rip_pen=40)
+                p = groups[g][0]
+                out.append(dict(net=name, pads=[f'{q["ref"]}.{q["num"]}' for q in groups[g]],
+                                x=round((p["rect"][0] + p["rect"][2]) / 2, 2), y=round((p["rect"][1] + p["rect"][3]) / 2, 2),
+                                side="F" if L1 in p["layers"] and L6 not in p["layers"] else "B" if L6 in p["layers"] and L1 not in p["layers"] else "FB",
+                                walled=res is None))
+        return out
 
     # ---- writing the result back into the KiCad board ------------------------------------------
     def export(self):
@@ -972,8 +1092,11 @@ def main():
     for name in sorted((n for n in multi if n in USB), key=size.get):
         r.route_net(name)
     r.critical = set(r.tracks) | set(r.vias)                  # everything so far is locked in the board file
-    for name in (sorted((n for n in multi if n in PWR_HI), key=size.get)
-                 + sorted((n for n in multi if n in PWR_LO), key=size.get) + ["GND"]):
+    for name in sorted((n for n in multi if n in PWR_HI), key=size.get):
+        r.route_net(name)
+    made, short = r.local_first([n for n in multi if n not in RF | USB | PWR_HI | set(PLANES)])
+    print(f"short connections first: {made} of {short} made", flush=True)
+    for name in sorted((n for n in multi if n in PWR_LO), key=size.get) + ["GND"]:
         r.route_net(name)
     print(f"+3V3: {r.decouple_first('+3V3')} supply pins joined to their capacitor instead of a via", flush=True)
     order = ["+3V3"] + sorted((n for n in multi if n not in special), key=size.get)
@@ -994,6 +1117,11 @@ def main():
           f"{length:.0f} mm of track, {time.time() - t0:.0f} s")
     for name, m in r.failed:
         print(f"  NOT ROUTED {name}: {m}")
+    diag = r.diagnose()
+    print(f"open pad groups: {len(diag)}, of which {sum(1 for d in diag if d['walled'])} are shut in by fixed copper",
+          flush=True)
+    with open(os.path.join(OUT, "build", "open.json"), "w", encoding="utf-8") as f:
+        json.dump(diag, f, ensure_ascii=False, indent=0)
     usb = []
     for pname, nname in USB_PAIRS:
         ln = {n: sum(math.hypot(t[4] - t[2], t[5] - t[3]) for t in r.tracks if r.net_name[t[0]] == n)
