@@ -261,7 +261,12 @@ def main():
     project["board"]["design_settings"]["rules"].update(RULES)
     project["board"]["design_settings"]["rule_severities"].update(
         {"silk_overlap": "ignore", "silk_over_copper": "ignore", "silk_edge_clearance": "ignore",
-         "text_height": "ignore", "text_thickness": "ignore"})
+         "text_height": "ignore", "text_thickness": "ignore",
+         # The footprints are written into the board by footprints.py / board.py. Whether a KiCad installation
+         # has the same footprint in its own libraries says nothing about this board: another KiCad version
+         # reports dozens of these. The one footprint changed on purpose (J7: its keep-out only on the back) is
+         # in the README.
+         "lib_footprint_issues": "ignore", "lib_footprint_mismatch": "ignore"})
     default = project["net_settings"]["classes"][0]
     default.update(DEFAULT_CLASS)
     classes, patterns = [default], []
