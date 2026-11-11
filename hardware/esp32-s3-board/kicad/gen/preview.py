@@ -113,7 +113,7 @@ if __name__ == "__main__":
 
 
 def draw_routing(path):
-    """Picture of the routed tracks: front red, inner layer green, back blue, pads grey."""
+    """Picture of the routed tracks: front red, L3 green, L4 orange, back blue, pads grey."""
     import pcbnew
     from board import NAME, OX, OY
     board = pcbnew.LoadBoard(os.path.join(OUT, NAME + ".kicad_pcb"))
@@ -132,9 +132,10 @@ def draw_routing(path):
                    px(pcbnew.ToMM(bb.GetRight()) - OX, pcbnew.ToMM(bb.GetBottom()) - OY)]
             front = pad.IsOnLayer(pcbnew.F_Cu)
             d.rectangle(box, fill=(205, 205, 205) if front else (228, 228, 236))
-    colors = {pcbnew.B_Cu: (40, 90, 220), pcbnew.In2_Cu: (40, 160, 70), pcbnew.F_Cu: (215, 50, 40)}
+    colors = {pcbnew.B_Cu: (40, 90, 220), pcbnew.In3_Cu: (235, 150, 30), pcbnew.In2_Cu: (40, 160, 70),
+              pcbnew.F_Cu: (215, 50, 40)}
     tracks = [t for t in board.GetTracks() if t.Type() != pcbnew.PCB_VIA_T]
-    for layer in (pcbnew.B_Cu, pcbnew.In2_Cu, pcbnew.F_Cu):
+    for layer in (pcbnew.B_Cu, pcbnew.In3_Cu, pcbnew.In2_Cu, pcbnew.F_Cu):
         for t in tracks:
             if t.GetLayer() != layer:
                 continue
@@ -150,7 +151,7 @@ def draw_routing(path):
     with open(os.path.join(OUT, "build", "routing.json"), encoding="utf-8") as f:
         st = json.load(f)
     d.text((MARGIN * s, 0.5 * s), f"布线进度：{st['total'] - st['missing']} / {st['total']} 个连接（从正面看）"
-           "    红 = 正面，绿 = 第三层，蓝 = 背面，灰点 = 过孔", fill="black", font=font)
+           "    红 = 正面，绿 = 第 3 层，橙 = 第 4 层，蓝 = 背面，灰点 = 过孔", fill="black", font=font)
     img.save(path)
 
 

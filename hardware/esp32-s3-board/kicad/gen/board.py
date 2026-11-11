@@ -13,7 +13,7 @@ import sys
 
 import pcbnew
 
-from place import GROUPS, MAIN
+from place import EXACT, GROUPS, MAIN
 from sexpr import find, first, parse
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -30,7 +30,7 @@ def V(x, y):
     return pcbnew.VECTOR2I(MM(OX + x), MM(OY + y))
 
 
-# ---- outline of the reference board (64 x 34 mm, 0.8 mm thick) --------------------------------
+# ---- outline of the reference board (64 x 34 mm; ours is 1.6 mm thick, six layers) --------------------------------
 # ("L", x, y) = line to; ("A", cx, cy, x, y) = arc around (cx, cy) to (x, y), short way round.
 OUTLINE_START = (1.5, 0.0)
 OUTLINE = [
@@ -44,7 +44,7 @@ OUTLINE = [
 HOLE_NPTH = (62.2, 1.2)                                   # too close to the edge for a copper ring
 HOLES = [(2.0, 14.5), (3.7, 32.0), (60.3, 32.0)]            # grounded ring
 
-# ---- basic rules for a 4-layer board at JLC; refined when routing starts -------------------------
+# ---- basic rules for a multilayer board at JLC (docs/layout-spec.md, GEN-1..7) -------------------------
 RULES = {"min_clearance": 0.09, "min_track_width": 0.09, "min_copper_edge_clearance": 0.3,
          "min_through_hole_diameter": 0.2, "min_via_diameter": 0.4, "min_via_annular_width": 0.075,
          "min_hole_clearance": 0.2}
@@ -57,7 +57,9 @@ NET_CLASSES = {
     "Power": (dict(track_width=0.3, via_diameter=0.5, via_drill=0.25),
               ["+3V3", "+2V8", "+1V2", "BUCK_SW", "BL_SW", "LCD_LEDA", "LCD_LEDK", "PA_OUTP", "PA_OUTN", "SPK_P",
                "SPK_N", "CHG_REGN", "CHG_BTST", "SIM_VDD", "LCD_VCI", "CAMF_IOVDD", "CAMF_DVDD", "GND"]),
-    "RF": (dict(track_width=0.35, clearance=0.3), ["LTE_ANT", "LTE_ANT_C"]),
+    # antenna line: coplanar, 0.5 mm wide with a 0.15 mm gap to the ground beside it. Placeholder values:
+    # the real ones come from the fab's impedance calculator (layout-spec.md RF-1)
+    "RF": (dict(track_width=0.5, clearance=0.15), ["LTE_ANT", "LTE_ANT_C"]),
     "USB": (dict(track_width=0.2, diff_pair_width=0.2, diff_pair_gap=0.15),
             ["USBC_DP", "USBC_DM", "ESP_DP", "ESP_DM", "ESP_USB_DP", "ESP_USB_DM", "LTE_USB_DP", "LTE_USB_DM"]),
 }
@@ -122,9 +124,9 @@ def main():
         parts = json.load(f)
 
     board = pcbnew.BOARD()
-    board.SetCopperLayerCount(4)
+    board.SetCopperLayerCount(6)       # F, In1 = GND, In2 = signal, In3 = power + signal, In4 = GND, B
     ds = board.GetDesignSettings()
-    ds.SetBoardThickness(MM(0.8))
+    ds.SetBoardThickness(MM(1.6))
     ds.SetAuxOrigin(V(0, 0))
     draw_outline(board)
 
@@ -173,7 +175,7 @@ def main():
         if extra:
             problems.append(f"{ref} ({info['footprint']}): pads without a schematic pin: {' '.join(extra)}")
 
-        spot = MAIN.get(info["value"]) or MAIN.get(info["footprint"])
+        spot = EXACT.get(ref) or MAIN.get(info["value"]) or MAIN.get(info["footprint"])
         if info["footprint"] == "zeebuddy:MountingHole_1.6mm_Pad":
             spot = holes.pop(0) + (0, "F")
         elif info["footprint"] == "zeebuddy:MountingHole_1.6mm_NPTH":

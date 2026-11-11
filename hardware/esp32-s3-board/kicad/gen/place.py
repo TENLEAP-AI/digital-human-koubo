@@ -32,6 +32,15 @@ MAIN = {
     "下载 / 调试焊盘": (42.5, 32.4, 0, "F"),
 }
 
+# ---- parts that need an exact spot: reference -> (x of the part's centre, y, rotation, side) ----------
+# Antenna matching on the back, in one straight line from the Air780E antenna pad to the socket's centre pad
+# (x = 24.45): the shunt capacitors sit with their signal pad on the line, the series part in the line (RF-8).
+EXACT = {
+    "C29": (23.97, 23.9, 0, "B"),
+    "R49": (24.45, 25.4, 90, "B"),
+    "C30": (23.97, 26.9, 0, "B"),
+}
+
 # ---- small parts ---------------------------------------------------------------------------------
 # (side, x, y, rows[, gap between parts, gap between rows]); the default gaps leave room for a via
 T = (0.12, 0.12)        # tight packing where there is no room to spare
@@ -39,13 +48,11 @@ GROUPS = [
     # ---------------- back ----------------
     ("B", 4.3, 6.0, ["C3 C4 C1 C2"], *T),                               # charger: PMID, REGN, BTST, VBUS
     ("B", 4.3, 14.7, ["C7 C5 C6", "R3 R5 R4"], *T),                     # charger: BAT, SYS, ILIM, NTC
-    ("B", 17.0, 8.7, ["C19@270"]),                                      # 220 uF, + pad level with the Air780E supply pads
+    ("B", 17.9, 8.7, ["C19@270"]),                                      # 220 uF, + pad within 1 mm of the Air780E supply pads (PWR-3)
     ("B", 17.8, 5.7, ["C20", "C21"], *T),
     ("B", 17.0, 14.0, ["Q1@90"]),                                       # Air780E load switch
     ("B", 61.3, 3.2, ["C13@180", "C12@90", "R12", "C14@180"], *T),      # ESP32: 3V3 decoupling (3V3 pads face pin 2), EN
     ("B", 61.3, 16.8, ["R19@180", "R18@180"], *T),                      # ESP32 USB series resistors, in pin order
-    ("B", 21.0, 24.1, ["C29", "C30"], *T),                              # antenna matching, shunt parts
-    ("B", 23.4, 24.2, ["R49@90"]),                                      # antenna matching, series part
     # ---------------- front ----------------
     ("F", 1.9, 0.7, ["R53 R54 C31 C32", "R61 R55 R56 R57", "C33 R58 R59 R60"]),           # LCD / touch
     ("F", 0.8, 6.2, ["U3 L2 C9@90 C10@90 C11@90", "R11 R9 C8 R10"]),                      # 3.3 V buck

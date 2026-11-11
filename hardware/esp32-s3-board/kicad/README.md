@@ -3,12 +3,13 @@
 ESP32-S3-WROOM-1U-N16R8 + Air780E 的主板，第一版，**草稿**：原理图已画完，PCB 元件全部摆好，
 **布线没有完成，还不能投板。**引脚分配按 `../docs/requirements.md` 的方案三。
 
-> **当前状态（布线暂停）**：正在考虑从四层改成六层，布线做到一半停下了。
-> 六层版的布局布线规范见 [`../docs/layout-spec.md`](../docs/layout-spec.md)。
-> - 这一版的 `zeebuddy-mainboard.kicad_pcb` **只有摆放，没有走线**（布线程序重跑到一半被中止）。
->   上一个提交里的 PCB 是旧摆放、布通 508 / 599 的版本。
-> - 下文的布线数字来自中止前最后一次完整运行（四层），重新运行 `gen/build.sh` 可以得到那个结果。
-> - `freerouting/zeebuddy-mainboard.dsn` 还是**旧摆放**的，先不要用，层数定了以后重新生成。
+> **当前状态（正在改六层，暂停在评审规范这一步）**：板厚定为 1.6 mm、六层。
+> - 脚本（`gen/board.py`、`gen/route.py` 等）已经改成六层，但**还没跑过一次完整布线**，其中天线线"挖空 L5"的做法正在重新评估。
+> - 这一版的 `zeebuddy-mainboard.kicad_pcb` 是六层、**只有摆放，没有走线**，并且有 3 处元件间距冲突还没修
+>   （220 µF 和天线匹配元件挪位后压到了 Air780E 和天线座的安装间隙）。
+> - 下文"PCB 布线现状"里的数字来自四层版最后一次完整运行，仅供参考。
+> - `freerouting/zeebuddy-mainboard.dsn` 还是**四层旧摆放**的，不要用。
+> - 六层版的布局布线规范见 [`../docs/layout-spec.md`](../docs/layout-spec.md)（草案，正在按评审意见修订）。
 
 ## 文件
 

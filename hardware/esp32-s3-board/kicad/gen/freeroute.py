@@ -32,9 +32,11 @@ def main():
     bare = os.path.join(OUT, "build", NAME + "-unrouted.kicad_pcb")
     kept = strip_copper(path, bare, keep_locked=True)   # keep only the locked copper: antenna, USB, decoupling
     board = pcbnew.LoadBoard(bare)
-    board.SetLayerType(pcbnew.In1_Cu, pcbnew.LT_POWER)   # ground plane: no signal tracks on it
+    for layer in (pcbnew.In1_Cu, pcbnew.In4_Cu):         # ground planes: no signal tracks on them
+        board.SetLayerType(layer, pcbnew.LT_POWER)
     add_zone(board, "GND", pcbnew.In1_Cu)      # exported as planes: the router drops vias onto them
-    add_zone(board, "+3V3", pcbnew.In2_Cu)
+    add_zone(board, "GND", pcbnew.In4_Cu)
+    add_zone(board, "+3V3", pcbnew.In3_Cu)
     add_pour(board, "VDD_4G", pcbnew.B_Cu, VDD_4G_AREA)
     add_rf_ground(board)
     print(f"kept {kept} locked tracks and vias")

@@ -3,8 +3,9 @@
     /usr/bin/python3.12 route.py [output_dir]
 
 Reads <name>.kicad_pcb written by board.py and writes it back with tracks, vias and zones.
-Layers: F.Cu and B.Cu carry signals, In1.Cu is a solid GND plane, In2.Cu is the +3V3 plane
-(the router may also use In2 for a signal when it has to, at a higher cost).
+Six layers (docs/layout-spec.md): F.Cu and B.Cu carry parts and short tracks, In1.Cu and In4.Cu are
+solid ground, In2.Cu is the main signal layer (mostly horizontal), In3.Cu carries +3V3 and signals
+(mostly vertical).
 """
 import ctypes
 import json
@@ -31,17 +32,24 @@ MARGIN = 0.02
 R0 = CLR + W_DEF / 2 + MARGIN  # growth of every obstacle in the owner map
 EDGE = 0.30                   # copper to board edge
 HOLE_CLR = 0.25               # hole to hole / hole to copper
-ROUTE_LAYERS = [pcbnew.F_Cu, pcbnew.In2_Cu, pcbnew.B_Cu]
+ROUTE_LAYERS = [pcbnew.F_Cu, pcbnew.In2_Cu, pcbnew.In3_Cu, pcbnew.B_Cu]   # the two ground planes are not routed
 NL = len(ROUTE_LAYERS)
+L1, L3, L4, L6 = 0, 1, 2, 3    # index of each routing layer (L2 and L5 are the planes)
+LAYER_DIRS = (0, 1, 2, 0)      # 1 = mostly horizontal, 2 = mostly vertical (STK-2)
 GW, GH = int(round(BOARD_W / G)) + 1, int(round(BOARD_H / G)) + 1
 
-PLANES = {"GND": pcbnew.In1_Cu}
+PLANES = {"GND": pcbnew.In1_Cu}          # a ground via also lands on In4, the second plane
 RF = {"LTE_ANT", "LTE_ANT_C"}
-RF_EXTRA = 0.2                # the antenna line keeps 0.3 mm from everything else, pours included
-RF_GND_AREA = (21.3, 21.0, 26.0, 32.5)   # under the antenna line: In2 is ground here and carries no tracks
+# Antenna line (layout-spec.md RF-1..11): coplanar on the back, In4 cut away under it, In3 is its ground.
+# Width and gap are placeholders until the fab's impedance calculator gives the real ones.
+RF_W, RF_GAP = 0.5, 0.15
+RF_EXTRA = RF_GAP - CLR       # the line and its pads keep RF_GAP from all other copper, pours included
+RF_KEEP = 1.0                 # other signals on the back stay this far from the line (ground may be closer)
+RF_CUT = 5 * RF_W             # width of the opening in In4 under the line
+RF_GND_AREA = (22.0, 20.3, 26.9, 31.3)   # In3 is ground here and carries no tracks
 USB = {"USBC_DP", "USBC_DM", "ESP_DP", "ESP_DM", "ESP_USB_DP", "ESP_USB_DM", "LTE_USB_DP", "LTE_USB_DM"}
 USB_PAIRS = [("USBC_DP", "USBC_DM"), ("ESP_DP", "ESP_DM"), ("ESP_USB_DP", "ESP_USB_DM"), ("LTE_USB_DP", "LTE_USB_DM")]
-COUPLED = [("ESP_USB_DP", "ESP_USB_DM", 1)]   # long pairs laid side by side on this routing layer (1 = In2)
+COUPLED = [("ESP_USB_DP", "ESP_USB_DM", L3)]  # long pairs laid side by side on this routing layer
 PAIR_W, PAIR_GAP = 0.2, 0.15
 VDD_4G_AREA = [(17.6, 5.65), (20.45, 5.65), (20.45, 10.9), (23.15, 10.9), (23.15, 13.0), (20.45, 13.0),
                (20.45, 18.1), (16.9, 18.1), (16.9, 8.6), (17.6, 8.6)]   # copper pour on the back, mm
@@ -51,20 +59,20 @@ PWR_LO = {"BUCK_SW", "BL_SW", "LCD_LEDA", "LCD_LEDK", "PA_OUTP", "PA_OUTN", "SPK
 
 
 def net_rules(name):
-    """widths to try (mm), via (diameter, drill) or None, layer costs (F, In2, B; 0 = not allowed), via cost."""
+    """widths to try (mm), via (diameter, drill) or None, layer costs (L1, L3, L4, L6; 0 = not allowed), via cost."""
     if name in RF:
-        return dict(widths=[0.35], via=None, lcost=(0, 0, 1), viacost=0)
+        return dict(widths=[RF_W], via=None, lcost=(0, 0, 0, 1), viacost=0)
     if name in PLANES:
-        return dict(widths=[0.25, 0.15], via=(0.45, 0.2), lcost=(1, 0, 1), viacost=0)
-    if name == "+3V3":      # trunk on In2 (a +3V3 pour fills the rest of that layer), short stubs to the pads
-        return dict(widths=[0.3, 0.2, 0.15], via=(0.45, 0.2), lcost=(3, 1, 3), viacost=300)
+        return dict(widths=[0.25, 0.15], via=(0.45, 0.2), lcost=(1, 0, 0, 1), viacost=0)
+    if name == "+3V3":      # trunk on L4 (a +3V3 pour fills the rest of that layer), short stubs to the pads
+        return dict(widths=[0.3, 0.2, 0.15], via=(0.45, 0.2), lcost=(3, 3, 1, 3), viacost=300)
     if name in USB:
-        return dict(widths=[PAIR_W, 0.15], via=(0.45, 0.2), lcost=(1, 2, 1), viacost=500)
-    if name in PWR_HI:
-        return dict(widths=[0.6, 0.4, 0.25, 0.15], via=(0.6, 0.3), lcost=(1, 4, 1), viacost=600)
+        return dict(widths=[PAIR_W, 0.15], via=(0.45, 0.2), lcost=(1, 2, 3, 1), viacost=500)
+    if name in PWR_HI:      # high current stays on the outer layers (1 oz copper)
+        return dict(widths=[0.6, 0.4, 0.25, 0.15], via=(0.6, 0.3), lcost=(1, 4, 2, 1), viacost=600)
     if name in PWR_LO:
-        return dict(widths=[0.3, 0.2, 0.15], via=(0.5, 0.25), lcost=(1, 4, 1), viacost=500)
-    return dict(widths=[0.15], via=(0.45, 0.2), lcost=(2, 3, 2), viacost=1000)
+        return dict(widths=[0.3, 0.2, 0.15], via=(0.5, 0.25), lcost=(1, 4, 3, 1), viacost=500)
+    return dict(widths=[0.15], via=(0.45, 0.2), lcost=(2, 1, 1, 2), viacost=700)
 
 
 def build_core():
@@ -81,6 +89,7 @@ def build_core():
     lib.rt_window.argtypes = [i, i, i, i]
     lib.rt_set_fixed.argtypes = [i]
     lib.rt_usable.argtypes = [i, i, i, i, i, ctypes.POINTER(i)]
+    lib.rt_set_dirs.argtypes = [ctypes.POINTER(i)]
     lib.rt_via_ok.argtypes = [i, i, i, i, ctypes.POINTER(i)]
     lib.rt_route.argtypes = [i, i, ctypes.POINTER(i), i, i, ctypes.POINTER(i), i, ctypes.POINTER(i), i, i,
                              ctypes.POINTER(ctypes.c_int32), i, ctypes.POINTER(i)]
@@ -102,6 +111,7 @@ class Router:
         self.board = board
         self.lib = build_core()
         self.lib.rt_init(GW, GH, NL)
+        self.lib.rt_set_dirs((ctypes.c_int * NL)(*LAYER_DIRS))
         self.net_id, self.net_name = {}, {}
         self.comps = {}            # net id -> list of component ids (one per pad)
         self.pads = []             # (net id, layers, rect mm, is_pth, comp id)
@@ -202,7 +212,7 @@ class Router:
             if no_vias or no_tracks:
                 lib.rt_viablock_rect(x0 / G, y0 / G, x1 / G, y1 / G, 0.3 / G)
         x0, y0, x1, y1 = [v / G for v in RF_GND_AREA]          # the antenna line needs unbroken ground below it
-        lib.rt_paint_rect(1, x0, y0, x1, y1, (W_DEF / 2 + MARGIN) / G, -1, 0, 0)
+        lib.rt_paint_rect(L4, x0, y0, x1, y1, (W_DEF / 2 + MARGIN) / G, -1, 0, 0)
         self.comps, self.comp_rect, self.net_box = {}, {}, {}
         for p in self.pads:
             plane = p["pth"] and self.net_name[p["net"]] in PLANES
@@ -225,6 +235,19 @@ class Router:
             for v in vias:
                 if (v[0] in fixed) == bool(keep):
                     self.add_via(*v, comp=None)
+        self.paint_rf_moat()
+        lib.rt_set_fixed(0)
+
+    def paint_rf_moat(self):
+        """Around the finished antenna line only ground may run on the back (RF-9)."""
+        lib = self.lib
+        gnd = self.net_id.get("GND")
+        if gnd is None:
+            return
+        lib.rt_set_fixed(1)
+        for net, l, x0, y0, x1, y1, w in self.tracks:
+            if self.net_name[net] in RF:
+                lib.rt_paint_seg(l, x0 / G, y0 / G, x1 / G, y1 / G, (w / 2 + RF_KEEP + W_DEF / 2 + MARGIN) / G, gnd, 0, 0)
         lib.rt_set_fixed(0)
 
     def remove_net(self, net):
@@ -319,7 +342,7 @@ class Router:
     def preroute_decoupling(self):
         """ESP32 supply: via -> 22 uF -> 100 nF -> pin 2, so the current passes the capacitors first."""
         net = self.net_id["+3V3"]
-        rules = dict(widths=[0.4, 0.25], via=(0.45, 0.2), lcost=(0, 0, 1), viacost=0)
+        rules = dict(widths=[0.4, 0.25], via=(0.45, 0.2), lcost=(0, 0, 0, 1), viacost=0)
         bulk, small = self.pad("C12", "+3V3"), self.pad("C13", "+3V3")
         res = self.search(net, bulk["comp"], rules, 0.4, True, bulk["rect"], 3.0)
         if res:
@@ -345,7 +368,7 @@ class Router:
             if length < 0.3:
                 continue
             ux, uy = (x1 - x0) / length, (y1 - y0) / length
-            off = w / 2 + 0.3 + via[0] / 2 + 0.15
+            off = w / 2 + RF_GAP + via[0] / 2 + 0.1       # in the ground right beside the gap
             steps = max(1, int(length / 1.2))
             for k in range(steps + 1):
                 for side in (1, -1):
@@ -709,25 +732,49 @@ def vec(x, y):
     return pcbnew.VECTOR2I(pcbnew.FromMM(OX + x), pcbnew.FromMM(OY + y))
 
 
-def add_rf_ground(board):
-    """Ground on In2 under the antenna line (the layer right below it), and no tracks allowed there."""
-    x0, y0, x1, y1 = RF_GND_AREA
-    pts = [(x0, y0), (x1, y0), (x1, y1), (x0, y1)]
-    add_pour(board, "GND", pcbnew.In2_Cu, pts, priority=2)
+def rule_area(board, layer, pts, name, no_tracks=False, no_pour=False):
     z = pcbnew.ZONE(board)
     z.SetIsRuleArea(True)
-    z.SetLayer(pcbnew.In2_Cu)
-    z.SetZoneName("antenna line: keep In2 ground unbroken")
-    z.SetDoNotAllowTracks(True)
+    z.SetLayer(layer)
+    z.SetZoneName(name)
+    z.SetDoNotAllowTracks(no_tracks)
     z.SetDoNotAllowVias(False)
     z.SetDoNotAllowPads(False)
-    z.SetDoNotAllowCopperPour(False)
+    z.SetDoNotAllowCopperPour(no_pour)
     z.SetDoNotAllowFootprints(False)
     outline = z.Outline()
     outline.NewOutline()
     for x, y in pts:
         outline.Append(vec(x, y))
     board.Add(z)
+
+
+def add_rf_ground(board):
+    """The antenna line's reference (RF-3, RF-4): In4 is opened under the line and its pads, 5 line widths
+    wide; In3 below the opening is ground and carries no tracks. Reads the line from the board's tracks."""
+    x0, y0, x1, y1 = RF_GND_AREA
+    pts = [(x0, y0), (x1, y0), (x1, y1), (x0, y1)]
+    add_pour(board, "GND", pcbnew.In3_Cu, pts, priority=2)
+    rule_area(board, pcbnew.In3_Cu, pts, "antenna line: In3 is its ground, no tracks", no_tracks=True)
+    half = RF_CUT / 2
+    boxes = []
+    for t in board.GetTracks():
+        if t.GetNetname() in RF and t.Type() != pcbnew.PCB_VIA_T:
+            a, b = t.GetStart(), t.GetEnd()
+            xs = [pcbnew.ToMM(a.x) - OX, pcbnew.ToMM(b.x) - OX]
+            ys = [pcbnew.ToMM(a.y) - OY, pcbnew.ToMM(b.y) - OY]
+            boxes.append((min(xs) - half, min(ys) - half, max(xs) + half, max(ys) + half))
+    for fp in board.GetFootprints():
+        for pad in fp.Pads():
+            if pad.GetNetname() in RF:
+                bb = pad.GetBoundingBox()
+                cx = (pcbnew.ToMM(bb.GetLeft()) + pcbnew.ToMM(bb.GetRight())) / 2 - OX
+                boxes.append((cx - half, pcbnew.ToMM(bb.GetTop()) - OY - 0.3, cx + half, pcbnew.ToMM(bb.GetBottom()) - OY + 0.3))
+    for bx0, by0, bx1, by1 in boxes:
+        bx0, by0, bx1, by1 = max(bx0, x0 + 1.0), max(by0, y0 + 0.5), min(bx1, x1 - 1.0), min(by1, y1 - 0.5)
+        if bx1 > bx0 and by1 > by0:
+            rule_area(board, pcbnew.In4_Cu, [(bx0, by0), (bx1, by0), (bx1, by1), (bx0, by1)],
+                      "antenna line: In4 opened under it", no_pour=True)
 
 
 def strip_copper(src, dst, keep_locked=False):
@@ -818,6 +865,7 @@ def main():
     for name in sorted(n for n in multi if n in RF):          # antenna line first, then its ground vias
         r.route_net(name)
     print(f"antenna line: {r.stitch_rf()} ground vias beside it", flush=True)
+    r.paint_rf_moat()
     for pname, nname, layer in COUPLED:                       # long USB pair side by side
         ok = r.route_pair(pname, nname, layer)
         print(f"pair {pname} / {nname}: {'laid side by side' if ok else 'no room for a coupled run'}", flush=True)
@@ -854,7 +902,8 @@ def main():
 
     r.export()
     add_zone(board, "GND", pcbnew.In1_Cu)
-    add_zone(board, "+3V3", pcbnew.In2_Cu)
+    add_zone(board, "GND", pcbnew.In4_Cu)
+    add_zone(board, "+3V3", pcbnew.In3_Cu)
     add_zone(board, "GND", pcbnew.F_Cu)
     add_zone(board, "GND", pcbnew.B_Cu)
     add_pour(board, "VDD_4G", pcbnew.B_Cu, VDD_4G_AREA)       # Air780E supply: a pour, not just a track

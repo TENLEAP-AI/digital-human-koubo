@@ -24,6 +24,7 @@ static uint32_t epoch = 0;
 static uint32_t *vstamp;       /* per (x, y): epoch at which viaval was computed */
 static uint8_t *viaval;
 static int wx0, wy0, wx1, wy1; /* search window */
+static int ldir[16];           /* per layer: 0 = any direction, 1 = mostly horizontal, 2 = mostly vertical */
 
 static int *uf;
 static uint8_t *plane_ok;
@@ -87,6 +88,7 @@ void rt_unite(int a, int b) {
     if (a != b) { uf[b] = a; plane_ok[a] |= plane_ok[b]; }
 }
 
+void rt_set_dirs(const int *dirs) { for (int l = 0; l < L && l < 16; l++) ldir[l] = dirs[l]; }
 void rt_set_plane(int a) { plane_ok[rt_find(a)] = 1; }
 void rt_set_fixed(int on) { paint_fixed = on; }
 int rt_plane(int a) { return plane_ok[rt_find(a)]; }
@@ -291,6 +293,7 @@ int rt_route(int net, int src, const int *lcost, int viacost, int np, const int 
             if (!usable(net, l, nx, ny, np, probe)) continue;
             int32_t ns = (int32_t)(((size_t)l * H + ny) * W + nx);
             int step = (d & 1) ? 14 : 10;
+            if ((ldir[l] == 1 && DY[d]) || (ldir[l] == 2 && DX[d])) step *= 3;   /* against the layer's direction */
             int32_t c = h.cost + step * lcost[l];
             if (rip_mode) {
                 int32_t v = owner[ns];
