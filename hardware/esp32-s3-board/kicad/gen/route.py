@@ -36,6 +36,7 @@ ROUTE_LAYERS = [pcbnew.F_Cu, pcbnew.In2_Cu, pcbnew.In3_Cu, pcbnew.B_Cu]   # the 
 NL = len(ROUTE_LAYERS)
 L1, L3, L4, L6 = 0, 1, 2, 3    # index of each routing layer (L2 and L5 are the planes)
 L4_SIGNALS = os.environ.get("L4_SIGNALS", "0") == "1"   # STK-6: L4 is a pure +3V3 layer unless this is set
+NEGOTIATE = os.environ.get("NEGOTIATE", "0") == "1"     # route by negotiation instead of one net after the other (experimental)
 LAYER_DIRS = (0, 1, 2, 0) if L4_SIGNALS else (0, 0, 0, 0)   # 1 = mostly horizontal, 2 = mostly vertical (STK-2)
 GW, GH = int(round(BOARD_W / G)) + 1, int(round(BOARD_H / G)) + 1
 
@@ -95,6 +96,14 @@ def build_core():
     lib.rt_set_fixed.argtypes = [i]
     lib.rt_usable.argtypes = [i, i, i, i, i, ctypes.POINTER(i)]
     lib.rt_set_dirs.argtypes = [ctypes.POINTER(i)]
+    lib.rt_cnt_seg.argtypes = [i, d, d, d, d, d, i]
+    lib.rt_cnt_via.argtypes = [d, d, d, d, i]
+    lib.rt_erase_seg.argtypes = [i, d, d, d, d, d, i]
+    lib.rt_erase_rect.argtypes = [i, d, d, d, d, d, i]
+    lib.rt_conflict_seg.argtypes = [i, d, d, d, d, d, i]
+    lib.rt_conflict_via.argtypes = [d, d, d, i]
+    lib.rt_route_neg.argtypes = [i, i, ctypes.POINTER(i), i, i, ctypes.POINTER(i), i, ctypes.POINTER(i), i,
+                                 ctypes.POINTER(ctypes.c_int32), i, ctypes.POINTER(i)]
     lib.rt_via_ok.argtypes = [i, i, i, i, ctypes.POINTER(i)]
     lib.rt_route.argtypes = [i, i, ctypes.POINTER(i), i, i, ctypes.POINTER(i), i, ctypes.POINTER(i), i, i,
                              ctypes.POINTER(ctypes.c_int32), i, ctypes.POINTER(i)]
@@ -126,6 +135,9 @@ class Router:
         self.critical = set()      # tracks and vias of the nets routed by rule: exported locked
         self.pid, self.cur_pid, self.next_pid = {}, None, 1   # track / via tuple -> id of the path it was laid in
         self.comp_of = {}          # track / via tuple -> component id (refreshed by build_maps)
+        self.neg = False           # negotiated routing in progress: new copper is counted, it does not block
+        self.cur_items = None      # where add_track / add_via note what they laid while negotiating
+        self.mov = {}              # net id -> [("t", track) | ("v", via)] of the nets being negotiated
         self.masks = []
         self.outbuf = (ctypes.c_int32 * 20000)()
         self.load_pads()
@@ -141,8 +153,13 @@ class Router:
         lib = self.lib
         cu = [l for l in ROUTE_LAYERS]
         self.npth, self.keepouts = [], []
-        for fp in self.board.GetFootprints():
-            for pad in fp.Pads():
+        # KiCad writes footprints and pads in the order of their (random) ids: sort them, so that the same
+        # placement always gives the same routing
+        ref_key = lambda fp: ("".join(c for c in fp.GetReference() if not c.isdigit()),
+                              int("".join(c for c in fp.GetReference() if c.isdigit()) or 0))
+        pad_key = lambda pad: (pad.GetNumber(), pad.GetPosition().x, pad.GetPosition().y)
+        for fp in sorted(self.board.GetFootprints(), key=ref_key):
+            for pad in sorted(fp.Pads(), key=pad_key):
                 on = [k for k, layer in enumerate(cu) if pad.IsOnLayer(layer)]
                 bb = pad.GetBoundingBox()
                 rect = (pcbnew.ToMM(bb.GetLeft()) - OX, pcbnew.ToMM(bb.GetTop()) - OY,
@@ -180,12 +197,24 @@ class Router:
             if p["round"]:
                 cx, cy, r = (x0 + x1) / 2, (y0 + y1) / 2, w / 2
                 lib.rt_paint_seg(l, cx, cy, cx, cy, r + grow / G, p["net"], 0, 0)
-                lib.rt_paint_seg(l, cx, cy, cx, cy, max(0.6, r * 0.5), p["net"], 1, comp)
             else:
                 lib.rt_paint_rect(l, x0, y0, x1, y1, grow / G, p["net"], 0, 0)
-                lib.rt_paint_rect(l, x0 + shrink, y0 + shrink, x1 - shrink, y1 - shrink, 0.3, p["net"], 1, comp)
+        self.paint_pad_copper(p, comp)
         # no via centre inside or right next to a pad
         lib.rt_viablock_rect(x0, y0, x1, y1, (0.40 if p["pth"] else 0.20) / G)
+
+    def paint_pad_copper(self, p, comp):
+        """The core of a pad as copper of component `comp`: where a track of its net may start or end."""
+        lib = self.lib
+        x0, y0, x1, y1 = [v / G for v in p["rect"]]
+        w, h = x1 - x0, y1 - y0
+        shrink = 0.35 * min(w, h)
+        for l in p["layers"]:
+            if p["round"]:
+                cx, cy, r = (x0 + x1) / 2, (y0 + y1) / 2, w / 2
+                lib.rt_paint_seg(l, cx, cy, cx, cy, max(0.6, r * 0.5), p["net"], 1, comp)
+            else:
+                lib.rt_paint_rect(l, x0 + shrink, y0 + shrink, x1 - shrink, y1 - shrink, 0.3, p["net"], 1, comp)
 
     def build_maps(self, frozen=()):
         """(Re)paint every map from the pad list and the tracks / vias routed so far.
@@ -347,6 +376,10 @@ class Router:
             comp = lib.rt_new_comp(0)
             self.comps.setdefault(net, []).append(comp)
         a = (x0 / G, y0 / G, x1 / G, y1 / G)
+        if self.neg:                 # copper only; neg_route counts the net's space in once the net is done
+            lib.rt_paint_seg(l, *a, 0.6, net, 1, comp)
+            self.cur_items.append(("t", (net, l, x0, y0, x1, y1, width)))
+            return comp
         extra = RF_EXTRA if self.net_name[net] in RF else 0.0
         lib.rt_paint_seg(l, *a, (width / 2 + R0 + extra) / G, net, 0, 0)
         lib.rt_paint_seg(l, *a, 0.6, net, 1, comp)
@@ -363,6 +396,11 @@ class Router:
             comp = lib.rt_new_comp(1 if self.net_name[net] in PLANES else 0)
             self.comps.setdefault(net, []).append(comp)
         cx, cy = x / G, y / G
+        if self.neg:
+            for l in range(NL):
+                lib.rt_paint_seg(l, cx, cy, cx, cy, 0.6, net, 1, comp)
+            self.cur_items.append(("v", (net, x, y, dia, drill)))
+            return comp
         for l in range(NL):
             lib.rt_paint_seg(l, cx, cy, cx, cy, (dia / 2 + R0) / G, net, 0, 0)
             lib.rt_paint_seg(l, cx, cy, cx, cy, 0.6, net, 1, comp)
@@ -693,6 +731,225 @@ class Router:
         if missing and record:
             self.failed.append((name, missing))
         return missing
+
+    # ---- negotiated routing ------------------------------------------------------------------
+    # All nets that are not fixed are routed together. A track may run through the space another net's
+    # track needs, but pays for it; the price rises every round and cells that stay contested get a
+    # lasting extra cost, so the nets sort out among themselves who goes where. A round in which no net is
+    # in another's way ends it: the result then obeys the same clearances as the strict router.
+    def search_neg(self, net, src, rules, width, box, margin, pf):
+        """Returns (cells, how much of the path lies in another net's way), or None when there is no way."""
+        lib = self.lib
+        if box is None:
+            lib.rt_window(0, 0, GW - 1, GH - 1)
+        else:
+            lib.rt_window(int((box[0] - margin) / G), int((box[1] - margin) / G),
+                          int((box[2] + margin) / G) + 1, int((box[3] + margin) / G) + 1)
+        np_, probe = disc_offsets(width / 2 - W_DEF / 2)
+        via = rules["via"]
+        nvp, vprobe = disc_offsets((via[0] / 2 if via else 0.3) - W_DEF / 2 + 0.01)
+        lcost = (ctypes.c_int * NL)(*rules["lcost"])
+        conf = ctypes.c_int(0)
+        n = lib.rt_route_neg(net, src, lcost, rules["viacost"] if via else 0, np_, probe, nvp, vprobe, pf,
+                             self.outbuf, len(self.outbuf), ctypes.byref(conf))
+        if n == 0:
+            return None
+        return [(s // (GW * GH), (s % (GW * GH)) // GW, s % GW) for s in reversed(self.outbuf[:n])], conf.value
+
+    def neg_route(self, net, pf, margin):
+        """Make the connections a net still lacks. Returns the new paths (one list of tracks and vias per
+        connection) and how many connections found no way. Each connection takes the widest track that
+        has a free way; where none has, the one least in the way of other nets. A wider search area is
+        tried before settling for a way that is not free."""
+        lib = self.lib
+        rules = net_rules(self.net_name[net])
+        paths = []
+        bad = set()
+        while True:
+            roots = sorted({lib.rt_find(c) for c in self.comps[net]})
+            todo = [r for r in roots if r not in bad] if len(roots) > 1 else []
+            if not todo:
+                break
+            src = todo[0]
+            best = None
+            for width in rules["widths"]:
+                for box, m in ((self.net_box[net], margin), (None, None)):
+                    res = self.search_neg(net, src, rules, width, box, m, pf)
+                    if res and (best is None or res[1] < best[1]):
+                        best = (res[0], res[1], width)
+                    if res and res[1] == 0:
+                        break
+                if best and best[1] == 0:
+                    break
+            if best:
+                self.cur_items = []
+                self.commit(net, src, best[0], 0, rules, best[2], False)
+                paths.append(self.cur_items)
+                self.cur_items = None
+                bad = {lib.rt_find(b) for b in bad}
+            else:
+                bad.add(src)
+        return paths, len({lib.rt_find(c) for c in self.comps[net]}) - 1
+
+    def neg_count(self, items, delta):
+        """Add (or take away) the space these tracks and vias need from the count the other nets see."""
+        lib = self.lib
+        for kind, it in items:
+            if kind == "t":
+                _, l, x0, y0, x1, y1, w = it
+                lib.rt_cnt_seg(l, x0 / G, y0 / G, x1 / G, y1 / G, (w / 2 + R0) / G, delta)
+            else:                                 # the same hole spacing for every via, whatever its drill:
+                _, x, y, dia, drill = it          # two vias must agree on whether they are too close
+                lib.rt_cnt_via(x / G, y / G, (dia / 2 + R0) / G, (0.15 + HOLE_CLR + 0.15 + MARGIN) / G, delta)
+
+    def neg_lift(self, net, items):
+        """Take a net's tracks and vias out of the maps; its pads stand alone again."""
+        lib = self.lib
+        self.neg_count(items, -1)
+        for kind, it in items:
+            if kind == "t":
+                _, l, x0, y0, x1, y1, w = it
+                lib.rt_erase_seg(l, x0 / G, y0 / G, x1 / G, y1 / G, 1.2, net)
+            else:
+                _, x, y, dia, drill = it
+                for l in range(NL):
+                    lib.rt_erase_seg(l, x / G, y / G, x / G, y / G, 1.2, net)
+        # the pads' copper has to go too: components cannot be split again, and painting a pad over its
+        # old copper would join it to the component the whole net was in
+        self.comps[net] = []
+        for p in self.pads_of[net]:
+            x0, y0, x1, y1 = [v / G for v in p["rect"]]
+            for l in p["layers"]:
+                lib.rt_erase_rect(l, x0, y0, x1, y1, 1.0, net)
+        for p in self.pads_of[net]:
+            p["comp"] = lib.rt_new_comp(0)
+            self.comps[net].append(p["comp"])
+            self.paint_pad_copper(p, p["comp"])
+
+    def neg_copper(self, net, items):
+        """Put tracks and vias back as copper of their net (not yet counted as space taken)."""
+        lib = self.lib
+        for kind, it in items:
+            comp = lib.rt_new_comp(0)
+            self.comps[net].append(comp)
+            if kind == "t":
+                _, l, x0, y0, x1, y1, w = it
+                lib.rt_paint_seg(l, x0 / G, y0 / G, x1 / G, y1 / G, 0.6, net, 1, comp)
+            else:
+                _, x, y, dia, drill = it
+                for l in range(NL):
+                    lib.rt_paint_seg(l, x / G, y / G, x / G, y / G, 0.6, net, 1, comp)
+
+    def neg_conflicts(self, items, add):
+        """Cells of these tracks and vias that lie in another net's way (call while the net is lifted).
+        The radii are the exact ones, without the half cell the search adds to be on the safe side: with the
+        rounded-up radius a via would count as being in the way of a track that was laid next to it at a
+        distance the track's own check allows, and the two would be taken out and laid again for ever."""
+        lib = self.lib
+        n = 0
+        for kind, it in items:
+            if kind == "t":
+                _, l, x0, y0, x1, y1, w = it
+                r = max(0.5, (w / 2 - W_DEF / 2) / G)
+                n += lib.rt_conflict_seg(l, x0 / G, y0 / G, x1 / G, y1 / G, r, add)
+            else:
+                _, x, y, dia, drill = it
+                n += lib.rt_conflict_via(x / G, y / G, (dia / 2 - W_DEF / 2) / G, add)
+        return n
+
+    def negotiate(self, names, max_iter=80, pf=400, grow=1.3, pf_max=4000):
+        """Route the named nets together (see above). Everything already in the maps must be fixed copper.
+        From the second round on, only the connections that are in another net's way are taken out and
+        laid again; the rest of the net stays where it is."""
+        lib = self.lib
+        nets = [self.net_id[n] for n in names]
+        self.pads_of = {}
+        for p in self.pads:
+            self.pads_of.setdefault(p["net"], []).append(p)
+        self.mov = {n: [] for n in nets}                 # net -> list of paths, a path = list of items
+        missing = {n: 0 for n in nets}
+        self.neg = True
+        lib.rt_clear_hist()
+        for it in range(1, max_iter + 1):
+            t0 = time.time()
+            dirty = cells = relaid = 0
+            margin = 6.0 if it <= 3 else 12.0
+            for net in nets:
+                keep = self.mov[net]
+                if it > 1:
+                    self.neg_lift(net, [i for p in keep for i in p])
+                    bad = [self.neg_conflicts(p, pf // 4) for p in keep]      # contested cells get dearer for good
+                    keep = [p for p, n in zip(keep, bad) if not n]
+                    flat = [i for p in keep for i in p]
+                    self.neg_copper(net, flat)
+                    if not any(bad) and not (missing[net] and it % 5 == 0):
+                        self.neg_count(flat, 1)
+                        continue
+                    if any(bad):
+                        dirty += 1
+                        cells += sum(bad)
+                        relaid += sum(1 for n in bad if n)
+                new, missing[net] = self.neg_route(net, pf, margin)
+                self.mov[net] = keep + new
+                self.neg_count([i for p in self.mov[net] for i in p], 1)
+            print(f"  round {it}: {dirty} nets were in another's way ({relaid} connections, {cells} cells), "
+                  f"{sum(missing.values())} connections with no way at all, price x{pf / 8:.0f}, "
+                  f"{time.time() - t0:.0f} s", flush=True)
+            if it > 1 and dirty == 0:
+                break
+            pf = min(int(pf * grow), pf_max)
+        return it
+
+    def neg_finish(self, names):
+        """Back to strict maps. Connections that are still in another net's way are taken out, worst first."""
+        nets = [self.net_id[n] for n in names]
+        dropped = 0
+        while True:
+            worst = (0, None, None)
+            for net in nets:
+                paths = self.mov[net]
+                flat = [i for p in paths for i in p]
+                if not flat:
+                    continue
+                self.neg_lift(net, flat)
+                for k, p in enumerate(paths):
+                    n = self.neg_conflicts(p, 0)
+                    if n > worst[0]:
+                        worst = (n, net, k)
+                self.neg_copper(net, flat)
+                self.neg_count(flat, 1)
+            if worst[1] is None:
+                break
+            net, k = worst[1], worst[2]
+            flat = [i for p in self.mov[net] for i in p]
+            self.neg_lift(net, flat)
+            del self.mov[net][k]
+            flat = [i for p in self.mov[net] for i in p]
+            self.neg_copper(net, flat)
+            self.neg_count(flat, 1)
+            dropped += 1
+        self.neg = False
+        for net in nets:
+            for p in self.mov[net]:
+                for kind, it in p:
+                    (self.tracks if kind == "t" else self.vias).append(it)
+        self.mov = {}
+        self.build_maps()
+        return dropped
+
+    def open_nets(self):
+        """(net name, connections missing) for every net that is not complete, counted from the pads."""
+        lib = self.lib
+        groups = {}
+        for p in self.pads:
+            groups.setdefault(p["net"], set()).add(lib.rt_find(p["comp"]))
+        out = []
+        for net, g in sorted(groups.items()):
+            name = self.net_name[net]
+            miss = sum(1 for r in g if not lib.rt_plane(r)) if name in PLANES else len(g) - 1
+            if miss:
+                out.append((name, miss))
+        return out
 
     def rip_up(self, limit=1500, pen=40, budget=600.0):
         """Rip-up and reroute: let a failed net push through other nets' tracks, take out only the paths
@@ -1097,25 +1354,44 @@ def main():
     for name in sorted((n for n in multi if n in USB), key=size.get):
         r.route_net(name)
     r.critical = set(r.tracks) | set(r.vias)                  # everything so far is locked in the board file
-    for name in sorted((n for n in multi if n in PWR_HI), key=size.get):
-        r.route_net(name)
-    made, short = r.local_first([n for n in multi if n not in RF | USB | PWR_HI | set(PLANES)])
-    print(f"short connections first: {made} of {short} made", flush=True)
-    for name in sorted((n for n in multi if n in PWR_LO), key=size.get) + ["GND"]:
-        r.route_net(name)
-    print(f"+3V3: {r.decouple_first('+3V3')} supply pins joined to their capacitor instead of a via", flush=True)
-    order = ["+3V3"] + sorted((n for n in multi if n not in special), key=size.get)
-    for k, name in enumerate(order):
-        t1 = time.time()
-        miss = r.route_net(name)
-        if time.time() - t1 > 8:
-            print(f"  [{k + 1}/{len(order)}] {name}: {miss} missing, {time.time() - t1:.1f} s", flush=True)
-    first = sum(m for _, m in r.failed)
-    print(f"first pass: {total - first} of {total} connections, {time.time() - t0:.0f} s", flush=True)
-    rounds = r.rip_up()
+    if NEGOTIATE:
+        # fixed first: supply and planes; then every other net together, by negotiation
+        for name in sorted((n for n in multi if n in PWR_HI), key=size.get) + ["GND"]:
+            r.route_net(name)
+        print(f"+3V3: {r.decouple_first('+3V3')} supply pins joined to their capacitor instead of a via", flush=True)
+        r.route_net("+3V3")
+        movable = (sorted((n for n in multi if n in PWR_LO), key=size.get)   # the wider supply tracks first
+                   + sorted((n for n in multi if n not in special), key=size.get))
+        print(f"fixed nets laid, {sum(m for _, m in r.failed)} of their connections open, {time.time() - t0:.0f} s; "
+              f"negotiating the other {len(movable)} nets", flush=True)
+        r.build_maps(frozen=set(r.net_name))                  # everything laid so far is fixed from here on
+        rounds = r.negotiate(movable)
+        dropped = r.neg_finish(movable)
+        print(f"negotiation: {rounds} rounds, {dropped} connections taken out because they were still in "
+              f"another's way", flush=True)
+        for name, _ in r.open_nets():                         # what is open gets one more try, strictly
+            r.route_net(name, record=False)
+        r.failed = r.open_nets()
+    else:
+        for name in sorted((n for n in multi if n in PWR_HI), key=size.get):
+            r.route_net(name)
+        made, short = r.local_first([n for n in multi if n not in RF | USB | PWR_HI | set(PLANES)])
+        print(f"short connections first: {made} of {short} made", flush=True)
+        for name in sorted((n for n in multi if n in PWR_LO), key=size.get) + ["GND"]:
+            r.route_net(name)
+        print(f"+3V3: {r.decouple_first('+3V3')} supply pins joined to their capacitor instead of a via", flush=True)
+        order = ["+3V3"] + sorted((n for n in multi if n not in special), key=size.get)
+        for k, name in enumerate(order):
+            t1 = time.time()
+            miss = r.route_net(name)
+            if time.time() - t1 > 8:
+                print(f"  [{k + 1}/{len(order)}] {name}: {miss} missing, {time.time() - t1:.1f} s", flush=True)
+        first = sum(m for _, m in r.failed)
+        print(f"first pass: {total - first} of {total} connections, {time.time() - t0:.0f} s", flush=True)
+        rounds = r.rip_up()
+        print(f"rip-up: {rounds} rounds; {r.walled} attempts found no way through even with other tracks pushed "
+              f"aside", flush=True)
     missing = sum(m for _, m in r.failed)
-    print(f"rip-up: {rounds} rounds; {r.walled} attempts found no way through even with other tracks pushed aside",
-          flush=True)
     print(f"trimmed {r.trim_tails()} track ends", flush=True)
     length = sum(math.hypot(t[4] - t[2], t[5] - t[3]) for t in r.tracks)
     print(f"routing: {total - missing} of {total} connections, {len(r.tracks)} segments, {len(r.vias)} vias, "
