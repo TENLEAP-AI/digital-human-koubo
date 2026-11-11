@@ -186,6 +186,17 @@ v("+3V3", 50.95, 31.3, 0.45, 0.2)
 t("SD_CLK_R", B, 0.15, (52.2, 32.6), (52.2, 32.2), (51.9, 31.35))
 v("SD_CLK_R", 51.9, 31.35, 0.45, 0.2)
 
+# ---- expander B (U8, front, over the antenna line): pin 18 is an address pin tied to ground. Left to itself its
+# ground stub runs round the end of pin 17 to a via and shuts that pin in; it goes into the centre pad instead.
+t("GND", F, 0.25, (26.51, 22.23), (25.95, 22.23), (24.8, 23.4))
+
+# ---- expander A (U7, front, turned 180 degrees) sits over the ESP32's right pad column (back). Its interrupt
+# pin is 0.4 mm from the ESP32's own interrupt pad: one via and 1 mm of track on the back join them, before the
+# supply stubs of the neighbouring pins get in the way.
+t("EXP_INT", F, 0.15, (58.22, 12.41), (58.22, 13.3))
+v("EXP_INT", 58.22, 13.3, 0.45, 0.2)
+t("EXP_INT", B, 0.15, (58.22, 13.3), (58.22, 12.6), (58.95, 12.2))
+
 
 def lay(r):
     """Put the copper into the router. Returns the list of pieces that do not fit (empty when all is well)."""

@@ -128,7 +128,11 @@ GROUPS = [
     ("F", 25.55, 14.9, ["TP20", "TP19"]),             # ... debug UART: beside module pins 39 / 38 (they were 13 mm away)
     ("F", 37.55, 13.3, ["TP17", "TP18"]),             # ... main UART: beside module pins 17 / 18
     ("F", 39.0, 6.0, ["R51", "R52", "R70"]),                                              # UART0 / LCD sync; CAM_SEL pull-down
-    ("F", 21.9, 20.0, ["U8 C17@90 U6 C15@90 R17@90"]),      # expander B, USB switch; the pad under U8 takes the
+    # U8 is 0.8 mm lower than U6: its top pins then face the gap between two pad rows of the Air780E on the back,
+    # and each can drop a via right above itself. At y = 20.0 only one via fitted there, both +3V3 pins had to share
+    # it and their link shut in the interrupt pin between them.
+    ("F", 21.9, 20.8, ["U8 C17@90"]),
+    ("F", 28.9, 20.0, ["U6 C15@90 R17@90"]),      # expander B, USB switch; the pad under U8 takes the
                                                             # ground vias beside the antenna line on the back (RF-5)
     ("F", 30.6, 28.2, ["R1@90 R2@90"]),                                                   # Type-C: CC resistors
     ("F", 29.8, 30.7, ["D1"]),                                                            # Type-C: TVS
@@ -148,7 +152,11 @@ GROUPS = [
     ("F", 49.3, 7.8, ["C36@90", "C37@90"], 0.3, 0.3),    # upright, one above the other: clear of the vias in the ESP32's ground pad
     ("F", 49.5, 12.4, ["C38"]),
     ("F", 49.5, 13.9, ["U14"]),
-    ("F", 55.3, 7.8, ["U7"]),                                                             # expander A (keys)
+    # expander A (keys), turned 180 degrees: the six key pins face right, towards their pull-ups below and the key
+    # connector; the two front camera pins face up, towards the camera connector. The side that is over the ESP32's
+    # pad column on the back (no room for vias there) carries next to nothing. Unturned, every key track had to go
+    # round the chip.
+    ("F", 55.3, 7.8, ["U7@180"]),
     ("F", 59.0, 13.3, ["R20 R21", "R22 R23", "R24 R25", "R27 R28", "C16"], 0.3, 0.2),
     ("F", 27.3, 15.0, ["R26"]),                                                           # touch interrupt pull-up, beside chip B
     ("F", 38.9, 20.9, ["R50 R16 R13 R14 R15", "U5 SW1", "SW2 TP8 TP9"]),                  # ESP32 misc, buttons
