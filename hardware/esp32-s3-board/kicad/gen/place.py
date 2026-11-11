@@ -23,9 +23,12 @@ MAIN = {
     "电池焊盘": (2.11, 8.7, 0, "B"),
     "喇叭焊盘": (1.27, 19.22, 0, "B"),
     "zeebuddy:SY6970_QFN-24_4x4mm": (7.9, 12.2, 270, "B"),
-    # front: front camera, keys, microphone, download pads
-    "前摄 30 万（型号待定）": (20.0, 2.75, 180, "F"),
-    "按键排线 B": (49.4, 2.75, 180, "F"),
+    # front: front camera, keys, microphone, download pads.
+    # The front camera connector sits right above its bus switches (U12 .. U14) and over the ESP32 module, where the
+    # back has no pads in the way. It used to be at x = 20, back to back with the display connector and 25 mm from
+    # the switches: its 14 signals had to cross the Air780E's surroundings and a third of them found no way.
+    "前摄 30 万（型号待定）": (51.1, 2.75, 180, "F"),
+    "按键排线 B": (39.42, 2.75, 180, "F"),               # was at 49.4: made room for the camera connector
     "按键排线 A": (60.4, 25.0, 90, "F"),
     "zeebuddy:MSM261S4030H0R": (51.0, 31.3, 90, "F"),
     "下载 / 调试焊盘": (42.5, 32.4, 0, "F"),
@@ -109,7 +112,8 @@ GROUPS = [
     ("F", 0.8, 5.9, ["R6", "R7", "D2", "R8"]),                                            # charger LED, pull-ups
     # Below the front camera connector (pads end at y = 5.25) a band of about 2 mm stays free of parts: its 0.5 mm
     # pins need the room to get out. C46 / C47 and Q2 used to sit in it.
-    ("F", 16.0, 7.31, ["R29 R30", "C48 C49", "R66 R67", "R71 R72", "R73"]),               # front camera options; Air780E switch gate
+    ("F", 16.0, 7.31, ["R29 R30"]),                                                       # Air780E switch gate
+    ("F", 61.25, 2.6, ["C48", "C49", "R66", "R67", "R71", "R72", "R73"], 0.3, 0.3),      # front camera options, beside its connector
     ("F", 21.5, 7.88, ["C46", "C47"], 0.3, 0.12),
     ("F", 15.4, 14.75, ["Q2"]),                                                           # Air780E supply switch driver
     ("F", 11.6, 18.5, ["R45 R46 R47 R48", "C24 C25 C26 C27", "U10 C28"]),                 # SIM
@@ -125,15 +129,24 @@ GROUPS = [
                                                             # ground vias beside the antenna line on the back (RF-5)
     ("F", 30.6, 28.2, ["R1@90 R2@90"]),                                                   # Type-C: CC resistors
     ("F", 29.8, 30.7, ["D1"]),                                                            # Type-C: TVS
-    ("F", 28.6, 0.6, ["U15 U16 Y1", "C44 C39 C40 C45 C42 C43 C41"]),                      # camera LDOs, clock
-    ("F", 42.3, 0.6, ["R63", "R64"]),                                                     # camera clock resistors
-    ("F", 53.3, 0.6, ["R68 R69 R70", "R65"]),
-    ("F", 41.4, 6.2, ["U12", "U13"]),                                                     # camera bus switches
-    ("F", 49.5, 6.2, ["C36 C37"]),
+    # Camera LDOs and clock: one strip under y = 4.2, the capacitors between the chips and not below them. The display
+    # and rear camera connectors on the back have their pads at y = 4.05 .. 5.25: the front stays free from there down
+    # to y = 7, so that their pins can drop a via right below the pad.
+    ("F", 11.5, 0.6, ["R68", "R69", "R65"], 0.3, 0.3),
+    ("F", 13.7, 0.6, ["R70", "R63", "R64"], 0.3, 0.3),                                    # ... camera clock resistors
+    ("F", 15.93, 0.6, ["U15"]),
+    ("F", 20.38, 0.6, ["C44", "C39", "C40"], 0.3, 0.3),
+    ("F", 22.55, 0.6, ["U16"]),
+    ("F", 27.0, 0.6, ["C45", "C42"], 0.3, 0.3),
+    ("F", 29.17, 0.6, ["Y1"]),
+    ("F", 33.72, 0.6, ["C43", "C41"], 0.3, 0.3),
+    # 2.5 mm below the camera connector's pads (they end at y = 5.25) stays free: room for its pins to get out
+    ("F", 41.4, 7.8, ["U12", "U13"]),                                                     # camera bus switches
+    ("F", 49.3, 7.8, ["C36@90", "C37@90"], 0.3, 0.3),    # upright, one above the other: clear of the vias in the ESP32's ground pad
     ("F", 49.5, 12.4, ["C38"]),
     ("F", 49.5, 13.9, ["U14"]),
-    ("F", 55.3, 6.2, ["U7"]),                                                             # expander A (keys)
-    ("F", 59.0, 12.0, ["R20 R21", "R22 R23", "R24 R25", "R26 R27", "R28 C16"]),
+    ("F", 55.3, 7.8, ["U7"]),                                                             # expander A (keys)
+    ("F", 59.0, 13.3, ["R20 R21", "R22 R23", "R24 R25", "R26 R27", "R28 C16"], 0.3, 0.2),
     ("F", 38.9, 20.9, ["R50 R16 R13 R14 R15", "U5 SW1", "SW2 TP8 TP9"]),                  # ESP32 misc, buttons
     ("F", 50.3, 20.9, ["R77 R78 R79", "R80 R81 R82", "C57 C56"]),                         # TF card
     ("F", 53.7, 29.6, ["C50@90 C51@90 R74@90"]),                                          # microphone
