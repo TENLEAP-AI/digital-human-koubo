@@ -53,13 +53,21 @@ def main():
     mm = pcbnew.ToMM
     removed = collections.Counter()
     breaking = {}                                # track or via -> the rule it breaks
+
+    def shape(t):
+        if t.Type() == pcbnew.PCB_VIA_T:
+            return (t.GetNetname(), t.GetPosition().x, t.GetPosition().y)
+        ends = sorted([(t.GetStart().x, t.GetStart().y), (t.GetEnd().x, t.GetEnd().y)])
+        return (t.GetNetname(), t.GetLayer(), ends[0], ends[1])
+
+    base = {shape(t) for t in board.GetTracks() if t.IsLocked()}
     for t in board.GetTracks():
         net = r.net_id.get(t.GetNetname())
         if net is None or (t.Type() != pcbnew.PCB_VIA_T and t.GetLayer() not in ROUTE_LAYERS):
             removed["no net or not on a routing layer"] += 1
             continue
-        if t.GetNetname() in RF | USB and not t.IsLocked():
-            removed["copy of a locked track"] += 1          # the session repeats the locked antenna and USB tracks
+        if not t.IsLocked() and (t.GetNetname() in RF | USB or shape(t) in base):
+            removed["copy of a locked track"] += 1          # the session repeats the locked tracks it was given
             continue
         if t.Type() == pcbnew.PCB_VIA_T:
             p = t.GetPosition()
