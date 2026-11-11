@@ -1,16 +1,17 @@
 # Zeebuddy 主板 V1（KiCad 9）
 
-ESP32-S3-WROOM-1U-N16R8 + Air780E 的主板，第一版，**草稿**：原理图已画完，PCB 元件全部摆好，
-**布线没有完成，还不能投板。**引脚分配按 `../docs/requirements.md` 的方案三。
+ESP32-S3-WROOM-1U-N16R8 + Air780E 的主板，第一版，**草稿**：原理图已画完，PCB 已布通，
+**还有几条规范没满足（见下），还不能投板。**引脚分配按 `../docs/requirements.md` 的方案三，
+两颗扩展芯片的引脚按板上位置重新分过（见"还没定的"一节的表）。
 
-> **当前状态**：六层、板厚 1.6 mm，按 [`../docs/layout-spec.md`](../docs/layout-spec.md)（V0.3）在做。
-> - `zeebuddy-mainboard.kicad_pcb` 是**第二轮的结果**：底子（电源铜皮、三个开关电源、天线线、USB、
->   每个地和 3.3 V 焊盘的过孔）已锁定，信号线由 Freerouting 布了 20 分钟再收尾。
->   576 处连接通了 **534 处**，KiCad 检查 0 条违规，**还剩 42 处信号线没连**。
-> - 剩下的集中在上边缘的三个排线座（屏、前摄、后摄）。前摄排线座下方已经清出 2 mm 的空带，数字没有变好：
->   真正的原因是前摄排线座离它的总线切换芯片有 25 mm，十几根线要横穿整个 4G 模组区。
->   要再往下降，得调整排线座的位置（见"第二轮"一节），不是再多跑几轮能解决的。
-> - 还没达标的：USB 四段里三段的等长（USB-3）；另有 3 处和规范的出入等确认（见规范的"待定问题"）。
+> **当前状态**（2026-11-11）：六层、板厚 1.6 mm，按 [`../docs/layout-spec.md`](../docs/layout-spec.md)（V0.3）在做。
+> - `zeebuddy-mainboard.kicad_pcb` **已全部布通**：570 处连接全部连上。KiCad 9.0.9 完整检查：
+>   未连通 0、布线违规 0、原理图一致性（含字段差异）0。报告在 [`reports/`](reports/)。
+> - 首版配置：屏用 G3 ~ G7 五根数据线（G0 ~ G2 接地），保留 TF 卡，R58 ~ R60 已删除。
+> - **KiCad 检查通过不等于规范全部满足。**还没满足或没检查的：USB 四段里三段的等长（USB-3）；
+>   1 段 4.2 mm 的 0.11 mm 窄线（GEN-1 允许的窄线最长 3 mm）；过孔到焊盘 ≥0.15 mm（GEN-7）没有写进 KiCad 规则，
+>   现在按 0.10 mm 检查；另有 3 处和规范的出入等确认（见规范的"待定问题"）。
+>   逐项见 [`reports/routing-closure.md`](reports/routing-closure.md)。
 
 ## 文件
 
@@ -26,7 +27,9 @@ ESP32-S3-WROOM-1U-N16R8 + Air780E 的主板，第一版，**草稿**：原理图
 | `camera.kicad_sch` | 6 前后摄像头、总线切换、摄像头电源 |
 | `audio_tf.kicad_sch` | 7 麦克风、功放、TF 卡 |
 | `zeebuddy.kicad_sym` | 工程自带的符号（Air780E、排线座等） |
-| `zeebuddy-mainboard.kicad_pcb` | PCB：六层，外形、螺丝孔、213 个元件全部摆好；电源、地、天线线、USB 已布好并锁定，信号线布了 201 / 243 处 |
+| `zeebuddy-mainboard.kicad_pcb` | PCB：六层，外形、螺丝孔、210 个封装；电源、地、天线线、USB 已布好并锁定，信号线全部布通 |
+| `reports/drc-report.txt` / `.json` | KiCad 9.0.9 的完整检查报告（含原理图一致性） |
+| `reports/routing-closure.md` | 布线收尾记录：每处断点怎么处理的、改了什么摆位、规范核查结果、还没满足的规范 |
 | `placement-front.png` / `placement-back.png` | 正反两面主要器件的摆放示意图 |
 | `routing.png` | 当前布线的示意图 |
 | `freerouting/zeebuddy-mainboard.dsn` | **第二轮**给 Freerouting 用的板子文件（底子作为障碍，只有信号线要布） |
@@ -59,7 +62,7 @@ gen/build.sh
 - PCB 与原理图一致性：213 个封装、全部焊盘的网络都与原理图一致。
 - KiCad DRC：元件之间没有重叠，没有超出板边；已布的线没有间距、短路、孔距、板边类的违规。
   有 1 个提示：天线座封装与库里的不一致（我把它自带的禁布区从"所有层"改成了只在背面，是有意的）。
-  剩下 42 个"未连接"，是还没布通的信号线。
+  未连接 0 个。
 
 这些只说明"图和脚本一致、没有悬空或短接、摆放不打架"，**不代表电路经过了实物验证**。
 
@@ -144,7 +147,47 @@ gen/build.sh
   按 2 A 算会掉 0.12 V 以上，占了"跌落 ≤300 mV"预算的四成。这是原理图层面的事，这次没有动，
   打样前值得换一颗导通电阻更低的管子。
 
-### 第二轮：用 Freerouting 布信号线
+### 第三轮：布通（2026-11-11）
+
+第二轮停在"三个信号层装不下这么多交叉"。第三轮没有加层，改的是交叉本身：
+
+| 改了什么 | 为什么 |
+|---|---|
+| 前摄排线座 J11 移到上边缘右侧，紧挨总线切换芯片；按键排线座 J5 左移 10 mm | 前摄的 14 根线原来要横穿 25 mm 的 4G 模组外围 |
+| 两颗扩展芯片的信号按器件在板上的位置重新分配（6 个信号换了芯片或引脚） | 左边的中断线接在右边的芯片上，右边的摄像头控制线接在中间的芯片上，各跨 30 ~ 65 mm |
+| 删除 R58 ~ R60（屏低 3 位借 TF 卡线的选配） | 三条 40 mm 以上的线横穿全板，首版用不上 |
+| U8 下移 0.8 mm，U7 转 180° | U8 的中断脚被两个 3.3 V 脚的连线盖死；U7 的按键脚背对着它们的上拉电阻 |
+| 底子里手工加了 4 处短线（`power.py`） | TF 卡座第 4、5 脚，U8 第 18 脚，U7 的中断脚：这些脚光靠锁定的铜就被围住，自动布线解不了 |
+| 测试点、时钟串联电阻、稳压芯片的输出电容等挪到它们所连的引脚旁 | 缩短支线，让出通道 |
+
+找这类问题用的办法是在只有底子的板子上逐个引脚试"能不能出来"（出不来的就是被锁定的铜围死的），
+以及对每一处没连上的连接算"最短的路要穿过哪些线、沿途有多少过孔"。
+
+结果：Freerouting 2.5.0 自己停在剩 3 处，`finish.py` 之后剩 1 处（充电芯片的 I²C 时钟脚），
+`hand.py` 手工接通；`widen.py` 把过窄的线加宽。每处断点的处理见 [`reports/routing-closure.md`](reports/routing-closure.md)。
+
+**重新生成的命令**（顺序不能变；`hand.py` 里的坐标只对这一份布线结果有效）：
+
+```bash
+python3 gen/design.py . && python3 gen/verify.py . zeebuddy-mainboard      # 原理图
+/usr/bin/python3.12 gen/board.py .                                          # 摆放
+/usr/bin/python3.12 gen/route.py .                                          # 底子
+/usr/bin/python3.12 gen/freeroute.py .                                      # 生成 freerouting/*.dsn
+java -jar freerouting-2.5.0.jar -de freerouting/zeebuddy-mainboard.dsn -do freerouting/zeebuddy-mainboard.ses \
+     --router.autorouter.max_passes=40 --router.job_timeout=00:20:00 -mt 1 --gui.enabled=false
+/usr/bin/python3.12 gen/freeroute.py . --ses freerouting/zeebuddy-mainboard.ses   # 导入
+RIPUP=150 /usr/bin/python3.12 gen/finish.py .                               # 清理、补线
+/usr/bin/python3.12 gen/hand.py . --kicad-decides                           # 手工那几段
+/usr/bin/python3.12 gen/widen.py zeebuddy-mainboard.kicad_pcb               # 加宽过窄的线
+/usr/bin/python3.12 gen/check.py .                                          # 检查表
+```
+
+仓库里的 `freerouting/zeebuddy-mainboard.ses` 就是这次用的那份结果，直接从"导入"那一步做起可以得到同一块板子。
+
+### 第二轮的记录
+
+下面是第二轮（三层、原来的摆放）的过程，保留作记录；数字已被第三轮取代。
+
 
 **结果（2026-11-11，Freerouting 2.5.0，每次限时 20 分钟）**
 
