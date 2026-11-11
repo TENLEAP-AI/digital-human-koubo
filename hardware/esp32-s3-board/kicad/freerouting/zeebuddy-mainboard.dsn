@@ -70,22 +70,25 @@
             99000 -59000))
     (plane GND (polygon In4.Cu 0  99000 -59000  165000 -59000  165000 -95000  99000 -95000
             99000 -59000))
+    (plane GND (polygon In3.Cu 0  122625 -88710  126275 -88710  126275 -92210  122625 -92210
+            122625 -88710))
     (plane +3V3 (polygon In3.Cu 0  99000 -59000  165000 -59000  165000 -95000  99000 -95000
-            99000 -59000))
+            99000 -59000)
+      (window (polygon In3.Cu 0  122625 -88710  122625 -92210  126275 -92210  126275 -88710
+            122625 -88710))
+    )
     (plane VDD_4G (polygon B.Cu 0  117600 -65650  120450 -65650  120450 -70900  123150 -70900
             123150 -73000  120450 -73000  120450 -78100  116900 -78100  116900 -68600
             117600 -68600  117600 -65650))
-    (plane GND (polygon In3.Cu 0  122625 -88710  126275 -88710  126275 -92210  122625 -92210
-            122625 -88710))
     (wire_keepout "" (polygon In3.Cu 0  122625 -88710  126275 -88710  126275 -92210  122625 -92210
             122625 -88710))
     (keepout "" (polygon In4.Cu 0  123625 -89710  125275 -89710  125275 -91210  123625 -91210
             123625 -89710))
-    (via "Via[0-5]_600:300_um" "Via[0-5]_450:200_um")
+    (via "Via[0-5]_450:200_um" "Via[0-5]_600:300_um" "Via[0-5]_500:250_um")
     (rule
-      (width 200)
-      (clearance 200)
-      (clearance 50 (type smd_smd))
+      (width 150)
+      (clearance 100)
+      (clearance 25 (type smd_smd))
     )
   )
   (placement
@@ -575,12 +578,12 @@
             -65.74 1798.8  196.868 1789.2  455.28 1741.47  703.988 1656.62
             937.693 1536.47  1151.41 1383.57  1340.59 1201.17  1501.2 993.182
             1629.81 764.022  1723.68 518.578  1780.82 262.082  1800 0))
-      (keepout "" (circle F.Cu 2100))
-      (keepout "" (circle In1.Cu 2100))
-      (keepout "" (circle In2.Cu 2100))
-      (keepout "" (circle In3.Cu 2100))
-      (keepout "" (circle In4.Cu 2100))
-      (keepout "" (circle B.Cu 2100))
+      (keepout "" (circle F.Cu 2000))
+      (keepout "" (circle In1.Cu 2000))
+      (keepout "" (circle In2.Cu 2000))
+      (keepout "" (circle In3.Cu 2000))
+      (keepout "" (circle In4.Cu 2000))
+      (keepout "" (circle B.Cu 2000))
     )
     (image "Package_TO_SOT_SMD:SOT-23-6"
       (outline (path signal 120  -910 1560  910 1560))
@@ -1508,18 +1511,18 @@
       (pin Oval[TB]Pad_1000.000000x2100.000000_um S1@1 -4320 3130)
       (pin Oval[TB]Pad_1000.000000x1600.000000_um S1@2 4320 -1050)
       (pin Oval[TB]Pad_1000.000000x2100.000000_um S1@3 4320 3130)
-      (keepout "" (circle F.Cu 1150 -2890 2600))
-      (keepout "" (circle In1.Cu 1150 -2890 2600))
-      (keepout "" (circle In2.Cu 1150 -2890 2600))
-      (keepout "" (circle In3.Cu 1150 -2890 2600))
-      (keepout "" (circle In4.Cu 1150 -2890 2600))
-      (keepout "" (circle B.Cu 1150 -2890 2600))
-      (keepout "" (circle F.Cu 1150 2890 2600))
-      (keepout "" (circle In1.Cu 1150 2890 2600))
-      (keepout "" (circle In2.Cu 1150 2890 2600))
-      (keepout "" (circle In3.Cu 1150 2890 2600))
-      (keepout "" (circle In4.Cu 1150 2890 2600))
-      (keepout "" (circle B.Cu 1150 2890 2600))
+      (keepout "" (circle F.Cu 1050 -2890 2600))
+      (keepout "" (circle In1.Cu 1050 -2890 2600))
+      (keepout "" (circle In2.Cu 1050 -2890 2600))
+      (keepout "" (circle In3.Cu 1050 -2890 2600))
+      (keepout "" (circle In4.Cu 1050 -2890 2600))
+      (keepout "" (circle B.Cu 1050 -2890 2600))
+      (keepout "" (circle F.Cu 1050 2890 2600))
+      (keepout "" (circle In1.Cu 1050 2890 2600))
+      (keepout "" (circle In2.Cu 1050 2890 2600))
+      (keepout "" (circle In3.Cu 1050 2890 2600))
+      (keepout "" (circle In4.Cu 1050 2890 2600))
+      (keepout "" (circle B.Cu 1050 2890 2600))
     )
     (image "Connector_Coaxial:U.FL_Hirose_U.FL-R-SMT-1_Vertical"
       (outline (path signal 0  -515 940  1575 940  1575 -940  -515 -940  -515 940))
@@ -1953,6 +1956,15 @@
       (shape (rect F.Cu -950 -675 950 675))
       (attach off)
     )
+    (padstack "Via[0-5]_450:200_um"
+      (shape (circle F.Cu 450))
+      (shape (circle In1.Cu 450))
+      (shape (circle In2.Cu 450))
+      (shape (circle In3.Cu 450))
+      (shape (circle In4.Cu 450))
+      (shape (circle B.Cu 450))
+      (attach off)
+    )
     (padstack "Via[0-5]_600:300_um"
       (shape (circle F.Cu 600))
       (shape (circle In1.Cu 600))
@@ -1962,13 +1974,13 @@
       (shape (circle B.Cu 600))
       (attach off)
     )
-    (padstack "Via[0-5]_450:200_um"
-      (shape (circle F.Cu 450))
-      (shape (circle In1.Cu 450))
-      (shape (circle In2.Cu 450))
-      (shape (circle In3.Cu 450))
-      (shape (circle In4.Cu 450))
-      (shape (circle B.Cu 450))
+    (padstack "Via[0-5]_500:250_um"
+      (shape (circle F.Cu 500))
+      (shape (circle In1.Cu 500))
+      (shape (circle In2.Cu 500))
+      (shape (circle In3.Cu 500))
+      (shape (circle In4.Cu 500))
+      (shape (circle B.Cu 500))
       (attach off)
     )
   )
@@ -2781,38 +2793,34 @@
     (net "unconnected-(U17-NC-Pad13)"
       (pins U17-13)
     )
-    (class kicad_default +1V2 +2V8 +3V3 BL_SW BUCK_EN BUCK_FB BUCK_SW CAMF_D0
-      CAMF_D1 CAMF_D2 CAMF_D3 CAMF_D4 CAMF_D5 CAMF_D6 CAMF_D7 CAMF_DVDD CAMF_HREF
-      CAMF_IOVDD CAMF_PCLK CAMF_PWDN CAMF_VSYNC CAMF_XCLK CAMR_D0 CAMR_D1
-      CAMR_D2 CAMR_D3 CAMR_D4 CAMR_D5 CAMR_D6 CAMR_D7 CAMR_HREF CAMR_PCLK
-      CAMR_PWDN CAMR_VSYNC CAMR_XCLK CAM_D0 CAM_D1 CAM_D2 CAM_D3 CAM_D4 CAM_D5
-      CAM_D6 CAM_D7 CAM_HREF CAM_PCLK CAM_PWR_EN CAM_RST CAM_SEL CAM_VSYNC
-      CAM_XCLK CHG_BTST CHG_DPDM CHG_ILIM CHG_INT CHG_LED_A CHG_PMID CHG_QON
-      CHG_REGN CHG_STAT CHG_SW CHG_TS ESP_DM ESP_DP ESP_EN ESP_USB_DM ESP_USB_DP
-      EXP_INT EXP_SPARE GND I2C_SCL I2C_SDA I2S_BCLK I2S_DIN I2S_DOUT I2S_WS
-      KEY1 KEY2 KEY3 KEY4 KEY5 KEY6 LCD_BL_PWM LCD_CS LCD_DE LCD_G0 LCD_G1
-      LCD_G2 LCD_G3 LCD_G4 LCD_G5 LCD_G6 LCD_G7 LCD_HSYNC LCD_LEDA LCD_LEDK
-      LCD_PCLK LCD_PCLK_R LCD_RST LCD_SCL LCD_SDA LCD_VCI LCD_VSYNC LTE_ANT
-      LTE_ANT_C LTE_DBG_RX LTE_DBG_TX LTE_IOSEL LTE_NETLED_A LTE_NETLED_K
-      LTE_NET_B LTE_NET_STATUS LTE_PWRKEY LTE_PWRKEY_B LTE_PWRKEY_EN LTE_PWR_B
-      LTE_PWR_C LTE_PWR_EN LTE_PWR_G LTE_RESET_B LTE_RESET_EN LTE_RESET_N
-      LTE_RXD LTE_STATUS LTE_STATUS_B LTE_STATUS_N LTE_TXD LTE_USB_BOOT LTE_USB_DM
-      LTE_USB_DP LTE_VBUS LTE_VDD_EXT LTE_VREF PA_EN PA_GAIN PA_OUTN PA_OUTP
-      SD_CLK SD_CLK_R SD_CMD SD_D0 SD_D1 SD_D2 SD_D3 SD_DET SIM_CLK SIM_CLK_C
-      SIM_DAT SIM_DAT_C SIM_DET SIM_RST SIM_RST_C SIM_VDD SPK_N SPK_P TP_INT
-      TP_RST U0RXD U0TXD USBC_CC1 USBC_CC2 USBC_DM USBC_DP USB_SEL VBAT VBUS
-      VDD_4G VSYS "unconnected-(J1-SBU1-PadA8)" "unconnected-(J1-SBU2-PadB8)"
-      "unconnected-(J10-STROBE-Pad1)" "unconnected-(J10-Y0-Pad24)" "unconnected-(J10-Y1-Pad23)"
-      "unconnected-(J11-STROBE-Pad1)" "unconnected-(J11-Y0-Pad24)" "unconnected-(J11-Y1-Pad23)"
-      "unconnected-(J4-NC-Pad5)" "unconnected-(J5-NC-Pad5)" "unconnected-(J6-VPP-Pad6)"
-      "unconnected-(J8-NC-Pad5)" "unconnected-(MK1-NC-Pad2)" "unconnected-(U1-VBUS-Pad5)"
-      "unconnected-(U14-4A-Pad12)" "unconnected-(U14-4B1-Pad14)" "unconnected-(U14-4B2-Pad13)"
-      "unconnected-(U15-NC-Pad4)" "unconnected-(U16-NC-Pad4)" "unconnected-(U17-NC-Pad12)"
-      "unconnected-(U17-NC-Pad13)" "unconnected-(U17-NC-Pad5)" "unconnected-(U17-NC-Pad6)"
-      "unconnected-(U2-DSEL-Pad24)" "unconnected-(U4-IO35-Pad28)" "unconnected-(U4-IO36-Pad29)"
-      "unconnected-(U4-IO37-Pad30)" "unconnected-(U7-P12-Pad12)" "unconnected-(U7-P13-Pad13)"
-      "unconnected-(U7-P14-Pad14)" "unconnected-(U7-P15-Pad15)" "unconnected-(U7-P16-Pad16)"
-      "unconnected-(U7-P17-Pad17)" "unconnected-(U9-MAIN_CTS-Pad22)" "unconnected-(U9-MAIN_DCD-Pad21)"
+    (class kicad_default BUCK_EN BUCK_FB CAMF_D0 CAMF_D1 CAMF_D2 CAMF_D3 CAMF_D4
+      CAMF_D5 CAMF_D6 CAMF_D7 CAMF_HREF CAMF_PCLK CAMF_PWDN CAMF_VSYNC CAMF_XCLK
+      CAMR_D0 CAMR_D1 CAMR_D2 CAMR_D3 CAMR_D4 CAMR_D5 CAMR_D6 CAMR_D7 CAMR_HREF
+      CAMR_PCLK CAMR_PWDN CAMR_VSYNC CAMR_XCLK CAM_D0 CAM_D1 CAM_D2 CAM_D3
+      CAM_D4 CAM_D5 CAM_D6 CAM_D7 CAM_HREF CAM_PCLK CAM_PWR_EN CAM_RST CAM_SEL
+      CAM_VSYNC CAM_XCLK CHG_DPDM CHG_ILIM CHG_INT CHG_LED_A CHG_QON CHG_STAT
+      CHG_TS ESP_EN EXP_INT EXP_SPARE I2C_SCL I2C_SDA I2S_BCLK I2S_DIN I2S_DOUT
+      I2S_WS KEY1 KEY2 KEY3 KEY4 KEY5 KEY6 LCD_BL_PWM LCD_CS LCD_DE LCD_G0
+      LCD_G1 LCD_G2 LCD_G3 LCD_G4 LCD_G5 LCD_G6 LCD_G7 LCD_HSYNC LCD_PCLK
+      LCD_PCLK_R LCD_RST LCD_SCL LCD_SDA LCD_VSYNC LTE_DBG_RX LTE_DBG_TX LTE_IOSEL
+      LTE_NETLED_A LTE_NETLED_K LTE_NET_B LTE_NET_STATUS LTE_PWRKEY LTE_PWRKEY_B
+      LTE_PWRKEY_EN LTE_PWR_B LTE_PWR_C LTE_PWR_EN LTE_PWR_G LTE_RESET_B LTE_RESET_EN
+      LTE_RESET_N LTE_RXD LTE_STATUS LTE_STATUS_B LTE_STATUS_N LTE_TXD LTE_USB_BOOT
+      LTE_VBUS LTE_VDD_EXT LTE_VREF PA_EN PA_GAIN SD_CLK SD_CLK_R SD_CMD SD_D0
+      SD_D1 SD_D2 SD_D3 SD_DET SIM_CLK SIM_CLK_C SIM_DAT SIM_DAT_C SIM_DET
+      SIM_RST SIM_RST_C TP_INT TP_RST U0RXD U0TXD USBC_CC1 USBC_CC2 USB_SEL
+      "unconnected-(J1-SBU1-PadA8)" "unconnected-(J1-SBU2-PadB8)" "unconnected-(J10-STROBE-Pad1)"
+      "unconnected-(J10-Y0-Pad24)" "unconnected-(J10-Y1-Pad23)" "unconnected-(J11-STROBE-Pad1)"
+      "unconnected-(J11-Y0-Pad24)" "unconnected-(J11-Y1-Pad23)" "unconnected-(J4-NC-Pad5)"
+      "unconnected-(J5-NC-Pad5)" "unconnected-(J6-VPP-Pad6)" "unconnected-(J8-NC-Pad5)"
+      "unconnected-(MK1-NC-Pad2)" "unconnected-(U1-VBUS-Pad5)" "unconnected-(U14-4A-Pad12)"
+      "unconnected-(U14-4B1-Pad14)" "unconnected-(U14-4B2-Pad13)" "unconnected-(U15-NC-Pad4)"
+      "unconnected-(U16-NC-Pad4)" "unconnected-(U17-NC-Pad12)" "unconnected-(U17-NC-Pad13)"
+      "unconnected-(U17-NC-Pad5)" "unconnected-(U17-NC-Pad6)" "unconnected-(U2-DSEL-Pad24)"
+      "unconnected-(U4-IO35-Pad28)" "unconnected-(U4-IO36-Pad29)" "unconnected-(U4-IO37-Pad30)"
+      "unconnected-(U7-P12-Pad12)" "unconnected-(U7-P13-Pad13)" "unconnected-(U7-P14-Pad14)"
+      "unconnected-(U7-P15-Pad15)" "unconnected-(U7-P16-Pad16)" "unconnected-(U7-P17-Pad17)"
+      "unconnected-(U9-MAIN_CTS-Pad22)" "unconnected-(U9-MAIN_DCD-Pad21)"
       "unconnected-(U9-MAIN_DTR-Pad19)" "unconnected-(U9-MAIN_RI-Pad20)" "unconnected-(U9-MAIN_RTS-Pad23)"
       "unconnected-(U9-NC-Pad101)" "unconnected-(U9-NC-Pad102)" "unconnected-(U9-NC-Pad103)"
       "unconnected-(U9-NC-Pad104)" "unconnected-(U9-NC-Pad105)" "unconnected-(U9-NC-Pad106)"
@@ -2835,11 +2843,59 @@
       "unconnected-(U9-USIM2_DAT-Pad64)" "unconnected-(U9-USIM2_RST-Pad63)"
       "unconnected-(U9-USIM2_VDD-Pad65)"
       (circuit
+        (use_via "Via[0-5]_450:200_um")
+      )
+      (rule
+        (width 150)
+        (clearance 100)
+      )
+    )
+    (class RF LTE_ANT LTE_ANT_C
+      (circuit
+        (use_via "Via[0-5]_450:200_um")
+      )
+      (rule
+        (width 340)
+        (clearance 200)
+      )
+    )
+    (class USB ESP_DM ESP_DP ESP_USB_DM ESP_USB_DP LTE_USB_DM LTE_USB_DP USBC_DM
+      USBC_DP
+      (circuit
+        (use_via "Via[0-5]_450:200_um")
+      )
+      (rule
+        (width 190)
+        (clearance 100)
+      )
+    )
+    (class PowerHi CHG_PMID CHG_SW VBAT VDD_4G VSYS
+      (circuit
         (use_via "Via[0-5]_600:300_um")
       )
       (rule
-        (width 200)
-        (clearance 200)
+        (width 600)
+        (clearance 100)
+      )
+    )
+    (class Vbus VBUS
+      (circuit
+        (use_via "Via[0-5]_600:300_um")
+      )
+      (rule
+        (width 1000)
+        (clearance 100)
+      )
+    )
+    (class Power +1V2 +2V8 +3V3 BL_SW BUCK_SW CAMF_DVDD CAMF_IOVDD CHG_BTST
+      CHG_REGN GND LCD_LEDA LCD_LEDK LCD_VCI PA_OUTN PA_OUTP SIM_VDD SPK_N
+      SPK_P
+      (circuit
+        (use_via "Via[0-5]_500:250_um")
+      )
+      (rule
+        (width 300)
+        (clearance 100)
       )
     )
   )

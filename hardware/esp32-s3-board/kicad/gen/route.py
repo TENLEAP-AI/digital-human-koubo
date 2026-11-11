@@ -1028,7 +1028,8 @@ def strip_copper(src, dst, keep_locked=False):
     return kept
 
 
-def add_zone(board, net, layer, priority=0):
+def add_zone(board, net, layer, priority=0, hole=None):
+    """A pour over the whole board; hole = (x0, y0, x1, y1) leaves a rectangle out of it."""
     z = pcbnew.ZONE(board)
     z.SetLayer(layer)
     z.SetNet(board.FindNet(net))
@@ -1036,6 +1037,10 @@ def add_zone(board, net, layer, priority=0):
     outline.NewOutline()
     for x, y in ((-1, -1), (BOARD_W + 1, -1), (BOARD_W + 1, BOARD_H + 1), (-1, BOARD_H + 1)):
         outline.Append(vec(x, y))
+    if hole:
+        h = outline.NewHole()
+        for x, y in ((hole[0], hole[1]), (hole[0], hole[3]), (hole[2], hole[3]), (hole[2], hole[1])):
+            outline.Append(pcbnew.FromMM(OX + x), pcbnew.FromMM(OY + y), 0, h)
     z.SetLocalClearance(pcbnew.FromMM(0.15))
     z.SetMinThickness(pcbnew.FromMM(0.15))
     z.SetPadConnection(pcbnew.ZONE_CONNECTION_FULL)

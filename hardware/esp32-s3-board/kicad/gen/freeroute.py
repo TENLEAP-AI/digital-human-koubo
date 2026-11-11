@@ -10,6 +10,7 @@ are handed over as fixed wiring and kept when the session file is imported; ever
 """
 import json
 import os
+import shutil
 import subprocess
 import sys
 
@@ -31,6 +32,9 @@ def main():
     ses = opts.get("--ses") or os.path.join(OUT, "freerouting", NAME + ".ses")
     bare = os.path.join(OUT, "build", NAME + "-unrouted.kicad_pcb")
     kept = strip_copper(path, bare, keep_locked=True)   # keep only the locked copper: antenna, USB, decoupling
+    # the net classes and design rules live in the project file: without a copy next to the stripped board
+    # the export falls back to KiCad's defaults (0.2 mm tracks and clearance, 0.6 mm vias)
+    shutil.copyfile(os.path.join(OUT, NAME + ".kicad_pro"), bare[:-len(".kicad_pcb")] + ".kicad_pro")
     board = pcbnew.LoadBoard(bare)
     planes = [pcbnew.In1_Cu, pcbnew.In4_Cu]              # ground planes: no signal tracks on them
     if not L4_SIGNALS:
@@ -39,9 +43,9 @@ def main():
         board.SetLayerType(layer, pcbnew.LT_POWER)
     add_zone(board, "GND", pcbnew.In1_Cu)      # exported as planes: the router drops vias onto them
     add_zone(board, "GND", pcbnew.In4_Cu)
-    add_zone(board, "+3V3", pcbnew.In3_Cu)
+    win = add_rf_ground(board)                 # the ground under the antenna socket's opening...
+    add_zone(board, "+3V3", pcbnew.In3_Cu, hole=win[1] if win else None)   # ...is left out of the +3V3 plane
     add_pour(board, "VDD_4G", pcbnew.B_Cu, VDD_4G_AREA)
-    add_rf_ground(board)
     print(f"kept {kept} locked tracks and vias")
     if "--ses" not in opts:
         if not pcbnew.ExportSpecctraDSN(board, dsn):
