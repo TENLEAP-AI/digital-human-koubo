@@ -557,7 +557,7 @@
 			(effects (font (size 1.27 1.27)) (hide yes))
 		)
 	)
-	(global_label "TP_INT"
+	(global_label "CAMF_PWDN"
 		(shape passive)
 		(at 111.76 73.66 0)
 		(effects (font (size 1.27 1.27)) (justify left))
@@ -577,7 +577,7 @@
 			(effects (font (size 1.27 1.27)) (hide yes))
 		)
 	)
-	(global_label "CHG_INT"
+	(global_label "CAM_SEL"
 		(shape passive)
 		(at 111.76 81.28 0)
 		(effects (font (size 1.27 1.27)) (justify left))
@@ -727,7 +727,7 @@
 			(effects (font (size 1.27 1.27)) (hide yes))
 		)
 	)
-	(global_label "CAMF_PWDN"
+	(global_label "TP_INT"
 		(shape passive)
 		(at 111.76 182.88 0)
 		(effects (font (size 1.27 1.27)) (justify left))
@@ -737,7 +737,7 @@
 			(effects (font (size 1.27 1.27)) (hide yes))
 		)
 	)
-	(global_label "CAM_SEL"
+	(global_label "CHG_INT"
 		(shape passive)
 		(at 111.76 187.96 0)
 		(effects (font (size 1.27 1.27)) (justify left))
@@ -1642,7 +1642,7 @@
 		(stroke (width 0) (type default))
 		(uuid "5d536fde-3d3b-5f4f-9aef-4870ee36053d")
 	)
-	(text "上：地址 0x20，全部当输入用（按键、中断、检测），变化时 INT 拉低。\n    没用到的 P12 ~ P17 固件里设成输出，避免悬空的输入脚乱触发中断。\n下：地址 0x22，全部当输出用。不用 0x21，前摄常见型号占这个地址。"
+	(text "上：地址 0x20，在板子右侧。按键、TF 卡检测、4G 状态是输入；前摄 PWDN、摄像头切换是输出。\n    没用到的 P12 ~ P17 固件里设成输出，避免悬空的输入脚乱触发中断。\n下：地址 0x22，在板子中间偏左。触摸中断、充电中断是输入，其余是输出。不用 0x21，前摄常见型号占这个地址。\n两颗的 INT 并在一起：任何一个输入脚变化都会把 INT 拉低。信号按器件在板上的位置分配，不按输入输出分。"
 		(exclude_from_sim no)
 		(at 15.24 121.92 0)
 		(effects (font (size 1.3 1.3)) (justify left top))

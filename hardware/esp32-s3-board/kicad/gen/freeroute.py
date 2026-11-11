@@ -40,6 +40,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 args = [a for a in sys.argv[1:] if not a.startswith("--")]
 opts = dict(zip(sys.argv[1:], sys.argv[2:]))
 OUT = args[0] if args and args[0] not in opts.values() else os.path.join(HERE, "..")
+STAGE2 = "--stage2" in sys.argv     # route only what is still open; the routed signals stay and count as obstacles
 JAVA = "/usr/lib/jvm/java-25-openjdk-amd64/bin/java"
 
 
@@ -63,6 +64,12 @@ def solid_holes(dsn, inner):
     with open(dsn, "w", encoding="utf-8") as f:
         f.write(text)
     return n
+
+
+def geometry(t):
+    if t.Type() == pcbnew.PCB_VIA_T:
+        return (t.GetNetname(), t.GetPosition().x, t.GetPosition().y)
+    return (t.GetNetname(), t.GetLayer(), t.GetStart().x, t.GetStart().y, t.GetEnd().x, t.GetEnd().y)
 
 
 def hide_finished(board):
@@ -175,7 +182,18 @@ def main():
     dsn = os.path.join(OUT, "freerouting", NAME + ".dsn")
     ses = opts.get("--ses") or os.path.join(OUT, "freerouting", NAME + ".ses")
     bare = os.path.join(OUT, "build", NAME + "-unrouted.kicad_pcb")
-    kept = strip_copper(path, bare, keep_locked=True)   # keep only the locked copper: antenna, USB, decoupling
+    free = set()                                        # second stage: what was not locked, to unlock it again
+    if STAGE2:                                          # everything that is routed stays: lock it, so that neither
+        whole = pcbnew.LoadBoard(path)                  # strip_copper nor the session import throws it away
+        for t in whole.GetTracks():
+            if not t.IsLocked():
+                free.add(geometry(t))
+                t.SetLocked(True)
+        locked_copy = bare[:-len(".kicad_pcb")] + "-locked.kicad_pcb"
+        pcbnew.SaveBoard(locked_copy, whole)
+        kept = strip_copper(locked_copy, bare, keep_locked=True)
+    else:
+        kept = strip_copper(path, bare, keep_locked=True)   # keep only the locked copper: antenna, USB, decoupling
     # the net classes and design rules live in the project file: without a copy next to the stripped board
     # the export falls back to KiCad's defaults (0.2 mm tracks and clearance, 0.6 mm vias)
     shutil.copyfile(os.path.join(OUT, NAME + ".kicad_pro"), bare[:-len(".kicad_pcb")] + ".kicad_pro")
@@ -215,6 +233,9 @@ def main():
         return 0
     if not pcbnew.ImportSpecctraSES(board, ses):
         raise SystemExit("SES import failed")
+    for t in board.GetTracks():
+        if t.IsLocked() and geometry(t) in free:
+            t.SetLocked(False)
     add_zone(board, "GND", pcbnew.F_Cu)
     add_zone(board, "GND", pcbnew.B_Cu)
     pcbnew.SaveBoard(path, board)
