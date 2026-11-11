@@ -1055,7 +1055,7 @@ class Router:
                 out.append((name, miss))
         return out
 
-    def rip_up(self, limit=1500, pen=40, budget=600.0):
+    def rip_up(self, limit=1500, pen=40, budget=600.0, keep=()):
         """Rip-up and reroute: let a failed net push through other nets' tracks, take out only the paths
         that are in the way, route the failed net, then reconnect the nets that lost a path.
         The best state seen is the one that is kept."""
@@ -1067,6 +1067,7 @@ class Router:
         ripped = {}
         self.walled = 0
         frozen = {self.net_id[n] for n in RF | USB | PWR_HI | set(PLANES) if n in self.net_id}   # never pushed out
+        frozen |= set(keep)
         best = (self.count_open(), list(self.tracks), list(self.vias))
         rounds, stale = 0, 0
         t0 = time.time()

@@ -114,6 +114,8 @@ def hide_finished(board):
         return pts
 
     signal = [pcbnew.F_Cu, pcbnew.In2_Cu, pcbnew.B_Cu]
+    if L4_SIGNALS:
+        signal.append(pcbnew.In3_Cu)             # the vias of the finished nets cross L4 too
     n = 0
     for t in list(board.GetTracks()):
         if t.GetNetname() not in done:
@@ -189,7 +191,8 @@ def main():
     add_zone(board, "GND", pcbnew.In1_Cu)      # exported as planes: they keep signal tracks off these layers
     add_zone(board, "GND", pcbnew.In4_Cu)
     win = add_rf_ground(board)                 # the ground under the antenna socket's opening...
-    add_zone(board, "+3V3", pcbnew.In3_Cu, hole=win[1] if win else None)   # ...is left out of the +3V3 plane
+    if not L4_SIGNALS or "--ses" in opts:      # STK-6 relaxed: no plane on L4 in the hand-off, so signals may use it;
+        add_zone(board, "+3V3", pcbnew.In3_Cu, hole=win[1] if win else None)   # the +3V3 copper is poured around them
     if "--ses" not in opts:
         for_export(board)                      # last: after it pcbnew hands out zone outlines that cannot be used
     if "--ses" not in opts:

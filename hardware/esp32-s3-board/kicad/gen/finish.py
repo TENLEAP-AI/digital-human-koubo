@@ -16,14 +16,16 @@ import json
 import os
 import subprocess
 import sys
+import time
 
 import pcbnew
 
 from board import NAME, OX, OY, keepouts_on_own_side
-from route import BRANCH, PLANES, PWR_HI, RF, ROUTE_LAYERS, USB, Router, add_all_zones, strip_copper
+from route import BRANCH, PLANES, PWR_HI, RF, ROUTE_LAYERS, USB, Router, add_all_zones, net_rules, strip_copper
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 OUT = sys.argv[1] if len(sys.argv) > 1 else os.path.join(HERE, "..")
+RIPUP = float(os.environ.get("RIPUP", "0"))      # seconds for pushing the last connections through; 0 = off
 BAD = {"shorting_items", "clearance", "copper_edge_clearance", "items_not_allowed", "track_width",
        "hole_clearance", "hole_to_hole", "tracks_crossing"}
 
@@ -33,6 +35,107 @@ def rule_check(path, report):
                    check=False, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
     with open(report, encoding="utf-8") as f:
         return json.load(f)
+
+
+def number_paths(r):
+    """Give the imported copper path ids, so that rip-up can take out one stretch of a net and not the whole net.
+    A stretch runs from a pad or a junction to the next pad or junction; locked copper gets no id."""
+    key = lambda x, y: (round(x, 2), round(y, 2))
+    for net in {t[0] for t in r.tracks}:
+        tracks = [t for t in r.tracks if t[0] == net and t not in r.critical]
+        vias = [v for v in r.vias if v[0] == net and v not in r.critical]
+        ends = collections.defaultdict(list)
+        for t in tracks:
+            ends[key(t[2], t[3])].append(t)
+            ends[key(t[4], t[5])].append(t)
+        pads = [p["rect"] for p in r.pads if p["net"] == net]
+        fixed = [i for i in r.critical if i[0] == net]
+
+        def anchor(node):
+            x, y = node
+            if any(x0 - 0.01 <= x <= x1 + 0.01 and y0 - 0.01 <= y <= y1 + 0.01 for x0, y0, x1, y1 in pads):
+                return True
+            return any(key(*i[k:k + 2]) == node for i in fixed for k in ((1,) if len(i) == 5 else (2, 4)))
+
+        stop = {n for n, ts in ends.items() if len(ts) != 2 or anchor(n)}
+        via_at = collections.defaultdict(list)
+        for v in vias:
+            via_at[key(v[1], v[2])].append(v)
+        seen = set()
+        for t in tracks:
+            if t in seen:
+                continue
+            pid, r.next_pid = r.next_pid, r.next_pid + 1
+            todo = [t]
+            while todo:
+                cur = todo.pop()
+                if cur in seen:
+                    continue
+                seen.add(cur)
+                r.pid[cur] = pid
+                for node in (key(cur[2], cur[3]), key(cur[4], cur[5])):
+                    if node in stop:
+                        continue
+                    for v in via_at.get(node, ()):
+                        r.pid[v] = pid
+                    todo += [o for o in ends[node] if o not in seen]
+        for v in vias:
+            if v not in r.pid:
+                r.pid[v], r.next_pid = r.next_pid, r.next_pid + 1
+
+
+def push_through(r, locked, budget):
+    """One open connection at a time: find its cheapest way through other signal tracks, take out the stretches
+    that are in the way, lay the connection, lay the pushed nets again. The step is kept only when fewer
+    connections are open afterwards; otherwise the board goes back to what it was. Returns the steps kept."""
+    lib = r.lib
+    frozen = locked | {r.net_id[n] for n in RF | USB | PWR_HI | set(PLANES) if n in r.net_id}
+    kept, t0 = 0, time.time()
+    progress = True
+    while progress and time.time() - t0 < budget:
+        progress = False
+        for pen in (40, 10, 150):
+            r.build_maps(frozen)
+            for name in [n for n, _ in r.open_nets() if n not in PLANES]:
+                if time.time() - t0 > budget:
+                    break
+                state = (list(r.tracks), list(r.vias), dict(r.pid))
+                r.build_maps(frozen)
+                before = r.count_open()
+                net = r.net_id[name]
+                rules = net_rules(name)
+                width = rules["widths"][-1]
+                hits = set()
+                for src in sorted({lib.rt_find(c) for c in r.comps[net]}):
+                    res = r.search(net, src, rules, width, False, None, None, rip_pen=pen)
+                    if res:
+                        hits = {h for h in r.conflicts(net, res[0], width, rules) if h[0] not in frozen}
+                        if hits:
+                            break
+                if not hits:
+                    continue
+                victims = {v for v, _ in hits}
+                for v in {v for v, pid in hits if pid is None}:
+                    r.remove_net(v)
+                r.remove_paths({pid for _, pid in hits if pid is not None})
+                r.build_maps(frozen)
+                if r.drop_orphans(victims):
+                    r.build_maps(frozen)
+                r.route_net(name, record=False)
+                for v in victims:
+                    r.route_net(r.net_name[v], record=False)
+                r.build_maps(frozen)
+                after = r.count_open()
+                if after < before:
+                    kept += 1
+                    progress = True
+                    print(f"  pushed through: {name} (moved {', '.join(sorted(r.net_name[v] for v in victims))}); "
+                          f"open {before} -> {after}", flush=True)
+                else:
+                    r.tracks, r.vias, r.pid = state
+            r.build_maps(frozen)
+    r.build_maps(frozen)
+    return kept
 
 
 def main():
@@ -114,6 +217,17 @@ def main():
     for name, _ in r.open_nets():
         if name not in PLANES:
             r.route_net(name, record=False)
+    if RIPUP:
+        # what is still open may push other signal tracks out of the way; those are then routed again.
+        # Nets with locked copper are never touched. The best state seen is kept.
+        r.build_maps(frozen=set(r.net_name))
+        r.failed = [f for f in r.open_nets() if f[0] not in PLANES]
+        before_rip = sum(m for _, m in r.failed)
+        locked = {item[0] for item in r.critical}
+        number_paths(r)
+        r.build_maps(frozen=locked | {r.net_id[n] for n in RF | USB | PWR_HI | set(PLANES) if n in r.net_id})
+        steps = push_through(r, locked, RIPUP)
+        print(f"pushed through: {steps} steps kept, open {before_rip} -> {sum(m for _, m in r.open_nets())}", flush=True)
     n = (len(r.tracks), len(r.vias))
     r.trim_tails(only=loose)
     print(f"tidied: {n[0] - len(r.tracks)} loose track pieces and {n[1] - len(r.vias)} unused vias removed", flush=True)
