@@ -224,6 +224,11 @@ v("+3V3", 20.2, 1.4, 0.45, 0.2)
 t("ESP_USB_DP", B, 0.19, (62.8, 18.6), (62.8, 21.8))
 v("ESP_USB_DP", 62.8, 21.8, 0.45, 0.2)
 t("ESP_USB_DP", L3, 0.19, (62.8, 21.8), (62.8, 18.4))      # the way back up, to where the coupled run ends
+# D- round the pad of R18 to the one row where a via fits, and back up on the inner layer: by hand as well, so
+# that its length does not change when the ground vias beside it do.
+t("ESP_USB_DM", B, 0.19, (62.85, 17.45), (62.85, 17.65), (63.35, 18.15), (63.35, 19.2))
+v("ESP_USB_DM", 63.35, 19.2, 0.45, 0.2)
+t("ESP_USB_DM", L3, 0.19, (63.35, 19.2), (63.35, 18.2), (62.95, 17.8))
 
 # ---- USB from the Type-C socket (back) through the protection chip U1 (front, right above it) to the switch U6.
 # Each line has two contacts in the socket; they are joined on the back, D+ below the pads, D- above them, and

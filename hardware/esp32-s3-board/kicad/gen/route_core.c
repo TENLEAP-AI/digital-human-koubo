@@ -282,7 +282,7 @@ int rt_route(int net, int src, const int *lcost, int viacost, int np, const int 
             }
         }
     }
-    int32_t end = -1;
+    int32_t end = -1, pv = -1, pv_cost = 0;
     *kind = 0;
     while (heap_n > 0) {
         HNode h = heap_pop();
@@ -290,12 +290,16 @@ int rt_route(int net, int src, const int *lcost, int viacost, int np, const int 
         if (h.cost > dist[s]) continue;
         if (maxcost > 0 && h.cost > maxcost) break;
         int l = s / (W * H), rem = s % (W * H), y = rem / W, x = rem % W;
+        if (plane_mode && pv >= 0 && h.cost >= pv_cost) { end = pv; *kind = 1; break; }
         if (copper[s] == net) {
             int r = rt_find(comp[s]);
             if (r != root && (!plane_mode || plane_ok[r])) { end = s; *kind = 0; break; }
         }
-        if (plane_mode && h.cost > 0 && copper[s] != net && via_cached(net, x, y, nvp, vprobe)) {
-            end = s; *kind = 1; break;
+        /* In plane mode viacost is what a via of its own costs this pad: the first spot where a via fits is
+         * kept, and taken only if no copper that already reaches the plane turns up within that much more. */
+        if (plane_mode && pv < 0 && h.cost > 0 && copper[s] != net && via_cached(net, x, y, nvp, vprobe)) {
+            if (viacost <= 0) { end = s; *kind = 1; break; }
+            pv = s; pv_cost = h.cost + viacost;
         }
         for (int d = 0; d < 8; d++) {
             int nx = x + DX[d], ny = y + DY[d];
@@ -319,7 +323,7 @@ int rt_route(int net, int src, const int *lcost, int viacost, int np, const int 
                 heap_push(c, ns);
             }
         }
-        if (viacost > 0 && via_cached(net, x, y, nvp, vprobe))
+        if (viacost > 0 && !plane_mode && via_cached(net, x, y, nvp, vprobe))
             for (int l2 = 0; l2 < L; l2++) {
                 if (l2 == l || !lcost[l2]) continue;
                 if (!usable(net, l2, x, y, np, probe)) continue;
@@ -332,6 +336,7 @@ int rt_route(int net, int src, const int *lcost, int viacost, int np, const int 
                 }
             }
     }
+    if (end < 0 && pv >= 0) { end = pv; *kind = 1; }
     if (end < 0) return 0;
     int cnt = 0;
     for (int32_t s = end; s >= 0 && cnt < outcap; s = parent[s]) out[cnt++] = s;

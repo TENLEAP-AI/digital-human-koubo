@@ -44,6 +44,7 @@ L1, L3, L4, L6 = 0, 1, 2, 3    # index of each routing layer (L2 and L5 are the 
 L4_SIGNALS = os.environ.get("L4_SIGNALS", "0") == "1"   # STK-6: L4 is a pure +3V3 layer unless this is set
 NEGOTIATE = os.environ.get("NEGOTIATE", "0") == "1"     # route by negotiation instead of one net after the other (experimental)
 SIGNALS = os.environ.get("SIGNALS", "0") == "1" or NEGOTIATE   # route the signals too; default is the locked base only
+SHARE_COST = int(os.environ.get("SHARE_COST", "600"))        # what a new via costs a resistor's ground or supply pad; 0 = a via each
 SHORT_FIRST = float(os.environ.get("SHORT_FIRST", "4.0"))   # pads of a signal net this close are joined in the base; 0 = off
 LAYER_DIRS = (0, 1, 2, 0) if L4_SIGNALS else (0, 0, 0, 0)   # 1 = mostly horizontal, 2 = mostly vertical (STK-2)
 GW, GH = int(round(BOARD_W / G)) + 1, int(round(BOARD_H / G)) + 1
@@ -818,8 +819,9 @@ class Router:
             lib.rt_unite(root, joined)
         self.cur_pid = None
 
-    def route_net(self, name, record=True, rules=None):
-        """Connect all pads of a net. Returns the number of connections that could not be made."""
+    def route_net(self, name, record=True, rules=None, only=None):
+        """Connect all pads of a net. Returns the number of connections that could not be made.
+        only: a test on a pad; with it, only the pieces that hold such a pad are started from."""
         lib = self.lib
         net = self.net_id.get(name)
         if net is None or net not in self.comps:
@@ -829,6 +831,9 @@ class Router:
         bad = set()
         while True:
             roots = sorted({lib.rt_find(c) for c in self.comps[net]})
+            if only:
+                wanted = {lib.rt_find(p["comp"]) for p in self.pads if p["net"] == net and only(p)}
+                roots = [r for r in roots if r in wanted] if plane_mode else roots
             if plane_mode:
                 todo = [r for r in roots if not lib.rt_plane(r) and r not in bad]
             else:
@@ -1514,9 +1519,17 @@ def main():
         print(f"short signal connections first (pads up to {SHORT_FIRST} mm apart): {made} of {short} made", flush=True)
     # a stub and a via for every ground and +3V3 pad, capacitors first (DEC-2); before the short USB hops,
     # which would otherwise shut in the decoupling capacitors of the parts they connect
-    r.route_net("GND")
+    # Capacitors, chips and connectors get a via of their own. Resistors, transistors, diodes and test pads
+    # (pull-ups, pull-downs: no current to speak of) come after and join copper of the net that is already there
+    # when it is close, so that they do not use up the few spots for vias that the signals beside them need.
+    own = lambda p: p["ref"][0] not in "RQDT"
+    before = len(r.vias)
+    r.route_net("GND", record=False, only=own)
+    r.route_net("GND", rules=dict(net_rules("GND"), viacost=SHARE_COST) if SHARE_COST else None)
     print(f"+3V3: {r.decouple_first('+3V3')} supply pins joined to their capacitor instead of a via", flush=True)
-    r.route_net("+3V3")
+    r.route_net("+3V3", record=False, only=own)
+    r.route_net("+3V3", rules=dict(net_rules("+3V3"), viacost=SHARE_COST) if SHARE_COST else None)
+    print(f"ground and 3.3 V stubs: {len(r.vias) - before} vias", flush=True)
     for name in sorted((n for n in multi if n in USB), key=size.get):
         r.route_net(name)
     r.trim_tails(only={r.net_id[n] for n in USB if n in r.net_id})   # the ends of the coupled run
