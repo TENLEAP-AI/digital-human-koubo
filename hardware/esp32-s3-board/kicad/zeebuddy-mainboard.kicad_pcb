@@ -10129,7 +10129,7 @@
 				)
 			)
 		)
-		(property "Value" "5.1R 1%"
+		(property "Value" "10R 1%"
 			(at 0 1.17 270)
 			(layer "F.Fab")
 			(hide yes)

@@ -636,16 +636,16 @@ def backlight(sh):
               "FB": "LCD_LEDK"})
     sh.hlist(350.52, 96.52, [
         ("L", "VSYS", "BL_SW", "22µH", "", FP_L_SMALL),
-        ("R", "LCD_LEDK", "GND", "5.1R 1%"),
+        ("R", "LCD_LEDK", "GND", "10R 1%"),
     ])
     sh.D(350.52, 119.38, "BL_SW", "LCD_LEDA", "肖特基 40V", "Device:D_Schottky", "right",
          fp="Diode_SMD:D_SOD-323")
     sh.caps(243.84, 111.76, "VSYS", [("4.7µF", FP_0603)])
     sh.caps(269.24, 111.76, "LCD_LEDA", [("2.2µF 50V", FP_0805)])
     sh.text(220.98, 147.32,
-            "LED 电流 = 0.2 V / 5.1 Ω ≈ 39 mA。\n"
-            "这块屏的背光规格还没拿到，先按同尺寸 MIPI 版的\n"
-            "\"6 颗灯、40 mA、9.6 V\" 设计，拿到规格后只改这颗电阻。\n"
+            "LED 电流 = 0.2 V / 10 Ω = 20 mA。\n"
+            "按华迪创显 HD28142C22 的规格书：6 颗灯串联，18 V、20 mA，\n"
+            "电流的绝对上限也是 20 mA，不能再调高。\n"
             "GPIO45 输出 PWM 调光（20 kHz ~ 1 MHz），上电默认低 = 背光关。\n"
             "屏没插时输出会升到过压保护点（约 30 V），输出电容选 50 V。", 1.3)
 

@@ -2220,7 +2220,7 @@
 		(dnp no)
 		(uuid "d74b2b6a-f818-5422-ab04-487014ee979a")
 		(property "Reference" "R62" (at 350.52 101.6 90) (effects (font (size 1.27 1.27))))
-		(property "Value" "5.1R 1%" (at 350.52 106.68 90) (effects (font (size 1.27 1.27))))
+		(property "Value" "10R 1%" (at 350.52 106.68 90) (effects (font (size 1.27 1.27))))
 		(property "Footprint" "Resistor_SMD:R_0402_1005Metric"
 			(at 350.52 105.918 90)
 			(effects (font (size 1.27 1.27)) (hide yes))
@@ -2455,7 +2455,7 @@
 			)
 		)
 	)
-	(text "LED 电流 = 0.2 V / 5.1 Ω ≈ 39 mA。\n这块屏的背光规格还没拿到，先按同尺寸 MIPI 版的\n\"6 颗灯、40 mA、9.6 V\" 设计，拿到规格后只改这颗电阻。\nGPIO45 输出 PWM 调光（20 kHz ~ 1 MHz），上电默认低 = 背光关。\n屏没插时输出会升到过压保护点（约 30 V），输出电容选 50 V。"
+	(text "LED 电流 = 0.2 V / 10 Ω = 20 mA。\n按华迪创显 HD28142C22 的规格书：6 颗灯串联，18 V、20 mA，\n电流的绝对上限也是 20 mA，不能再调高。\nGPIO45 输出 PWM 调光（20 kHz ~ 1 MHz），上电默认低 = 背光关。\n屏没插时输出会升到过压保护点（约 30 V），输出电容选 50 V。"
 		(exclude_from_sim no)
 		(at 220.98 147.32 0)
 		(effects (font (size 1.3 1.3)) (justify left top))
