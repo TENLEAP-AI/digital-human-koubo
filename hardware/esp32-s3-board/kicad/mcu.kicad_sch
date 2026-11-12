@@ -1685,7 +1685,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "746e666d-2e2f-505d-b10f-f9c6fb9a9dc8")
-		(property "Reference" "#PWR35" (at 167.64 72.39 0) (effects (font (size 1.27 1.27)) (hide yes)))
+		(property "Reference" "#PWR36" (at 167.64 72.39 0) (effects (font (size 1.27 1.27)) (hide yes)))
 		(property "Value" "+3V3" (at 167.64 65.024 0) (effects (font (size 1.27 1.27))))
 		(property "Footprint" "" (at 167.64 68.58 0) (effects (font (size 1.27 1.27)) (hide yes)))
 		(property "Datasheet" "" (at 167.64 68.58 0) (effects (font (size 1.27 1.27)) (hide yes)))
@@ -1697,7 +1697,7 @@
 		(instances
 			(project "zeebuddy-mainboard"
 				(path "/7aeefa69-ecae-5622-92cc-4aeb9ca26e29/211471ca-6f6b-5659-97e0-543d0c20cec9"
-					(reference "#PWR35")
+					(reference "#PWR36")
 					(unit 1)
 				)
 			)
@@ -1717,7 +1717,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "e69fb110-f8a3-5443-a47a-ce252d34fb2c")
-		(property "Reference" "#PWR36" (at 167.64 135.89 0) (effects (font (size 1.27 1.27)) (hide yes)))
+		(property "Reference" "#PWR37" (at 167.64 135.89 0) (effects (font (size 1.27 1.27)) (hide yes)))
 		(property "Value" "GND" (at 167.64 133.35 0) (effects (font (size 1.27 1.27))))
 		(property "Footprint" "" (at 167.64 129.54 0) (effects (font (size 1.27 1.27)) (hide yes)))
 		(property "Datasheet" "" (at 167.64 129.54 0) (effects (font (size 1.27 1.27)) (hide yes)))
@@ -1729,7 +1729,7 @@
 		(instances
 			(project "zeebuddy-mainboard"
 				(path "/7aeefa69-ecae-5622-92cc-4aeb9ca26e29/211471ca-6f6b-5659-97e0-543d0c20cec9"
-					(reference "#PWR36")
+					(reference "#PWR37")
 					(unit 1)
 				)
 			)
@@ -1863,7 +1863,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "421d2ecc-fc1a-5627-b1bb-8bb1d232227c")
-		(property "Reference" "#PWR37" (at 43.18 48.26 0) (effects (font (size 1.27 1.27)) (hide yes)))
+		(property "Reference" "#PWR38" (at 43.18 48.26 0) (effects (font (size 1.27 1.27)) (hide yes)))
 		(property "Value" "+3V3" (at 43.18 40.894 0) (effects (font (size 1.27 1.27))))
 		(property "Footprint" "" (at 43.18 44.45 0) (effects (font (size 1.27 1.27)) (hide yes)))
 		(property "Datasheet" "" (at 43.18 44.45 0) (effects (font (size 1.27 1.27)) (hide yes)))
@@ -1875,7 +1875,7 @@
 		(instances
 			(project "zeebuddy-mainboard"
 				(path "/7aeefa69-ecae-5622-92cc-4aeb9ca26e29/211471ca-6f6b-5659-97e0-543d0c20cec9"
-					(reference "#PWR37")
+					(reference "#PWR38")
 					(unit 1)
 				)
 			)
@@ -1895,7 +1895,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "304bc292-d881-568a-9c67-9797d93a12c7")
-		(property "Reference" "#PWR38" (at 43.18 63.5 0) (effects (font (size 1.27 1.27)) (hide yes)))
+		(property "Reference" "#PWR39" (at 43.18 63.5 0) (effects (font (size 1.27 1.27)) (hide yes)))
 		(property "Value" "GND" (at 43.18 60.96 0) (effects (font (size 1.27 1.27))))
 		(property "Footprint" "" (at 43.18 57.15 0) (effects (font (size 1.27 1.27)) (hide yes)))
 		(property "Datasheet" "" (at 43.18 57.15 0) (effects (font (size 1.27 1.27)) (hide yes)))
@@ -1907,7 +1907,7 @@
 		(instances
 			(project "zeebuddy-mainboard"
 				(path "/7aeefa69-ecae-5622-92cc-4aeb9ca26e29/211471ca-6f6b-5659-97e0-543d0c20cec9"
-					(reference "#PWR38")
+					(reference "#PWR39")
 					(unit 1)
 				)
 			)
@@ -1958,7 +1958,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "45da6239-86b0-5039-8e91-317261310fe2")
-		(property "Reference" "#PWR39" (at 55.88 48.26 0) (effects (font (size 1.27 1.27)) (hide yes)))
+		(property "Reference" "#PWR40" (at 55.88 48.26 0) (effects (font (size 1.27 1.27)) (hide yes)))
 		(property "Value" "+3V3" (at 55.88 40.894 0) (effects (font (size 1.27 1.27))))
 		(property "Footprint" "" (at 55.88 44.45 0) (effects (font (size 1.27 1.27)) (hide yes)))
 		(property "Datasheet" "" (at 55.88 44.45 0) (effects (font (size 1.27 1.27)) (hide yes)))
@@ -1970,7 +1970,7 @@
 		(instances
 			(project "zeebuddy-mainboard"
 				(path "/7aeefa69-ecae-5622-92cc-4aeb9ca26e29/211471ca-6f6b-5659-97e0-543d0c20cec9"
-					(reference "#PWR39")
+					(reference "#PWR40")
 					(unit 1)
 				)
 			)
@@ -1990,7 +1990,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "165c657e-6c6a-5c81-986f-87444bf669f0")
-		(property "Reference" "#PWR40" (at 55.88 63.5 0) (effects (font (size 1.27 1.27)) (hide yes)))
+		(property "Reference" "#PWR41" (at 55.88 63.5 0) (effects (font (size 1.27 1.27)) (hide yes)))
 		(property "Value" "GND" (at 55.88 60.96 0) (effects (font (size 1.27 1.27))))
 		(property "Footprint" "" (at 55.88 57.15 0) (effects (font (size 1.27 1.27)) (hide yes)))
 		(property "Datasheet" "" (at 55.88 57.15 0) (effects (font (size 1.27 1.27)) (hide yes)))
@@ -2002,7 +2002,7 @@
 		(instances
 			(project "zeebuddy-mainboard"
 				(path "/7aeefa69-ecae-5622-92cc-4aeb9ca26e29/211471ca-6f6b-5659-97e0-543d0c20cec9"
-					(reference "#PWR40")
+					(reference "#PWR41")
 					(unit 1)
 				)
 			)
@@ -2505,7 +2505,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "f2d5b015-6bae-52c6-a700-a97a277b336d")
-		(property "Reference" "#PWR41" (at 116.84 181.61 0) (effects (font (size 1.27 1.27)) (hide yes)))
+		(property "Reference" "#PWR42" (at 116.84 181.61 0) (effects (font (size 1.27 1.27)) (hide yes)))
 		(property "Value" "+3V3" (at 116.84 174.244 0) (effects (font (size 1.27 1.27))))
 		(property "Footprint" "" (at 116.84 177.8 0) (effects (font (size 1.27 1.27)) (hide yes)))
 		(property "Datasheet" "" (at 116.84 177.8 0) (effects (font (size 1.27 1.27)) (hide yes)))
@@ -2517,7 +2517,7 @@
 		(instances
 			(project "zeebuddy-mainboard"
 				(path "/7aeefa69-ecae-5622-92cc-4aeb9ca26e29/211471ca-6f6b-5659-97e0-543d0c20cec9"
-					(reference "#PWR41")
+					(reference "#PWR42")
 					(unit 1)
 				)
 			)
@@ -2537,7 +2537,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "82d09479-fa4a-5ade-800f-15f79639bc2e")
-		(property "Reference" "#PWR42" (at 116.84 209.55 0) (effects (font (size 1.27 1.27)) (hide yes)))
+		(property "Reference" "#PWR43" (at 116.84 209.55 0) (effects (font (size 1.27 1.27)) (hide yes)))
 		(property "Value" "GND" (at 116.84 207.01 0) (effects (font (size 1.27 1.27))))
 		(property "Footprint" "" (at 116.84 203.2 0) (effects (font (size 1.27 1.27)) (hide yes)))
 		(property "Datasheet" "" (at 116.84 203.2 0) (effects (font (size 1.27 1.27)) (hide yes)))
@@ -2549,7 +2549,7 @@
 		(instances
 			(project "zeebuddy-mainboard"
 				(path "/7aeefa69-ecae-5622-92cc-4aeb9ca26e29/211471ca-6f6b-5659-97e0-543d0c20cec9"
-					(reference "#PWR42")
+					(reference "#PWR43")
 					(unit 1)
 				)
 			)
@@ -2673,7 +2673,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "c319cc3a-728a-59a8-a943-32a769b5329d")
-		(property "Reference" "#PWR43" (at 332.74 57.15 0) (effects (font (size 1.27 1.27)) (hide yes)))
+		(property "Reference" "#PWR44" (at 332.74 57.15 0) (effects (font (size 1.27 1.27)) (hide yes)))
 		(property "Value" "+3V3" (at 332.74 49.784 0) (effects (font (size 1.27 1.27))))
 		(property "Footprint" "" (at 332.74 53.34 0) (effects (font (size 1.27 1.27)) (hide yes)))
 		(property "Datasheet" "" (at 332.74 53.34 0) (effects (font (size 1.27 1.27)) (hide yes)))
@@ -2685,7 +2685,7 @@
 		(instances
 			(project "zeebuddy-mainboard"
 				(path "/7aeefa69-ecae-5622-92cc-4aeb9ca26e29/211471ca-6f6b-5659-97e0-543d0c20cec9"
-					(reference "#PWR43")
+					(reference "#PWR44")
 					(unit 1)
 				)
 			)
@@ -2705,7 +2705,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "81488b71-107d-53a5-96ef-7f3e796211f7")
-		(property "Reference" "#PWR44" (at 332.74 85.09 0) (effects (font (size 1.27 1.27)) (hide yes)))
+		(property "Reference" "#PWR45" (at 332.74 85.09 0) (effects (font (size 1.27 1.27)) (hide yes)))
 		(property "Value" "GND" (at 332.74 82.55 0) (effects (font (size 1.27 1.27))))
 		(property "Footprint" "" (at 332.74 78.74 0) (effects (font (size 1.27 1.27)) (hide yes)))
 		(property "Datasheet" "" (at 332.74 78.74 0) (effects (font (size 1.27 1.27)) (hide yes)))
@@ -2717,7 +2717,7 @@
 		(instances
 			(project "zeebuddy-mainboard"
 				(path "/7aeefa69-ecae-5622-92cc-4aeb9ca26e29/211471ca-6f6b-5659-97e0-543d0c20cec9"
-					(reference "#PWR44")
+					(reference "#PWR45")
 					(unit 1)
 				)
 			)
@@ -2905,7 +2905,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "a980810d-1d71-5f91-8ff4-0ecbfbc2831a")
-		(property "Reference" "#PWR45" (at 383.54 48.26 0) (effects (font (size 1.27 1.27)) (hide yes)))
+		(property "Reference" "#PWR46" (at 383.54 48.26 0) (effects (font (size 1.27 1.27)) (hide yes)))
 		(property "Value" "+3V3" (at 383.54 40.894 0) (effects (font (size 1.27 1.27))))
 		(property "Footprint" "" (at 383.54 44.45 0) (effects (font (size 1.27 1.27)) (hide yes)))
 		(property "Datasheet" "" (at 383.54 44.45 0) (effects (font (size 1.27 1.27)) (hide yes)))
@@ -2917,7 +2917,7 @@
 		(instances
 			(project "zeebuddy-mainboard"
 				(path "/7aeefa69-ecae-5622-92cc-4aeb9ca26e29/211471ca-6f6b-5659-97e0-543d0c20cec9"
-					(reference "#PWR45")
+					(reference "#PWR46")
 					(unit 1)
 				)
 			)
@@ -2937,7 +2937,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "ce722040-c30b-56d2-ab2a-5297d30d873f")
-		(property "Reference" "#PWR46" (at 383.54 63.5 0) (effects (font (size 1.27 1.27)) (hide yes)))
+		(property "Reference" "#PWR47" (at 383.54 63.5 0) (effects (font (size 1.27 1.27)) (hide yes)))
 		(property "Value" "GND" (at 383.54 60.96 0) (effects (font (size 1.27 1.27))))
 		(property "Footprint" "" (at 383.54 57.15 0) (effects (font (size 1.27 1.27)) (hide yes)))
 		(property "Datasheet" "" (at 383.54 57.15 0) (effects (font (size 1.27 1.27)) (hide yes)))
@@ -2949,7 +2949,7 @@
 		(instances
 			(project "zeebuddy-mainboard"
 				(path "/7aeefa69-ecae-5622-92cc-4aeb9ca26e29/211471ca-6f6b-5659-97e0-543d0c20cec9"
-					(reference "#PWR46")
+					(reference "#PWR47")
 					(unit 1)
 				)
 			)

@@ -131,7 +131,7 @@ def power():
               "D+": "USBC_DP", "D-": "USBC_DM"}, nc=["SBU1", "SBU2"],
              value="Type-C 16P", fp="Connector_USB:USB_C_Receptacle_HRO_TYPE-C-31-M-12")
     sh.place("Power_Protection:USBLC6-2SC6", 106.68, 50.8,
-             {"I/O1": "USBC_DP", "I/O2": "USBC_DM", "GND": "GND"}, nc=["VBUS"])
+             {"I/O1": "USBC_DP", "I/O2": "USBC_DM", "GND": "GND", "VBUS": "VBUS"})   # pin 5 to VBUS, as in ST's circuit
     sh.hlist(106.68, 81.28, [("R", "USBC_CC1", "GND", "5.1k"), ("R", "USBC_CC2", "GND", "5.1k")])
     sh.D(88.9, 114.3, "GND", "VBUS", "TVS 5V", "Device:D_TVS", "up", fp="Diode_SMD:D_SOD-123F")
     sh.text(15.24, 121.92, "USB 数据线只去 ESD 管和 USB 切换芯片，不接充电芯片，\n"
@@ -399,12 +399,14 @@ def cellular():
         value="Air780E（北美版换贴 Air780EEN）")
     sh.hlist(238.76, 142.24, [
         ("R", "LTE_IOSEL", "GND", "0R", "dnp"),
-        ("R", "VDD_4G", "LTE_VBUS", "10k", "dnp"),
+        ("R", "VDD_4G", "LTE_VBUS", "10k"),      # fitted: the module's USB-detect pin is high whenever the module has power
     ])
     tps = ["LTE_PWRKEY", "LTE_VDD_EXT", "LTE_USB_BOOT", "LTE_USB_DP", "LTE_USB_DM", "LTE_VBUS",
            "LTE_RXD", "LTE_TXD", "LTE_DBG_RX", "LTE_DBG_TX"]
     for i, net in enumerate(tps):
         sh.tp(190.5 + (i % 5) * 20.32, 185.42 + (i // 5) * 33.02, net)
+    sh.text(185.42, 205.74, "61 脚（VBUS，USB 插入检测）经 10k 接模组自己的供电：板上 4G 的数据只走 USB，\n"
+                            "电池供电时没有外部 5 V，这个脚不拉高模组可能不枚举。接法和阻值待合宙确认。", 1.3)
     sh.text(185.42, 228.6, "100 脚不接（Air780EEN 只有 1.8 V 电平）。主串口、调试串口、USB、\n"
                            "USB_BOOT 只引到测试点，用于升级模组固件和抓日志。\n"
                            "53 个悬空焊盘（AT 方式下不接）在符号里是隐藏脚，不能接地。", 1.3)

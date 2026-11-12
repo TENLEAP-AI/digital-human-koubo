@@ -5,8 +5,10 @@ ESP32-S3-WROOM-1U-N16R8 + Air780E 的主板，第一版，**草稿**：原理图
 两颗扩展芯片的引脚按板上位置重新分过（见"还没定的"一节的表）。
 
 > **当前状态**（2026-11-11）：六层、板厚 1.6 mm，按 [`../docs/layout-spec.md`](../docs/layout-spec.md)（V0.3）在做。
-> - `zeebuddy-mainboard.kicad_pcb` **已全部布通**：570 处连接全部连上。KiCad 9.0.9 完整检查：
->   未连通 0、布线违规 0、原理图一致性（含字段差异）0。报告在 [`reports/`](reports/)。
+> - `zeebuddy-mainboard.kicad_pcb`：`731b83a` 那一版 570 处连接全部布通。2026-11-12 按独立复查改了两处原理图
+>   （Type-C 保护芯片 U1 第 5 脚接 VBUS；R44 改为默认贴），U1 第 5 脚这根线在现在的板子上被锁定的 USB 线围住，
+>   **留作 1 处未连通**，和下一轮的 USB 重画一起做。KiCad 9.0.9 完整检查：未连通 1、布线违规 0、
+>   原理图一致性（含字段差异）0。报告在 [`reports/`](reports/)。
 > - 首版配置：屏用 G3 ~ G7 五根数据线（G0 ~ G2 接地），保留 TF 卡，R58 ~ R60 已删除。
 > - **KiCad 检查通过不等于规范全部满足。**还没满足或没检查的：USB 四段里三段的等长（USB-3）；
 >   1 段 4.2 mm 的 0.11 mm 窄线（GEN-1 允许的窄线最长 3 mm）；过孔到焊盘 ≥0.15 mm（GEN-7）没有写进 KiCad 规则，
@@ -29,7 +31,9 @@ ESP32-S3-WROOM-1U-N16R8 + Air780E 的主板，第一版，**草稿**：原理图
 | `zeebuddy.kicad_sym` | 工程自带的符号（Air780E、排线座等） |
 | `zeebuddy-mainboard.kicad_pcb` | PCB：六层，外形、螺丝孔、210 个封装；电源、地、天线线、USB 已布好并锁定，信号线全部布通 |
 | `reports/drc-report.txt` / `.json` | KiCad 9.0.9 的完整检查报告（含原理图一致性） |
-| `reports/routing-closure.md` | 布线收尾记录：每处断点怎么处理的、改了什么摆位、规范核查结果、还没满足的规范 |
+| `reports/routing-closure.md` | 布线收尾记录：每处断点怎么处理的、改了什么摆位、规范核查结果、还没满足的规范、独立复查的结论 |
+| `connector-positions.png` | 所有排线座的位置、第 1 脚、排线插入方向（`gen/connectors.py` 生成），给结构和排线供应商 |
+| `../docs/display-interface-for-vendor.md` | 给屏厂的排线接口定义：脚位表、要屏厂确认的事项、背光和触摸 |
 | `placement-front.png` / `placement-back.png` | 正反两面主要器件的摆放示意图 |
 | `routing.png` | 当前布线的示意图 |
 | `freerouting/zeebuddy-mainboard.dsn` | **第二轮**给 Freerouting 用的板子文件（底子作为障碍，只有信号线要布） |

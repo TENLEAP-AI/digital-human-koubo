@@ -1,10 +1,14 @@
 ** Drc report for zeebuddy-mainboard.kicad_pcb **
-** Created on 2026-11-11T17:19:17+0000 **
+** Created on 2026-11-12T00:32:34+0000 **
 ** Report includes: Errors, Warnings, Exclusions **
 
 ** Found 0 DRC violations **
 
-** Found 0 unconnected pads **
+** Found 1 unconnected pads **
+[unconnected_items]: Missing connection between items
+    Local override; error
+    @(132.0000 mm, 84.6625 mm): Pad 5 [VBUS] of U1 on F.Cu
+    @(133.8000 mm, 85.6000 mm): Track [VBUS] on F.Cu, length 4.7000 mm
 
 ** Found 0 Footprint errors **
 
