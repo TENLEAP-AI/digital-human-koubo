@@ -206,10 +206,10 @@ t("EXP_INT", B, 0.15, (58.15, 13.3), (58.15, 12.6), (58.95, 12.2))
 # to a via below the connector's pads, before that link is laid.
 t("CAM_PWR_EN", F, 0.15, (19.5, 3.3), (20.15, 3.75), (20.15, 5.8))
 v("CAM_PWR_EN", 20.15, 5.8, 0.45, 0.2)
-# The two regulators' output capacitors hang on the output pin by hand (DEC-2): 0.75 mm of copper each, which
+# The two regulators' output capacitors hang on the output pin by hand (DEC-2): about 1 mm of copper each, which
 # an autorouter will otherwise cut off with a signal track through the gap. U16's supply pin goes to the 3.3 V
 # plane beside the pin, like U15's; its link to the capacitor three pads away ran through that same gap.
-t("+2V8", F, 0.3, (15.2, 1.25), (16.42, 1.25))
+t("+2V8", F, 0.3, (14.6, 1.25), (16.42, 1.25))
 t("+2V8", F, 0.4, (16.42, 1.1), (16.42, 2.4))
 t("+1V2", F, 0.3, (21.8, 1.25), (23.05, 1.25))
 t("+1V2", F, 0.4, (23.05, 1.1), (23.05, 2.4))

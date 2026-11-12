@@ -139,7 +139,10 @@ GROUPS = [
     # Camera LDOs and clock: one strip under y = 4.2, the capacitors between the chips and not below them. The display
     # and rear camera connectors on the back have their pads at y = 4.05 .. 5.25: the front stays free from there down
     # to y = 7, so that their pins can drop a via right below the pad.
-    ("F", 11.5, 0.6, ["U15"]),
+    # U15 stands 0.6 mm to the left of where the strip would put it: the gap to its capacitors (1.35 mm between
+    # the pads) is the one column above the display connector's data pins where vias fit 0.15 mm clear of the
+    # pads on both sides of the board (GEN-7).
+    ("F", 10.9, 0.6, ["U15"]),
     ("F", 15.95, 0.6, ["C39", "C40", "C44"], 0.3, 0.3),          # output capacitors on top, level with the output pin
     ("F", 18.12, 0.6, ["U16"]),
     ("F", 22.57, 0.6, ["C42", "C43", "C45"], 0.3, 0.3),
@@ -157,11 +160,10 @@ GROUPS = [
     # pad column on the back (no room for vias there) carries next to nothing. Unturned, every key track had to go
     # round the chip.
     ("F", 55.3, 7.8, ["U7@180"]),
-    ("F", 59.0, 13.3, ["R20 R21", "R22", "R27 R28", "C16"], 0.3, 0.2),                    # pull-ups of keys 1 to 3 (connector A, below)
-    # pull-ups of keys 4 to 6: beside connector B at the top edge, where those three lines go. In the corner
-    # under U7 they made each line run down into the tightest spot of the board and back.
-    ("F", 34.7, 5.75, ["R23@180 R24@180"], 0.3, 0.2),
-    ("F", 36.95, 7.0, ["R25@180"]),
+    # (Tried: the pull-ups of keys 4 to 6 beside connector B at the top edge, where those lines go. The corner here
+    # got easier, but at (34.7 .. 38.9, 5.75 .. 8) they stand where the rear camera connector's last pins drop
+    # their vias, and four camera lines stayed open instead.)
+    ("F", 59.0, 13.3, ["R20 R21", "R22 R23", "R24 R25", "R27 R28", "C16"], 0.3, 0.2),
     ("F", 27.3, 15.0, ["R26"]),                                                           # touch interrupt pull-up, beside chip B
     ("F", 38.9, 20.9, ["R50 R16 R13 R14 R15", "U5 SW1", "SW2 TP8 TP9"]),                  # ESP32 misc, buttons
     ("F", 50.3, 20.9, ["R77 R78 R79", "R80 R81 R82", "C57 C56"]),                         # TF card
