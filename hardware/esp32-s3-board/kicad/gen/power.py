@@ -116,7 +116,9 @@ t("VBUS", F, 1.0, (30.65, 31.89), (29.3, 32.1), (28.6, 32.8), (20.3, 32.8), (18.
 t("VBUS", F, 0.6, (28.9, 31.9), (29.3, 32.1))                # test pad
 
 # ---- system supply on the front: 2 mm trunk from the four vias down to the amplifier (PWR-16), test pad at its end
-t("VSYS", F, 2.0, (5.9, 7.2), (5.6, 8.2), (5.6, 23.4))
+# The trunk steps 0.7 mm to the left where it passes the charger's four signal pins (back, y = 13.3 .. 14.4):
+# with the 5 V strip on the back to their right, the pins had 0.4 mm of room for vias below them.
+t("VSYS", F, 2.0, (5.9, 7.2), (5.6, 8.2), (5.6, 12.0), (4.9, 12.7), (4.9, 15.9), (5.6, 16.6), (5.6, 23.4))
 t("VSYS", F, 0.75, (4.2, 21.7), (4.9, 21.7))               # amplifier pins 7 / 8
 t("VSYS", F, 0.5, (6.0, 21.7), (6.7, 21.7))                # its 100 nF
 t("VSYS", F, 1.0, (6.5, 8.05), (7.6, 8.05))                # input capacitor of the 3.3 V buck
@@ -204,6 +206,15 @@ t("EXP_INT", B, 0.15, (58.15, 13.3), (58.15, 12.6), (58.95, 12.2))
 # to a via below the connector's pads, before that link is laid.
 t("CAM_PWR_EN", F, 0.15, (19.5, 3.3), (20.15, 3.75), (20.15, 5.8))
 v("CAM_PWR_EN", 20.15, 5.8, 0.45, 0.2)
+# The two regulators' output capacitors hang on the output pin by hand (DEC-2): 0.75 mm of copper each, which
+# an autorouter will otherwise cut off with a signal track through the gap. U16's supply pin goes to the 3.3 V
+# plane beside the pin, like U15's; its link to the capacitor three pads away ran through that same gap.
+t("+2V8", F, 0.3, (15.2, 1.25), (16.42, 1.25))
+t("+2V8", F, 0.4, (16.42, 1.1), (16.42, 2.4))
+t("+1V2", F, 0.3, (21.8, 1.25), (23.05, 1.25))
+t("+1V2", F, 0.4, (23.05, 1.1), (23.05, 2.4))
+t("+3V3", F, 0.3, (19.5, 1.4), (20.2, 1.4))
+v("+3V3", 20.2, 1.4, 0.45, 0.2)
 
 # ---- USB pair from the switch (U6) to the series resistors R18 / R19 (back, right edge): the two lines differ
 # at their ends, not on the coupled run in between. At the switch D- has to pass under the chip to a via on its

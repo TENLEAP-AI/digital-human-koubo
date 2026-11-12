@@ -157,7 +157,11 @@ GROUPS = [
     # pad column on the back (no room for vias there) carries next to nothing. Unturned, every key track had to go
     # round the chip.
     ("F", 55.3, 7.8, ["U7@180"]),
-    ("F", 59.0, 13.3, ["R20 R21", "R22 R23", "R24 R25", "R27 R28", "C16"], 0.3, 0.2),
+    ("F", 59.0, 13.3, ["R20 R21", "R22", "R27 R28", "C16"], 0.3, 0.2),                    # pull-ups of keys 1 to 3 (connector A, below)
+    # pull-ups of keys 4 to 6: beside connector B at the top edge, where those three lines go. In the corner
+    # under U7 they made each line run down into the tightest spot of the board and back.
+    ("F", 34.7, 5.75, ["R23@180 R24@180"], 0.3, 0.2),
+    ("F", 36.95, 7.0, ["R25@180"]),
     ("F", 27.3, 15.0, ["R26"]),                                                           # touch interrupt pull-up, beside chip B
     ("F", 38.9, 20.9, ["R50 R16 R13 R14 R15", "U5 SW1", "SW2 TP8 TP9"]),                  # ESP32 misc, buttons
     ("F", 50.3, 20.9, ["R77 R78 R79", "R80 R81 R82", "C57 C56"]),                         # TF card
