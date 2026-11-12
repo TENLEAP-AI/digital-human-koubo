@@ -157,11 +157,13 @@ def hide_finished(board):
     return done
 
 
-def pad_via_keepouts(board, gap=0.15):
+def pad_via_keepouts(board, gap=0.15, clearance=0.10):
     """GEN-7 for the autorouter, which has no such rule of its own: no via within 0.15 mm of a surface-mount pad,
     whatever the net. Each pad gets an area that bars vias (tracks may pass) on its own side of the board.
-    Only for the copy that is exported."""
-    grow = pcbnew.FromMM(gap)
+    Freerouting keeps its own clearance (0.10 mm) from such an area as well, so the area is the pad grown by
+    the difference only; grown by the full 0.15 mm its vias end up 0.25 mm from the pads, which costs room the
+    rule does not ask for. Only for the copy that is exported."""
+    grow = pcbnew.FromMM(gap - clearance)
     n = 0
     for fp in board.GetFootprints():
         for pad in fp.Pads():
