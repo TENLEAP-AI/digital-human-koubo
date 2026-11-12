@@ -157,6 +157,41 @@ def hide_finished(board):
     return done
 
 
+def pad_via_keepouts(board, gap=0.15):
+    """GEN-7 for the autorouter, which has no such rule of its own: no via within 0.15 mm of a surface-mount pad,
+    whatever the net. Each pad gets an area that bars vias (tracks may pass) on its own side of the board.
+    Only for the copy that is exported."""
+    grow = pcbnew.FromMM(gap)
+    n = 0
+    for fp in board.GetFootprints():
+        for pad in fp.Pads():
+            if pad.GetAttribute() in (pcbnew.PAD_ATTRIB_PTH, pcbnew.PAD_ATTRIB_NPTH):
+                continue
+            layers = [l for l in (pcbnew.F_Cu, pcbnew.B_Cu) if pad.IsOnLayer(l)]
+            if not layers:
+                continue                          # paste-only aperture
+            bb = pad.GetBoundingBox()
+            x0, y0, x1, y1 = bb.GetLeft() - grow, bb.GetTop() - grow, bb.GetRight() + grow, bb.GetBottom() + grow
+            z = pcbnew.ZONE(board)
+            z.SetIsRuleArea(True)
+            ls = pcbnew.LSET()
+            for layer in layers:
+                ls.AddLayer(layer)
+            z.SetLayerSet(ls)
+            z.SetDoNotAllowTracks(False)
+            z.SetDoNotAllowVias(True)
+            z.SetDoNotAllowPads(False)
+            z.SetDoNotAllowCopperPour(False)
+            z.SetDoNotAllowFootprints(False)
+            o = z.Outline()
+            o.NewOutline()
+            for x, y in ((x0, y0), (x1, y0), (x1, y1), (x0, y1)):
+                o.Append(int(x), int(y))
+            board.Add(z)
+            n += 1
+    print(f"vias barred within {gap} mm of {n} surface-mount pads (GEN-7)")
+
+
 def for_export(board):
     """The copy handed to the autorouter gets an outline that is EDGE smaller all round."""
     outline = pcbnew.SHAPE_POLY_SET()
@@ -206,6 +241,7 @@ def main():
     print(f"kept {kept} locked tracks and vias")
     if "--ses" not in opts:
         hide_finished(board)
+        pad_via_keepouts(board)
     add_zone(board, "GND", pcbnew.In1_Cu)      # exported as planes: they keep signal tracks off these layers
     add_zone(board, "GND", pcbnew.In4_Cu)
     win = add_rf_ground(board)                 # the ground under the antenna socket's opening...

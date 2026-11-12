@@ -162,6 +162,30 @@ def main():
             n = len(near(p["rect"], "GND", 1.2))
             row(f"RF-11 天线座地焊盘 {k + 1}", "旁边 ≥2 个地孔", f"{n} 个", n >= 2)
 
+    # ---- vias and pads ---------------------------------------------------------------------------------------
+    # GEN-7: via copper keeps 0.15 mm from every surface-mount pad, its own net's included. VIP-1: no via in a
+    # pad, except in the ground pad under a chip (short side 0.8 mm or more, via centre on the pad).
+    in_pad, close, locked_close = [], [], 0
+    smd = [(key, p) for key, group in pads.items() for p in group if not p["pth"] and
+           (pcbnew.F_Cu in p["layers"] or pcbnew.B_Cu in p["layers"])]
+    for name, x, y, dia, drill in vias:
+        worst = None
+        for (ref, num), p in smd:
+            x0, y0, x1, y1 = p["rect"]
+            gap = math.hypot(max(x0 - x, 0, x - x1), max(y0 - y, 0, y - y1)) - dia / 2
+            centre = x0 - 1e-3 <= x <= x1 + 1e-3 and y0 - 1e-3 <= y <= y1 + 1e-3    # on the pad or on its edge
+            if centre and ref.startswith("U") and p["net"] == "GND" == name and min(x1 - x0, y1 - y0) >= 0.8:
+                continue
+            if gap < 0.15 - 1e-6 and (worst is None or gap < worst[0]):
+                worst = (gap, ref, num)
+        if worst:
+            (in_pad if worst[0] < 0 else close).append((name, x, y) + worst)
+    row("VIP-1", "小焊盘上不打过孔（芯片底下的大地焊盘除外）", f"{len(in_pad)} 个" +
+        ("：" + "、".join(f"{n} ({x:.2f}, {y:.2f}) 压 {r}.{k}" for n, x, y, g, r, k in in_pad[:4]) if in_pad else ""),
+        not in_pad)
+    row("GEN-7", "过孔铜离贴片焊盘 ≥0.15 mm（同网络也算）", f"{len(close)} 个不够" +
+        ("，最近 %.3f mm" % min(c[3] for c in close) if close else ""), not close)
+
     # ---- USB ----------------------------------------------------------------------------------------------
     try:
         with open(os.path.join(OUT, "build", "routing.json"), encoding="utf-8") as f:

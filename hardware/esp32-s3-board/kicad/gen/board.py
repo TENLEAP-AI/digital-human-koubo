@@ -278,6 +278,15 @@ def main():
     with open(pro, "w", encoding="utf-8") as f:
         json.dump(project, f, indent=2, ensure_ascii=False)
         f.write("\n")
+    # Rules that KiCad's own table of clearances cannot express (docs/layout-spec.md section 11)
+    with open(os.path.join(OUT, NAME + ".kicad_dru"), "w", encoding="utf-8") as f:
+        f.write('(version 1)\n'
+                '# GEN-7: a via keeps 0.15 mm from the pads of other nets (solder must not run into the hole).\n'
+                '# Vias beside a pad of their own net are counted by gen/check.py: KiCad has no clearance between\n'
+                '# items of one net.\n'
+                '(rule "GEN-7 via to pad of another net"\n'
+                '  (constraint clearance (min 0.15mm))\n'
+                '  (condition "A.Type == \'Via\' && B.Type == \'Pad\' && A.Net != B.Net"))\n')
     with open(os.path.join(OUT, "build", "placement.json"), "w", encoding="utf-8") as f:
         json.dump([dict(ref=r, value=v, side=s, x1=round(a, 2), y1=round(b, 2), x2=round(c, 2), y2=round(d, 2))
                    for r, v, s, a, b, c, d in summary], f, ensure_ascii=False, indent=0)
