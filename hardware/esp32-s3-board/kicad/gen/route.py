@@ -37,6 +37,7 @@ MARGIN = 0.02
 R0 = CLR + W_DEF / 2 + MARGIN  # growth of every obstacle in the owner map
 EDGE = 0.30                   # copper to board edge
 HOLE_CLR = 0.25               # hole to hole / hole to copper
+VIA_PAD = 0.40                # via centre to the edge of a pad: GEN-7 (0.15 mm copper to copper for a 0.45 mm via)
 ROUTE_LAYERS = [pcbnew.F_Cu, pcbnew.In2_Cu, pcbnew.In3_Cu, pcbnew.B_Cu]   # the two ground planes are not routed
 NL = len(ROUTE_LAYERS)
 L1, L3, L4, L6 = 0, 1, 2, 3    # index of each routing layer (L2 and L5 are the planes)
@@ -212,8 +213,9 @@ class Router:
             else:
                 lib.rt_paint_rect(l, x0, y0, x1, y1, grow / G, p["net"], 0, 0)
         self.paint_pad_copper(p, comp)
-        # no via centre inside or right next to a pad
-        lib.rt_viablock_rect(x0, y0, x1, y1, (0.40 if p["pth"] else 0.20) / G)
+        # no via centre inside or near a pad. GEN-7: via copper stays 0.15 mm from pad copper, its own net's pads
+        # included (a 0.45 mm via: centre 0.225 + 0.15 away, plus the margin)
+        lib.rt_viablock_rect(x0, y0, x1, y1, VIA_PAD / G)
 
     def paint_pad_copper(self, p, comp):
         """The core of a pad as copper of component `comp`: where a track of its net may start or end."""

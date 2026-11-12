@@ -51,14 +51,15 @@ t("CHG_PMID", B, 0.28, (9.83, 12.95), (11.3, 13.2))
 # ---- charger ground (PWR-11): PGND pins -> ground pads of the system capacitors, same side, 0.6 mm away;
 # PGND and the two grounded control pins -> the pad under the chip; six vias in that pad (PWR-14)
 t("GND", B, 0.78, (8.9, 10.2), (8.9, 9.3))
-t("GND", B, 0.8, (9.0, 8.91), (10.65, 8.91))
+t("GND", B, 0.8, (9.0, 8.91), (10.8, 8.91))
 t("GND", B, 0.6, (8.9, 10.3), (8.9, 11.2))
 t("GND", B, 0.78, (5.98, 12.7), (6.9, 12.7))
 for x, y in ((8.0, 12.2), (7.2, 11.4), (8.8, 11.4), (7.2, 13.0), (8.8, 13.0), (8.0, 11.05)):
     v("GND", x, y, 0.45, 0.2, True)
-v("GND", 9.825, 8.91, 0.45, 0.2)                            # between the ground pads of C5 and C6
+v("GND", 9.9, 8.91, 0.45, 0.2)                              # between the ground pads of C5 and C6, 0.15 mm from each (GEN-7)
 t("GND", B, 0.5, (3.2, 6.9), (4.5, 7.3))                    # battery minus -> ground pad of C7
-v("GND", 3.725, 7.45, 0.45, 0.2)
+t("GND", B, 0.25, (3.6, 7.05), (3.6, 7.5))
+v("GND", 3.6, 7.5, 0.45, 0.2)                               # clear of TP1, TP3 (front) and of C7, J2 (back) by 0.15 mm
 v("GND", 11.3, 16.45, 0.45, 0.2)                            # ground of the PMID capacitor
 t("GND", B, 0.4, (11.565, 15.325), (11.3, 16.45))
 v("GND", 13.465, 15.55, 0.45, 0.2)                          # ground of the REGN capacitor
@@ -80,8 +81,8 @@ for x in (17.9, 18.8, 19.7):
     v("GND", x, 15.05)
     t("GND", B, 0.5, (x, 14.2), (x, 15.05))
 # gate of the load switch: to a via, the gate parts are on the front
-t("LTE_PWR_G", B, 0.2, (17.2, 8.75), (16.5, 8.6))
-v("LTE_PWR_G", 16.5, 8.6, 0.45, 0.2)
+t("LTE_PWR_G", B, 0.2, (17.2, 8.75), (16.45, 8.6))
+v("LTE_PWR_G", 16.45, 8.6, 0.45, 0.2)
 
 # ---- 5 V input (VBUS) on the back: charger pin 1 -> C2 -> under the SIM socket -> vias
 t("VBUS", B, 0.28, (9.15, 14.13), (9.15, 15.2))
@@ -165,7 +166,7 @@ t("VDD_4G", F, 0.4, (20.75, 11.6), (21.5, 11.65))
 t("VDD_4G", F, 0.4, (20.75, 12.45), (21.5, 12.7))
 t("VDD_4G", F, 0.4, (20.75, 12.4), (20.4, 13.6))
 # gate of the load switch
-t("LTE_PWR_G", F, 0.15, (16.5, 8.6), (17.46, 8.5), (17.46, 7.9))
+t("LTE_PWR_G", F, 0.15, (16.45, 8.6), (17.46, 8.5), (17.46, 7.9))
 t("LTE_PWR_G", F, 0.15, (17.46, 8.5), (18.74, 8.5), (18.74, 7.9))
 t("LTE_PWR_G", F, 0.15, (18.74, 8.5), (20.3, 8.5), (20.6, 8.6))
 
@@ -193,9 +194,9 @@ t("GND", F, 0.25, (26.51, 22.23), (25.95, 22.23), (24.8, 23.4))
 # ---- expander A (U7, front, turned 180 degrees) sits over the ESP32's right pad column (back). Its interrupt
 # pin is 0.4 mm from the ESP32's own interrupt pad: one via and 1 mm of track on the back join them, before the
 # supply stubs of the neighbouring pins get in the way.
-t("EXP_INT", F, 0.15, (58.22, 12.41), (58.22, 13.3))
-v("EXP_INT", 58.22, 13.3, 0.45, 0.2)
-t("EXP_INT", B, 0.15, (58.22, 13.3), (58.22, 12.6), (58.95, 12.2))
+t("EXP_INT", F, 0.15, (58.22, 12.41), (58.22, 12.95), (58.15, 13.3))
+v("EXP_INT", 58.15, 13.3, 0.45, 0.2)
+t("EXP_INT", B, 0.15, (58.15, 13.3), (58.15, 12.6), (58.95, 12.2))
 
 
 def lay(r):

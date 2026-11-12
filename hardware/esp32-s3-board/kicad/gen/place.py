@@ -45,7 +45,7 @@ EXACT = {
     # the system output leaves upwards into a 2 mm copper strip that runs right to the Air780E load switch.
     "C7": (4.5, 8.135, 270, "B"),      # battery capacitor, on the battery copper next to the BAT pins
     "C5": (9.0, 8.135, 90, "B"),       # system capacitors: ground pad straight above the PGND pins,
-    "C6": (10.65, 8.135, 90, "B"),     #   supply pad in the strip
+    "C6": (10.8, 8.135, 90, "B"),      #   supply pad in the strip; 0.85 mm from C5 so that a via fits between their ground pads
     "C1": (11.05, 11.62, 270, "B"),    # bootstrap capacitor, its SW pad sits in the switch-node copper
     "L1": (14.09, 9.3, 270, "B"),      # SW pad level with the SW pins (2.7 mm of copper), output pad in the strip
     "C3": (11.565, 14.37, 90, "B"),    # PMID capacitor, 0.7 mm from the pin
@@ -93,8 +93,8 @@ EXACT = {
     "C34": (13.87, 26.75, 90, "F"),
     "R62": (10.36, 32.52, 270, "F"),
     # test pads next to what they measure
-    "TP1": (3.5, 6.55, 0, "F"),
-    "TP3": (3.5, 8.4, 0, "F"),
+    "TP1": (3.5, 6.5, 0, "F"),
+    "TP3": (3.5, 8.45, 0, "F"),
     "TP2": (28.9, 31.9, 0, "F"),
     # Type-C protection: turned so that a 0.6 mm supply track passes on each side, between it and the connector's pegs
     "U1": (32.0, 25.8, 90, "F"),
