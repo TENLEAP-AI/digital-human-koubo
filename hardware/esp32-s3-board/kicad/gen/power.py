@@ -247,6 +247,24 @@ t("USBC_DM", B, 0.19, (32.8, 26.4), (32.8, 27.85), (33.0, 28.05))        # pin 3
 v("USBC_DM", 33.0, 28.05, 0.45, 0.2)
 t("USBC_DM", F, 0.19, (33.0, 28.05), (33.0, 27.5))
 
+# ---- Type-C CC lines: from the socket's contacts (back) down under its body to a via each between the pads of
+# the protection diode D1, and on the front along the bottom edge to the two resistors right of the diode. CC1
+# passes between the pads of R2 on its way to R1.
+t("USBC_CC2", B, 0.15, (30.25, 26.4), (30.25, 30.5), (31.25, 31.5), (31.75, 31.5))
+v("USBC_CC2", 31.75, 31.5, 0.45, 0.2)
+t("USBC_CC2", F, 0.15, (31.75, 31.5), (31.6, 31.65), (31.6, 33.05), (31.9, 33.35), (34.7, 33.35))
+t("USBC_CC1", B, 0.15, (33.25, 26.4), (33.25, 27.2), (33.55, 27.5), (33.55, 31.05), (32.3, 32.3))
+v("USBC_CC1", 32.3, 32.3, 0.45, 0.2)
+t("USBC_CC1", F, 0.15, (32.3, 32.3), (32.9, 32.9), (35.6, 32.9), (35.95, 33.25))
+
+# ---- right edge, level with expander A: three 3.3 V pads share one via, R71 and R67 on the front and the
+# pull-up R12 of the enable line on the back. R12 has no room for a via of its own (board edge on one side,
+# its other pad on the other); laid by hand so that the short signal connections do not cut its way to the via.
+t("+3V3", F, 0.3, (61.65, 8.25), (61.25, 7.85))
+t("+3V3", F, 0.3, (61.65, 7.2), (61.25, 7.6))
+v("+3V3", 61.2, 7.75, 0.45, 0.2)
+t("+3V3", B, 0.2, (62.7, 8.35), (62.6, 8.35), (62.05, 7.8), (61.2, 7.8))
+
 
 def lay(r):
     """Put the copper into the router. Returns the list of pieces that do not fit (empty when all is well)."""

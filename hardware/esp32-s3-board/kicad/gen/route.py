@@ -44,6 +44,7 @@ L1, L3, L4, L6 = 0, 1, 2, 3    # index of each routing layer (L2 and L5 are the 
 L4_SIGNALS = os.environ.get("L4_SIGNALS", "0") == "1"   # STK-6: L4 is a pure +3V3 layer unless this is set
 NEGOTIATE = os.environ.get("NEGOTIATE", "0") == "1"     # route by negotiation instead of one net after the other (experimental)
 SIGNALS = os.environ.get("SIGNALS", "0") == "1" or NEGOTIATE   # route the signals too; default is the locked base only
+SHORT_FIRST = float(os.environ.get("SHORT_FIRST", "4.0"))   # pads of a signal net this close are joined in the base; 0 = off
 LAYER_DIRS = (0, 1, 2, 0) if L4_SIGNALS else (0, 0, 0, 0)   # 1 = mostly horizontal, 2 = mostly vertical (STK-2)
 GW, GH = int(round(BOARD_W / G)) + 1, int(round(BOARD_H / G)) + 1
 
@@ -1504,6 +1505,13 @@ def main():
         print(f"pair {pname} / {nname}: {'laid side by side' if ok else 'no room for a coupled run'}", flush=True)
     for name in sorted(n for n in multi if n in PWR_HI):      # what the supply nets still lack: thin branches
         r.route_net(name, rules=BRANCH)
+    # The short signal connections (a resistor to the pin beside it, a test pad to its pin): before the ground
+    # and supply stubs. Where a module's pads cover the back and its small parts the front, a handful of spots
+    # are left for vias with 0.15 mm to every pad (GEN-7); the stubs that follow took them all, and the same
+    # short connections stayed open in every autorouter run. Ground has the whole board to find another spot.
+    if SHORT_FIRST > 0:
+        made, short = r.local_first(sorted(n for n in multi if n not in special), reach=SHORT_FIRST)
+        print(f"short signal connections first (pads up to {SHORT_FIRST} mm apart): {made} of {short} made", flush=True)
     # a stub and a via for every ground and +3V3 pad, capacitors first (DEC-2); before the short USB hops,
     # which would otherwise shut in the decoupling capacitors of the parts they connect
     r.route_net("GND")

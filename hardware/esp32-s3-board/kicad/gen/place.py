@@ -134,7 +134,10 @@ GROUPS = [
     ("F", 21.9, 20.8, ["U8 C17@90"]),
     ("F", 28.9, 20.0, ["U6 C15@90 R17@90"]),      # expander B, USB switch; the pad under U8 takes the
                                                             # ground vias beside the antenna line on the back (RF-5)
-    ("F", 30.6, 28.2, ["R1@90 R2@90"]),                                                   # Type-C: CC resistors
+    # Type-C: CC resistors, below the 5 V loop on the front and not inside it. Inside the loop no via fits with
+    # 0.15 mm to the pads round it (GEN-7), and the socket's CC contacts are on the other side of the board.
+    # They stand to the right of the protection diode D1, upright, CC pad at the bottom.
+    ("F", 34.4, 31.9, ["R2@90 R1@90"]),
     ("F", 29.8, 30.7, ["D1"]),                                                            # Type-C: TVS
     # Camera LDOs and clock: one strip under y = 4.2, the capacitors between the chips and not below them. The display
     # and rear camera connectors on the back have their pads at y = 4.05 .. 5.25: the front stays free from there down
