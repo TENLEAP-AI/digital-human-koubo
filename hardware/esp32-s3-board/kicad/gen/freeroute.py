@@ -33,7 +33,7 @@ import pcbnew
 
 from board import NAME
 from board import OX, OY
-from route import L4_SIGNALS, PLANES, ROUTE_LAYERS, Router, add_rf_ground, add_zone, strip_copper
+from route import L4_SIGNALS, PLANES, ROUTE_LAYERS, VIA_GAP, Router, add_rf_ground, add_zone, strip_copper
 
 EDGE = 0.32      # mm: the outline handed over is this much smaller all round (GEN-6 asks for 0.3)
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -191,7 +191,7 @@ def pad_via_keepouts(board, gap=0.15, clearance=0.10):
                 o.Append(int(x), int(y))
             board.Add(z)
             n += 1
-    print(f"vias barred within {gap} mm of {n} surface-mount pads (GEN-7)")
+    print(f"vias barred within {gap} mm of {n} surface-mount pads (GEN-7 asks for 0.15)")
 
 
 def for_export(board):
@@ -243,7 +243,7 @@ def main():
     print(f"kept {kept} locked tracks and vias")
     if "--ses" not in opts:
         hide_finished(board)
-        pad_via_keepouts(board)
+        pad_via_keepouts(board, VIA_GAP)
     add_zone(board, "GND", pcbnew.In1_Cu)      # exported as planes: they keep signal tracks off these layers
     add_zone(board, "GND", pcbnew.In4_Cu)
     win = add_rf_ground(board)                 # the ground under the antenna socket's opening...
