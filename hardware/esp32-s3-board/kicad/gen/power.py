@@ -198,6 +198,13 @@ t("EXP_INT", F, 0.15, (58.22, 12.41), (58.22, 12.95), (58.15, 13.3))
 v("EXP_INT", 58.15, 13.3, 0.45, 0.2)
 t("EXP_INT", B, 0.15, (58.15, 13.3), (58.15, 12.6), (58.95, 12.2))
 
+# ---- camera regulator (U16, front, top edge): its enable pin (3) lies between the supply pin above it, the
+# display connector's pads on the back below it and ground vias to the left. Left to itself the 3.3 V link from
+# pin 1 to the input capacitor runs round the pin and shuts it in. Its way out goes down between pins 3 and 4
+# to a via below the connector's pads, before that link is laid.
+t("CAM_PWR_EN", F, 0.15, (19.5, 3.3), (20.15, 3.75), (20.15, 5.8))
+v("CAM_PWR_EN", 20.15, 5.8, 0.45, 0.2)
+
 
 def lay(r):
     """Put the copper into the router. Returns the list of pieces that do not fit (empty when all is well)."""

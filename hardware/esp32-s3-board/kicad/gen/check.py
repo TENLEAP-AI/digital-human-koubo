@@ -139,10 +139,13 @@ def main():
         ux, uy = (b[0] - a[0]) / axis, (b[1] - a[1]) / axis
         worst = 0.0
         count = 0
+        far = 0.0
         for side in (1, -1):
-            along = sorted((v[1] - a[0]) * ux + (v[2] - a[1]) * uy for v in vias if v[0] == "GND"
-                           and 0 < side * ((v[1] - a[0]) * -uy + (v[2] - a[1]) * ux) <= 1.6
-                           and -0.6 <= (v[1] - a[0]) * ux + (v[2] - a[1]) * uy <= axis + 0.6)
+            beside = [v for v in vias if v[0] == "GND"
+                      and 0 < side * ((v[1] - a[0]) * -uy + (v[2] - a[1]) * ux) <= 2.0
+                      and -0.6 <= (v[1] - a[0]) * ux + (v[2] - a[1]) * uy <= axis + 0.6]
+            along = sorted((v[1] - a[0]) * ux + (v[2] - a[1]) * uy for v in beside)
+            far = max([far] + [side * ((v[1] - a[0]) * -uy + (v[2] - a[1]) * ux) for v in beside])
             count += len(along)
             # the socket's own ground pads count as ground beside the line where they lie along it
             for p in pads.get(("J7", "2"), []):
@@ -153,7 +156,7 @@ def main():
                     along += [t for t in (min(ts), (min(ts) + max(ts)) / 2, max(ts)) if 0 <= t <= axis]
             pts = [0.0] + sorted(along) + [axis]
             worst = max(worst, max(q - p for p, q in zip(pts, pts[1:])))
-        row("RF-5", "线两侧地孔，间距 ≤2 mm（天线座的地焊盘算作地）", f"{count} 个，最大间隔 {worst:.1f} mm", worst <= 2.0)
+        row("RF-5", "线两侧地孔，间距 ≤2 mm（天线座的地焊盘算作地）", f"{count} 个，最大间隔 {worst:.1f} mm；最远的一个离线中心 {far:.2f} mm", worst <= 2.0)
         for k, p in enumerate(sorted(pads.get(("J7", "2"), []), key=lambda p: p["rect"][1])):
             n = len(near(p["rect"], "GND", 1.2))
             row(f"RF-11 天线座地焊盘 {k + 1}", "旁边 ≥2 个地孔", f"{n} 个", n >= 2)

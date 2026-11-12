@@ -460,14 +460,19 @@ class Router:
         return None
 
     def in_ground_pad(self, x, y, r, least=0.8):
-        """Is a via of radius r at (x, y) wholly inside the ground pad under a chip (GEN-7 allows vias there)?"""
+        """Is a via of radius r at (x, y) wholly inside the ground pad under a chip (GEN-7 allows vias there),
+        and clear of every other pad, on either side of the board (VIP-1, GEN-7)?"""
+        inside = False
         for p in self.pads:
+            if p["pth"]:
+                continue
             x0, y0, x1, y1 = p["rect"]
-            if (not p["pth"] and p["ref"].startswith("U") and self.net_name[p["net"]] == "GND"
-                    and min(x1 - x0, y1 - y0) >= least
+            if (p["ref"].startswith("U") and self.net_name[p["net"]] == "GND" and min(x1 - x0, y1 - y0) >= least
                     and x0 + r <= x <= x1 - r and y0 + r <= y <= y1 - r):
-                return True
-        return False
+                inside = True
+            elif math.hypot(max(x0 - x, 0, x - x1), max(y0 - y, 0, y - y1)) < VIA_PAD:
+                return False
+        return inside
 
     # ---- nets that need more than "connect the pads" -------------------------------------------
     def pad(self, ref, net_name):
@@ -600,10 +605,10 @@ class Router:
             return bool(lib.rt_via_ok(gnd, ix, iy, nvp, vprobe)) or (       # the pad under a chip on the other side
                 self.in_ground_pad(x, y, via[0] / 2) and not self.via_blocked(gnd, x, y, via[0], True, via[1]))
 
-        def spot_at(t, side):
+        def spot_at(t, side, extras=(0.1, 0.25, 0.4, 0.6, 0.9)):
             px, py = ax + ux * t, ay + uy * t
             half = half_at(t, side)
-            for extra in (0.1, 0.25, 0.4, 0.6, 0.9):
+            for extra in extras:
                 off = half + RF_GAP + via[0] / 2 + extra
                 x = round((px + side * nx * off) / G) * G
                 y = round((py + side * ny * off) / G) * G
@@ -617,7 +622,18 @@ class Router:
         step, n_steps = 0.1, int((length + 0.8) / 0.1) + 1
         for side in (1, -1):
             spots = [spot_at(-0.4 + k * step, side) for k in range(n_steps)]
+            # Where no via fits for more than 2 mm (RF-5), look once more, further out: past the pads of a chip
+            # on the other side of the board.
             k = 0
+            while k < n_steps:
+                e = k
+                while e < n_steps and spots[e] is None:
+                    e += 1
+                if e > k and (e - k) * step > 2.0:
+                    for j in range(k, e):
+                        spots[j] = spot_at(-0.4 + j * step, side, (1.1,))
+                k = e + 1
+            k, last = 0, 0
             while k < n_steps:
                 if spots[k] is None:
                     k += 1
@@ -626,8 +642,13 @@ class Router:
                 while e + 1 < n_steps and spots[e + 1] is not None:
                     e += 1
                 parts = max(1, math.ceil((e - k) * step / 1.3))
-                for i in range(parts + 1 if e > k else 1):
-                    x, y = spots[k + round(i * (e - k) / parts)]
+                picks = [k + round(i * (e - k) / parts) for i in range(parts + 1 if e > k else 1)]
+                if (e - k) * step < 0.9:           # room for one via only: halfway between its neighbours
+                    after = next((j for j in range(e + 1, n_steps) if spots[j] is not None), n_steps - 1)
+                    picks = [min(e, max(k, (last + after) // 2))]
+                for j in picks:
+                    x, y = spots[j]
+                    last = j
                     if all(math.hypot(x - qx, y - qy) >= 0.9 for qx, qy in placed) and legal(x, y):
                         self.add_via(gnd, x, y, via[0], via[1], None)
                         placed.append((x, y))
