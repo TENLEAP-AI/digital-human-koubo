@@ -36,6 +36,7 @@ ESP32-S3-WROOM-1U-N16R8 + Air780E 的主板，第一版，**草稿**：原理图
 | `reports/routing-closure.md` | 布线收尾记录：每处断点怎么处理的、改了什么摆位、规范核查结果、还没满足的规范、独立复查的结论 |
 | `connector-positions.png` | 所有排线座的位置、第 1 脚、排线插入方向（`gen/connectors.py` 生成），给结构和排线供应商 |
 | `../docs/display-interface-for-vendor.md` | 给屏厂的排线接口定义（8 位串行 RGB，主板现在的接法）：脚位表、要屏厂确认的事项、背光和触摸 |
+| `../docs/display-request-serial-rgb.md` | 给屏厂的改法说明（8 位串行 RGB，一页，不含内部分析）：要求、脚位、要对方答复的问题 |
 | `../docs/display-interface-qspi-proposal.md` | 给屏厂评估的 QSPI 接口定义（提案，主板还没按它改） |
 | `placement-front.png` / `placement-back.png` | 正反两面主要器件的摆放示意图 |
 | `routing.png` | 当前布线的示意图 |
