@@ -9,7 +9,7 @@ with the router's own clearance test, and stops when one does not fit.
 A wide piece of copper is drawn as a wide track (round ends): an autorouter treats a locked track as an
 obstacle, which it does not do reliably for a filled zone.
 """
-F, B = 0, 3            # index of the front and back layer among the router's layers
+F, L3, B = 0, 1, 3     # index of the front layer, the inner signal layer and the back layer among the router's layers
 TRACKS = []            # (net, layer, width, [(x, y), ...])
 VIAS = []              # (net, x, y, diameter, drill, in_pad)
 
@@ -205,6 +205,37 @@ t("EXP_INT", B, 0.15, (58.15, 13.3), (58.15, 12.6), (58.95, 12.2))
 t("CAM_PWR_EN", F, 0.15, (19.5, 3.3), (20.15, 3.75), (20.15, 5.8))
 v("CAM_PWR_EN", 20.15, 5.8, 0.45, 0.2)
 
+# ---- USB pair from the switch (U6) to the series resistors R18 / R19 (back, right edge): the two lines differ
+# at their ends, not on the coupled run in between. At the switch D- has to pass under the chip to a via on its
+# far side, and here it has to go round the pad of R18; no via fits beside the resistors (board edge, pads on
+# both sides). That makes D- about 5 mm longer. D+ makes it good: it runs down the back first and comes back
+# up on the inner layer (USB-3).
+t("ESP_USB_DP", B, 0.19, (62.8, 18.6), (62.8, 21.8))
+v("ESP_USB_DP", 62.8, 21.8, 0.45, 0.2)
+t("ESP_USB_DP", L3, 0.19, (62.8, 21.8), (62.8, 18.4))      # the way back up, to where the coupled run ends
+
+# ---- USB from the Type-C socket (back) through the protection chip U1 (front, right above it) to the switch U6.
+# Each line has two contacts in the socket; they are joined on the back, D+ below the pads, D- above them, and
+# each line leaves from the top of its B-row contact, so that both are longer by the same join when the plug is
+# turned over. D+ has the longer way to the switch (its contact is on the left, its switch pin is the far one);
+# D- makes that good with one bend on the back (USB-3). Each via also feeds the upper pin of U1; the lower pins
+# hang on the same contacts from below.
+t("USBC_DP", B, 0.19, (31.3, 26.35), (31.3, 26.5), (31.5, 26.7), (32.0, 26.7), (32.2, 26.5), (32.2, 26.35))
+t("USBC_DP", B, 0.19, (31.25, 25.1), (31.25, 23.5))
+v("USBC_DP", 31.25, 23.5, 0.45, 0.2)
+t("USBC_DP", F, 0.19, (31.25, 23.5), (32.4, 22.35), (33.55, 22.35))
+t("USBC_DP", F, 0.19, (31.25, 23.5), (31.1, 23.65), (31.1, 24.2))
+t("USBC_DP", F, 0.19, (31.05, 25.2), (31.05, 26.4))                      # pin 6 to pin 1, under the chip
+t("USBC_DM", B, 0.19, (31.75, 25.1), (31.75, 25.05), (32.0, 24.8), (32.5, 24.8), (32.75, 25.05), (32.75, 25.1))
+t("USBC_DM", B, 0.19, (32.75, 25.05), (32.75, 24.7), (33.15, 24.3), (33.65, 24.3), (33.65, 23.6), (33.3, 23.25),
+  (32.75, 23.25))
+v("USBC_DM", 32.75, 23.25, 0.45, 0.2)
+t("USBC_DM", F, 0.19, (32.75, 23.25), (33.2, 22.8), (33.55, 22.8))
+t("USBC_DM", F, 0.19, (32.75, 23.25), (32.75, 23.7), (32.95, 23.9), (32.95, 24.1))
+t("USBC_DM", B, 0.19, (32.8, 26.4), (32.8, 27.85), (33.0, 28.05))        # pin 3, from the contact's lower end
+v("USBC_DM", 33.0, 28.05, 0.45, 0.2)
+t("USBC_DM", F, 0.19, (33.0, 28.05), (33.0, 27.5))
+
 
 def lay(r):
     """Put the copper into the router. Returns the list of pieces that do not fit (empty when all is well)."""
@@ -214,7 +245,7 @@ def lay(r):
         for (x0, y0), (x1, y1) in zip(pts, pts[1:]):
             hit = r.blocked(net, layer, x0, y0, x1, y1, width)
             if hit:
-                bad.append(f"{name} {'FB'[layer == B]} track {width} mm ({x0}, {y0}) - ({x1}, {y1}): too close to "
+                bad.append(f"{name} {'F3?B'[layer]} track {width} mm ({x0}, {y0}) - ({x1}, {y1}): too close to "
                            f"{hit[2]} at ({hit[0]:.2f}, {hit[1]:.2f})")
             r.add_track(net, layer, x0, y0, x1, y1, width, None)
     for name, x, y, dia, drill, in_pad in VIAS:

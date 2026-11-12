@@ -34,7 +34,8 @@ def main():
             bb = p.GetBoundingBox()
             rect = (mm(bb.GetLeft()) - OX, mm(bb.GetTop()) - OY, mm(bb.GetRight()) - OX, mm(bb.GetBottom()) - OY)
             pads.setdefault((fp.GetReference(), p.GetNumber()), []).append(
-                dict(net=p.GetNetname(), rect=rect, pth=p.GetAttribute() == pcbnew.PAD_ATTRIB_PTH))
+                dict(net=p.GetNetname(), rect=rect, pth=p.GetAttribute() == pcbnew.PAD_ATTRIB_PTH,
+                     layers=[l for l in (pcbnew.F_Cu, pcbnew.In2_Cu, pcbnew.In3_Cu, pcbnew.B_Cu) if p.IsOnLayer(l)]))
     vias, tracks = [], []
     for t in board.GetTracks():
         if t.Type() == pcbnew.PCB_VIA_T:
@@ -167,8 +168,78 @@ def main():
             usb = json.load(f).get("usb", [])
     except OSError:
         usb = []
-    for u in usb:
-        row(f"USB-3 {u['pair']}", "两根线长度差 ≤0.5 mm", f"{u['diff']} mm（{u['p']} / {u['n']}）", u["diff"] <= 0.5)
+    def path(net, a, b):
+        """Length of copper from pad a to pad b of a net, along the tracks, branches to test pads left out.
+        Also the total copper of the net, so that the length of those branches can be told."""
+        segs = [t for t in tracks if t[0] == net]
+        pts = {}                                             # (layer, x, y) -> node
+        node = lambda l, x, y: pts.setdefault((l, round(x, 3), round(y, 3)), len(pts))
+        cuts = {i: [0.0, 1.0] for i in range(len(segs))}
+        for i, (_, l, x0, y0, x1, y1, w) in enumerate(segs):  # an end that lands on the body of another piece
+            for j, (_, l2, a0, b0, a1, b1, w2) in enumerate(segs):
+                if i == j or l != l2:
+                    continue
+                for ex, ey in ((x0, y0), (x1, y1)):
+                    d2 = (a1 - a0) ** 2 + (b1 - b0) ** 2
+                    f = max(0.0, min(1.0, ((ex - a0) * (a1 - a0) + (ey - b0) * (b1 - b0)) / d2)) if d2 else 0.0
+                    if math.hypot(ex - a0 - f * (a1 - a0), ey - b0 - f * (b1 - b0)) <= w2 / 2 + 1e-6:
+                        cuts[j].append(f)
+        edges = {}
+        def link(u, v, d):
+            edges.setdefault(u, []).append((v, d))
+            edges.setdefault(v, []).append((u, d))
+        for i, (_, l, x0, y0, x1, y1, w) in enumerate(segs):
+            fs = sorted(set(cuts[i]))
+            for f, g in zip(fs, fs[1:]):
+                link(node(l, x0 + f * (x1 - x0), y0 + f * (y1 - y0)), node(l, x0 + g * (x1 - x0), y0 + g * (y1 - y0)),
+                     (g - f) * math.hypot(x1 - x0, y1 - y0))
+        items = list(pts.items())
+        for (l, x, y), u in items:                           # ends that touch: on a layer, through a via, in a pad
+            for (l2, x2, y2), v in items:
+                if u < v and l == l2 and math.hypot(x - x2, y - y2) <= 0.1:
+                    link(u, v, math.hypot(x - x2, y - y2))
+        for name, vx, vy, dia, drill in vias:
+            if name == net:
+                hub = node("via", vx, vy)
+                for (l, x, y), u in items:
+                    if l != "via" and math.hypot(x - vx, y - vy) <= dia / 2:
+                        link(hub, u, math.hypot(x - vx, y - vy))
+        ends = {}
+        for key, group in pads.items():                      # every pad of the net joins what ends in it
+            for pad in group:
+                if pad["net"] != net:
+                    continue
+                hub = ends.setdefault(key, node("pad", len(pts), 0))
+                x0, y0, x1, y1 = pad["rect"]
+                for (l, x, y), u in list(pts.items()):
+                    if l in pad["layers"] and x0 - 1e-3 <= x <= x1 + 1e-3 and y0 - 1e-3 <= y <= y1 + 1e-3:
+                        link(hub, u, 0.0)
+        ends = [ends[a], ends[b]]
+        dist, todo = {ends[0]: 0.0}, [ends[0]]
+        while todo:                                          # small graphs: plain relaxation
+            u = todo.pop()
+            for v, d in edges.get(u, []):
+                if dist[u] + d < dist.get(v, 1e9) - 1e-9:
+                    dist[v] = dist[u] + d
+                    todo.append(v)
+        return dist.get(ends[1]), sum(math.hypot(t[4] - t[2], t[5] - t[3]) for t in segs)
+
+    # USB-3 is about the two lines between the same two parts: the way from pin to pin, not all copper of the net
+    # (the branches to the test pads would count as length otherwise).
+    PAIRS = [("Type-C → 切换芯片（A 面触点）", ("USBC_DP", ("J1", "A6"), ("U6", "7")), ("USBC_DM", ("J1", "A7"), ("U6", "6"))),
+             ("Type-C → 切换芯片（B 面触点）", ("USBC_DP", ("J1", "B6"), ("U6", "7")), ("USBC_DM", ("J1", "B7"), ("U6", "6"))),
+             ("Air780E → 切换芯片", ("LTE_USB_DP", ("U9", "59"), ("U6", "9")), ("LTE_USB_DM", ("U9", "60"), ("U6", "8"))),
+             ("切换芯片 → 串联电阻", ("ESP_USB_DP", ("U6", "3"), ("R18", "2")), ("ESP_USB_DM", ("U6", "4"), ("R19", "2"))),
+             ("串联电阻 → ESP32", ("ESP_DP", ("R18", "1"), ("U4", "14")), ("ESP_DM", ("R19", "1"), ("U4", "13")))]
+    for title, dp, dm in PAIRS:
+        if (dp[1] not in pads) or (dp[2] not in pads):
+            continue
+        (lp, tp), (ln, tn) = path(*dp), path(*dm)
+        if lp is None or ln is None:
+            row(f"USB-3 {title}", "两根线引脚到引脚的长度差 ≤0.5 mm", "还没连通", False)
+            continue
+        row(f"USB-3 {title}", "两根线引脚到引脚的长度差 ≤0.5 mm", f"{abs(lp - ln):.2f} mm（D+ {lp:.2f} / D− {ln:.2f}）",
+            abs(lp - ln) <= 0.5)
 
     lines = ["| 规则 | 要求 | 实测 | 结论 |", "|---|---|---|---|"] + ["| " + " | ".join(r) + " |" for r in rows]
     text = "\n".join(lines)
