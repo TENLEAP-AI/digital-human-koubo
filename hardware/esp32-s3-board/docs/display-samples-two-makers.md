@@ -6,10 +6,12 @@
 
 | 屏厂 | 驱动芯片 | 接口 | 发这份 |
 |---|---|---|---|
-| 甲：联讯（ST7102，之前发来 LX280BS0111 规格书） | ST7102 | QSPI | [display-request-qspi-st7102.md](display-request-qspi-st7102.md) |
-| 乙：做 NV3049F 的那家 | NV3049F | 8 位串行 RGB + 三线 SPI | [display-request-serial-rgb.md](display-request-serial-rgb.md) |
+| 甲：联讯（ST7102，之前发来 LX280BS0111 规格书） | ST7102 | **16 位并口 RGB**（2026-11-14 由 QSPI 改） | [display-request-rgb-st7102.md](display-request-rgb-st7102.md) |
+| 乙：做 NV3049F 的那家 | NV3049F | 8 位串行 RGB + 三线 SPI（已问能否改 16 位并口） | [display-request-serial-rgb.md](display-request-serial-rgb.md) |
 
 两份的 Word 版在 [`vendor/`](vendor/) 目录，可以直接转发。
+
+**2026-11-14：主控换 ESP32-S31，联讯改 16 位并口 RGB，两家屏的排线统一成同一个 40 脚公母座定义**（NV3049F 只用 8 根数据线），主板一个座子两家都能插。下面的对比表是按 S3 和 QSPI 写的，留作记录。
 
 ## 2. 两家对比
 
