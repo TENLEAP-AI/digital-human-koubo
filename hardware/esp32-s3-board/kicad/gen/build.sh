@@ -13,6 +13,13 @@ echo "ERC:"; grep -E "^\[" "$out/build/erc.rpt" | sed 's/\]:.*/]/' | sort | uniq
 kicad-cli sch export pdf -o "$out/$name.pdf" "$out/$name.kicad_sch" >/dev/null
 
 "$py_kicad" "$here/footprints.py" "$out"
+
+# Branch claude/board-s31: the S31 board is redrawn by the board engineer. The placement and routing scripts below
+# still describe the S3 board, so stop here unless asked for them explicitly.
+if [ "${WITH_PCB:-0}" != 1 ]; then
+    echo "原理图、PDF、封装库已生成；S31 版 PCB 由工程师重画，跳过布局布线（WITH_PCB=1 可强制运行旧脚本）。"
+    exit 0
+fi
 "$py_kicad" "$here/board.py" "$out"
 "$py_kicad" "$here/route.py" "$out" 2>&1 | grep -v "Debug: Adding"      # the locked base; SIGNALS=1 also routes the signals
 "$py_kicad" "$here/preview.py" "$out" 2>&1 | grep -v "Debug: Adding"

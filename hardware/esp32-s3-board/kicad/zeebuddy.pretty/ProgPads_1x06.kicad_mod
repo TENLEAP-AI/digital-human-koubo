@@ -1,13 +1,13 @@
 (footprint "ProgPads_1x06"
-	(version 20241229)
+	(version 20260206)
 	(generator "pcbnew")
-	(generator_version "9.0")
+	(generator_version "10.0")
 	(layer "F.Cu")
 	(descr "6 个下载 / 调试焊盘，间距 1.5 mm：3V3、GND、EN、IO0、TXD0、RXD0")
 	(property "Reference" "REF**"
 		(at 0 -1.6 0)
 		(layer "F.SilkS")
-		(uuid "f69f055a-1afe-4402-ac7b-2a71b447ed51")
+		(uuid "31c4a4d6-a3eb-42db-bb70-892c8565c005")
 		(effects
 			(font
 				(size 0.8 0.8)
@@ -18,7 +18,7 @@
 	(property "Value" "ProgPads_1x06"
 		(at 0 1.6 0)
 		(layer "F.Fab")
-		(uuid "fa545e9c-9379-426f-94d2-e8f60b5bc342")
+		(uuid "7bb8d3df-6719-45e5-8804-b96316970721")
 		(effects
 			(font
 				(size 0.8 0.8)
@@ -30,11 +30,10 @@
 		(at 0 0 0)
 		(layer "F.Fab")
 		(hide yes)
-		(uuid "b10a6cfb-15f2-4726-af9a-97d502d6224e")
+		(uuid "fcc336ae-3470-4787-9b21-8989e40d2fd5")
 		(effects
 			(font
 				(size 1.27 1.27)
-				(thickness 0.15)
 			)
 		)
 	)
@@ -42,15 +41,15 @@
 		(at 0 0 0)
 		(layer "F.Fab")
 		(hide yes)
-		(uuid "bbfc25b0-b13c-4b0f-8ab6-ce6cf1f2a542")
+		(uuid "a56bac43-522e-43ef-b2b4-e892fdce0b33")
 		(effects
 			(font
 				(size 1.27 1.27)
-				(thickness 0.15)
 			)
 		)
 	)
 	(attr smd)
+	(duplicate_pad_numbers_are_jumpers no)
 	(fp_rect
 		(start -4.5 -0.75)
 		(end 4.5 0.75)
@@ -60,44 +59,44 @@
 		)
 		(fill no)
 		(layer "F.CrtYd")
-		(uuid "61010ce2-5373-49f6-a232-d6c836f21248")
+		(uuid "98693202-9127-4ceb-b624-bc52d073f027")
 	)
 	(pad "1" smd rect
 		(at -3.75 0)
 		(size 1 1)
 		(layers "F.Cu" "F.Mask")
 		(thermal_bridge_angle 45)
-		(uuid "ba2e05fb-21a1-4fd5-9289-cc388889e3ab")
+		(uuid "256b1bd2-b2f0-4c78-b225-cb7e52db06a5")
 	)
 	(pad "2" smd circle
 		(at -2.25 0)
 		(size 1 1)
 		(layers "F.Cu" "F.Mask")
-		(uuid "ce63ab5b-29d8-4a5f-95d6-1a8a44c9382b")
+		(uuid "d43cfbf1-61b3-4c16-b02a-e4a863dd2529")
 	)
 	(pad "3" smd circle
 		(at -0.75 0)
 		(size 1 1)
 		(layers "F.Cu" "F.Mask")
-		(uuid "34da1721-a4d7-4df1-aaa6-aec43dde19ee")
+		(uuid "47921eed-58f8-40e9-9dfc-1db5e279c853")
 	)
 	(pad "4" smd circle
 		(at 0.75 0)
 		(size 1 1)
 		(layers "F.Cu" "F.Mask")
-		(uuid "57ff05dd-e8cd-4287-95fc-0bc826ad6283")
+		(uuid "b176ba0f-b4ef-4611-a6ad-56517ceb899b")
 	)
 	(pad "5" smd circle
 		(at 2.25 0)
 		(size 1 1)
 		(layers "F.Cu" "F.Mask")
-		(uuid "40f37b04-1e73-4a6d-9d06-89be53f3cb74")
+		(uuid "58cac74b-bb90-4a80-95b4-528c68f227e8")
 	)
 	(pad "6" smd circle
 		(at 3.75 0)
 		(size 1 1)
 		(layers "F.Cu" "F.Mask")
-		(uuid "02e2fa47-5930-466b-bc04-7fa3a852c66a")
+		(uuid "ff37da1a-5e41-469c-9421-3164bbefd7ac")
 	)
 	(embedded_fonts no)
 )

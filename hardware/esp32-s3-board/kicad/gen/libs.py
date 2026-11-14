@@ -5,12 +5,16 @@ import os
 from sexpr import Sym, find, first, parse
 
 SYMDIR = "/usr/share/kicad/symbols"
+# Libraries kept in the repository (lib name -> file), for parts the installed KiCad libraries do not have.
+EXTRA = {"Espressif": os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "lib", "espressif",
+                                   "ESP32-S31-WROOM-1U.kicad_sym")}
 _cache = {}
 
 
 def _lib(lib):
     if lib not in _cache:
-        with open(os.path.join(SYMDIR, lib + ".kicad_sym"), encoding="utf-8") as f:
+        path = EXTRA.get(lib, os.path.join(SYMDIR, lib + ".kicad_sym"))
+        with open(path, encoding="utf-8") as f:
             tree = parse(f.read())
         _cache[lib] = {s[1]: s for s in find(tree, "symbol")}
     return _cache[lib]
@@ -42,6 +46,13 @@ def load(lib_id):
         sym = out
     sym[1] = lib_id
     return sym
+
+
+def numbers(number):
+    """Pad numbers of one pin: KiCad 10 writes several pads on one pin as '[1,40,41]'."""
+    if number.startswith("[") and number.endswith("]"):
+        return [n.strip() for n in number[1:-1].split(",")]
+    return [number]
 
 
 def pins(sym):

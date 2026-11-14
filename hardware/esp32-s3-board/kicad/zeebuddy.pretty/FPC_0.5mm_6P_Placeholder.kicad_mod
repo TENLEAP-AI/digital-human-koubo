@@ -1,13 +1,13 @@
 (footprint "FPC_0.5mm_6P_Placeholder"
-	(version 20241229)
+	(version 20260206)
 	(generator "pcbnew")
-	(generator_version "9.0")
+	(generator_version "10.0")
 	(layer "F.Cu")
 	(descr "0.5 mm 间距 6 脚翻盖排线座的占位封装，具体型号待定，画板前要换")
 	(property "Reference" "REF**"
 		(at 0 -3.6 0)
 		(layer "F.SilkS")
-		(uuid "b1627c17-c1c9-48ae-9e13-245e14472a3d")
+		(uuid "289ae9a1-9f59-4724-9279-7e027ed06978")
 		(effects
 			(font
 				(size 0.8 0.8)
@@ -18,7 +18,7 @@
 	(property "Value" "FPC_0.5mm_6P_Placeholder"
 		(at 0 3.2 0)
 		(layer "F.Fab")
-		(uuid "55c4260c-b087-446d-a84a-6985d0db1efc")
+		(uuid "caa13f2a-635f-40f3-915a-70840e129ee2")
 		(effects
 			(font
 				(size 0.8 0.8)
@@ -30,11 +30,10 @@
 		(at 0 0 0)
 		(layer "F.Fab")
 		(hide yes)
-		(uuid "5caca36b-0a5c-437d-9611-05c490dfbf98")
+		(uuid "31aa268f-fd59-45d7-b0a7-e158c28f18b4")
 		(effects
 			(font
 				(size 1.27 1.27)
-				(thickness 0.15)
 			)
 		)
 	)
@@ -42,15 +41,15 @@
 		(at 0 0 0)
 		(layer "F.Fab")
 		(hide yes)
-		(uuid "59da717d-0ff1-4263-bc1e-12f2b6b73de4")
+		(uuid "8e915f5b-f8c1-47fa-8197-b54bd3e4f684")
 		(effects
 			(font
 				(size 1.27 1.27)
-				(thickness 0.15)
 			)
 		)
 	)
 	(attr smd)
+	(duplicate_pad_numbers_are_jumpers no)
 	(fp_line
 		(start -3.25 2.25)
 		(end 3.25 2.25)
@@ -59,7 +58,7 @@
 			(type default)
 		)
 		(layer "F.SilkS")
-		(uuid "b6544dc7-2917-42b6-96ab-58f62bd15f67")
+		(uuid "ab9c1b77-1085-4f4b-af98-82da12822b8b")
 	)
 	(fp_circle
 		(center -1.85 -2.8)
@@ -70,7 +69,7 @@
 		)
 		(fill no)
 		(layer "F.SilkS")
-		(uuid "0da60ccd-ae25-4c45-992d-dcdf7ef80512")
+		(uuid "fbe582ba-98d3-4815-a994-b693f8363c3f")
 	)
 	(fp_rect
 		(start -3.5 -2.75)
@@ -81,7 +80,7 @@
 		)
 		(fill no)
 		(layer "F.CrtYd")
-		(uuid "f76c7fbf-bfa4-4d6b-ab09-2543a499ac00")
+		(uuid "43f0893d-ceb2-4e24-afd4-cfab3ac56579")
 	)
 	(fp_rect
 		(start -3.25 -1.6)
@@ -92,12 +91,12 @@
 		)
 		(fill no)
 		(layer "F.Fab")
-		(uuid "053daba7-f0a8-4dcf-bedf-e880ca7dc470")
+		(uuid "1a736c45-0478-4f8a-b367-16056e23114d")
 	)
 	(fp_text user "排线从这一侧插入"
 		(at 0 2.9 0)
 		(layer "Cmts.User")
-		(uuid "eb9ed327-13be-4ed4-a869-0c03731aaddb")
+		(uuid "960fb255-cf08-4af9-aaa2-a72650dab746")
 		(effects
 			(font
 				(size 0.5 0.5)
@@ -108,7 +107,7 @@
 	(fp_text user "占位"
 		(at 0 0.3 0)
 		(layer "F.Fab")
-		(uuid "87fad132-d8d1-4620-a354-78ee4ce61d5f")
+		(uuid "131c9cb1-d334-4222-abfc-9a50dee219a6")
 		(effects
 			(font
 				(size 0.7 0.7)
@@ -121,56 +120,56 @@
 		(size 0.3 1.2)
 		(layers "F.Cu" "F.Mask" "F.Paste")
 		(thermal_bridge_angle 45)
-		(uuid "1618a66b-c457-4644-9376-b742a75c5989")
+		(uuid "5cca0acf-86e8-4a3d-b1e2-8f0aa9f90abd")
 	)
 	(pad "2" smd rect
 		(at -0.75 -1.9)
 		(size 0.3 1.2)
 		(layers "F.Cu" "F.Mask" "F.Paste")
 		(thermal_bridge_angle 45)
-		(uuid "7f12e6c4-b5b3-4002-882e-cb849cbc325a")
+		(uuid "d6148861-3741-4d2c-b288-28c8b0d761d2")
 	)
 	(pad "3" smd rect
 		(at -0.25 -1.9)
 		(size 0.3 1.2)
 		(layers "F.Cu" "F.Mask" "F.Paste")
 		(thermal_bridge_angle 45)
-		(uuid "070ff3e0-7690-46fe-a355-4c7ca0c451d0")
+		(uuid "93e0a459-8035-401a-85db-2a38f15a9539")
 	)
 	(pad "4" smd rect
 		(at 0.25 -1.9)
 		(size 0.3 1.2)
 		(layers "F.Cu" "F.Mask" "F.Paste")
 		(thermal_bridge_angle 45)
-		(uuid "3e86cebd-365b-46c0-9549-3d440e10121d")
+		(uuid "1ffdd2ec-f332-4880-beea-1b710feaa6c5")
 	)
 	(pad "5" smd rect
 		(at 0.75 -1.9)
 		(size 0.3 1.2)
 		(layers "F.Cu" "F.Mask" "F.Paste")
 		(thermal_bridge_angle 45)
-		(uuid "4314f572-6ac2-4b88-9deb-978ed856f869")
+		(uuid "8bd920a4-3d8b-4eab-8d89-9bbe509b5bbc")
 	)
 	(pad "6" smd rect
 		(at 1.25 -1.9)
 		(size 0.3 1.2)
 		(layers "F.Cu" "F.Mask" "F.Paste")
 		(thermal_bridge_angle 45)
-		(uuid "9f7dafcc-a6d2-4ef5-a12f-8fd8da741f99")
+		(uuid "57f7e5a5-f5b4-4c9a-ad51-edf5c7836800")
 	)
 	(pad "MP" smd rect
 		(at -2.35 0.9)
 		(size 1.6 1.8)
 		(layers "F.Cu" "F.Mask" "F.Paste")
 		(thermal_bridge_angle 45)
-		(uuid "7c762126-82a1-411f-9209-9c74ff9a1624")
+		(uuid "06dc7ad6-8b06-447d-992f-30d18b0511c7")
 	)
 	(pad "MP" smd rect
 		(at 2.35 0.9)
 		(size 1.6 1.8)
 		(layers "F.Cu" "F.Mask" "F.Paste")
 		(thermal_bridge_angle 45)
-		(uuid "b1a9465d-2623-4f19-8d25-c21b1d4733f4")
+		(uuid "12ab2cb3-61bc-47fe-b065-bba981981673")
 	)
 	(embedded_fonts no)
 )

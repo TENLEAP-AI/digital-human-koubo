@@ -1,13 +1,13 @@
 (footprint "BatteryPads"
-	(version 20241229)
+	(version 20260206)
 	(generator "pcbnew")
-	(generator_version "9.0")
+	(generator_version "10.0")
 	(layer "F.Cu")
 	(descr "电池焊线焊盘，位置和尺寸同参考主板：1 = 正，2 = 负，3 = 温度电阻（没接）")
 	(property "Reference" "REF**"
 		(at 0 -3.81 0)
 		(layer "F.SilkS")
-		(uuid "7e43f069-d0fe-4e70-974c-a930e6079285")
+		(uuid "f80aa5e8-ee07-42f2-a085-08a0f0f89604")
 		(effects
 			(font
 				(size 0.8 0.8)
@@ -18,7 +18,7 @@
 	(property "Value" "BatteryPads"
 		(at 0 3.8 0)
 		(layer "F.Fab")
-		(uuid "ab5b96c0-3d24-457f-9f5c-c8481a587538")
+		(uuid "c0ac7d75-7a88-4e8f-a72f-f3395819b17f")
 		(effects
 			(font
 				(size 0.8 0.8)
@@ -30,11 +30,10 @@
 		(at 0 0 0)
 		(layer "F.Fab")
 		(hide yes)
-		(uuid "b0e3b6a9-b7e8-43eb-a7ef-d5162ff0afea")
+		(uuid "b37d4b98-19fa-4fc3-b9a6-c8cec71ab304")
 		(effects
 			(font
 				(size 1.27 1.27)
-				(thickness 0.15)
 			)
 		)
 	)
@@ -42,15 +41,15 @@
 		(at 0 0 0)
 		(layer "F.Fab")
 		(hide yes)
-		(uuid "c0ecdd05-1ce7-4f46-897d-4311b539b22c")
+		(uuid "850c0511-085f-41d8-8c82-348498cc27ca")
 		(effects
 			(font
 				(size 1.27 1.27)
-				(thickness 0.15)
 			)
 		)
 	)
 	(attr smd)
+	(duplicate_pad_numbers_are_jumpers no)
 	(fp_rect
 		(start -1.54 -3.06)
 		(end 1.54 3.05)
@@ -60,12 +59,12 @@
 		)
 		(fill no)
 		(layer "F.CrtYd")
-		(uuid "06abe394-d48b-4752-8e19-9df782bf9eab")
+		(uuid "8ed46cdb-52da-4cab-9b07-4b051e81edb4")
 	)
-	(fp_text user "+"
-		(at 1.99 2.2 0)
+	(fp_text user "-"
+		(at 1.99 -2.21 0)
 		(layer "F.SilkS")
-		(uuid "b2658b30-6662-4833-8a6a-2de173db5c21")
+		(uuid "aba89a7c-c6bc-4e83-a1a7-eb0c0446896b")
 		(effects
 			(font
 				(size 0.8 0.8)
@@ -73,10 +72,10 @@
 			)
 		)
 	)
-	(fp_text user "-"
-		(at 1.99 -2.21 0)
+	(fp_text user "+"
+		(at 1.99 2.2 0)
 		(layer "F.SilkS")
-		(uuid "ed402c7b-6f5f-4407-8561-05c770b5138b")
+		(uuid "23e42397-01bd-4635-afc2-3ca3cf25d6d8")
 		(effects
 			(font
 				(size 0.8 0.8)
@@ -89,21 +88,21 @@
 		(size 2.58 1.2)
 		(layers "F.Cu" "F.Mask")
 		(thermal_bridge_angle 45)
-		(uuid "9b7d6def-7895-4796-b2de-9ef02ce64c85")
+		(uuid "f9b49f3a-ef9c-4ea0-b6b8-7dc381a0bf31")
 	)
 	(pad "2" smd rect
 		(at 0 -2.21)
 		(size 2.58 1.2)
 		(layers "F.Cu" "F.Mask")
 		(thermal_bridge_angle 45)
-		(uuid "e1be5a6e-b9ee-4c80-a17e-79dc61ae2407")
+		(uuid "b5b5b8be-e287-4f38-81c7-cd286ebb52bb")
 	)
 	(pad "3" smd rect
 		(at 0 0)
 		(size 2.58 1.2)
 		(layers "F.Cu" "F.Mask")
 		(thermal_bridge_angle 45)
-		(uuid "20ffb00d-c3de-45e4-b0b2-9da83ad0167c")
+		(uuid "6808134d-5a54-402e-9653-a60712888c27")
 	)
 	(embedded_fonts no)
 )

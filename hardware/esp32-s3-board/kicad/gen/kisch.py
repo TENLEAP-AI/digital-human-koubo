@@ -39,6 +39,25 @@ def effects(justify=None, hide=False, size=1.27):
     return e
 
 
+def kicad10(node):
+    """KiCad 10 files keep a property's (hide yes) on the property itself, not inside its (effects): move it there.
+    Older-format symbols copied from libraries get the same treatment."""
+    if isinstance(node, list):
+        for item in node:
+            kicad10(item)
+        if node and node[0] == "property":
+            for k, item in enumerate(node):
+                if isinstance(item, list) and item and item[0] == "effects":
+                    def is_hide(e):
+                        return isinstance(e, list) and e and e[0] == "hide"
+                    if any(is_hide(e) for e in item):
+                        node[k] = [e for e in item if not is_hide(e)]      # (effects) lists may be shared
+                        if not any(is_hide(e) for e in node):
+                            node.insert(k, [S("hide"), S("yes")])
+                    break
+    return node
+
+
 def rot_vec(dx, dy, rot):
     """Rotate a screen-space vector counter-clockwise (screen Y points down)."""
     rot %= 360
@@ -164,20 +183,23 @@ class Design:
         os.makedirs(outdir, exist_ok=True)
         for sh in self.sheets:
             with open(os.path.join(outdir, sh.fname), "w", encoding="utf-8") as f:
-                f.write(dump(sh.render()) + "\n")
+                f.write(dump(kicad10(sh.render())) + "\n")
         with open(os.path.join(outdir, self.name + ".kicad_sch"), "w", encoding="utf-8") as f:
-            f.write(dump(self.render_root()) + "\n")
-        lib = [S("kicad_symbol_lib"), [S("version"), 20241209], [S("generator"), "zeebuddy_gen"],
-               [S("generator_version"), "9.0"]]
+            f.write(dump(kicad10(self.render_root())) + "\n")
+        lib = [S("kicad_symbol_lib"), [S("version"), 20251024], [S("generator"), "zeebuddy_gen"],
+               [S("generator_version"), "10.0"]]
         for lib_id, sym in sorted(self.custom.items()):
             s = copy.deepcopy(sym)
             s[1] = lib_id.split(":", 1)[1]
             lib.append(s)
         with open(os.path.join(outdir, PROJECT_LIB + ".kicad_sym"), "w", encoding="utf-8") as f:
-            f.write(dump(lib) + "\n")
+            f.write(dump(kicad10(lib)) + "\n")
         with open(os.path.join(outdir, "sym-lib-table"), "w", encoding="utf-8") as f:
             f.write('(sym_lib_table\n  (version 7)\n  (lib (name "%s")(type "KiCad")'
-                    '(uri "${KIPRJMOD}/%s.kicad_sym")(options "")(descr "Project symbols"))\n)\n'
+                    '(uri "${KIPRJMOD}/%s.kicad_sym")(options "")(descr "Project symbols"))\n'
+                    '  (lib (name "Espressif")(type "KiCad")'
+                    '(uri "${KIPRJMOD}/lib/espressif/ESP32-S31-WROOM-1U.kicad_sym")(options "")'
+                    '(descr "Espressif official library (only the parts this board uses)"))\n)\n'
                     % (PROJECT_LIB, PROJECT_LIB))
         pro = os.path.join(outdir, self.name + ".kicad_pro")
         if not os.path.exists(pro):
@@ -197,8 +219,8 @@ class Design:
                 [S("company"), self.company]]
 
     def render_root(self):
-        root = [S("kicad_sch"), [S("version"), 20250114], [S("generator"), "eeschema"],
-                [S("generator_version"), "9.0"], [S("uuid"), self.root_uuid], [S("paper"), "A4"],
+        root = [S("kicad_sch"), [S("version"), 20260306], [S("generator"), "eeschema"],
+                [S("generator_version"), "10.0"], [S("uuid"), self.root_uuid], [S("paper"), "A4"],
                 self.title_block(self.title), [S("lib_symbols")]]
         for i, (x, y, text, size) in enumerate(self.root_text):
             root.append([S("text"), text, [S("exclude_from_sim"), S("no")], [S("at"), x, y, 0],
@@ -325,7 +347,11 @@ class Sheet:
             else:
                 ddx, ddy = rot_vec(px, -py, rot)
                 ax, ay = x + ddx, y + ddy
-            node.append([S("property"), name, val, [S("at"), r2(ax), r2(ay), pa], eff])
+            pnode = [S("property"), name, val, [S("at"), r2(ax), r2(ay), pa]]
+            if first(prop, "hide") is not None and first(prop, "hide")[1] == "yes" \
+                    and not (prop_pos and name in prop_pos and prop_pos[name] is not None):
+                pnode.append([S("hide"), S("yes")])     # KiCad 10 libraries mark hidden fields on the property
+            node.append(pnode + [eff])
         for k, v in fields.items():
             node.append([S("property"), k, v, [S("at"), r2(x), r2(y), 0], effects(hide=True)])
         for p in libs.pins(sym):
@@ -368,9 +394,10 @@ class Sheet:
                 net = None
             else:
                 raise KeyError(f"{ref} ({lib_id}): pin {p['number']} '{p['name']}' has no net and is not in nc")
-            if (ref, p["number"]) in self.d.expect:
-                raise KeyError(f"duplicate reference {ref}")
-            self.d.expect[(ref, p["number"])] = net
+            for n in libs.numbers(p["number"]):
+                if (ref, n) in self.d.expect:
+                    raise KeyError(f"duplicate reference {ref}")
+                self.d.expect[(ref, n)] = net
             ddx, ddy = rot_vec(p["x"], -p["y"], rot)
             px, py = r2(x + ddx), r2(y + ddy)
             a = math.radians(p["angle"])
@@ -462,8 +489,8 @@ class Sheet:
 
     # ---- output -----------------------------------------------------------
     def render(self):
-        root = [S("kicad_sch"), [S("version"), 20250114], [S("generator"), "eeschema"],
-                [S("generator_version"), "9.0"], [S("uuid"), self.uuid], [S("paper"), self.paper],
+        root = [S("kicad_sch"), [S("version"), 20260306], [S("generator"), "eeschema"],
+                [S("generator_version"), "10.0"], [S("uuid"), self.uuid], [S("paper"), self.paper],
                 self.d.title_block(self.title)]
         root.append([S("lib_symbols")] + [self.libsyms[k] for k in sorted(self.libsyms)])
         for i, (net, x, y, angle) in enumerate(self.pending):

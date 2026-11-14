@@ -1,3 +1,13 @@
+# Zeebuddy 主板 V2（ESP32-S31，KiCad 10）
+
+> **本分支 `claude/board-s31`（2026-11-14）**：原理图已按 ESP32-S31 改好，**用 KiCad 10 打开**。
+> - 主控 ESP32-S31-WROOM-1U-N16R16V，符号和封装用乐鑫官方 KiCad 库（[`lib/espressif`](lib/espressif)）。
+> - 引脚按 [`../docs/esp32-s31-pinmap.md`](../docs/esp32-s31-pinmap.md)；屏和触摸用 40 脚亚奇板对板母座 OK-128GF040/2-35（封装按亚奇推荐焊盘画在 `zeebuddy.pretty` 里，脚号顺序画板前要和亚奇图纸核对）。
+> - 214 个元件、180 个网络；网表核对 0 错误；ERC 只剩 1 条警告（充电芯片底部散热焊盘接地，正常）。
+> - **`zeebuddy-mainboard.kicad_pcb` 还是 S3 版的板子，和这份原理图对不上，不能用**，由画板工程师按新原理图重画（见 [`../docs/pcb-redesign-brief.md`](../docs/pcb-redesign-brief.md)）。
+>   在本分支运行 `gen/build.sh` 只生成原理图、PDF 和封装库，不碰 PCB。
+> - S3 版（V1）的原理图和布线留在分支 `claude/esp32-board-layout-2w2fx8`、`claude/backup-board-v1-routed`、`claude/board-v2-gen7-round`，下面是 V1 的说明，留作记录。
+
 # Zeebuddy 主板 V1（KiCad 9）
 
 ESP32-S3-WROOM-1U-N16R8 + Air780E 的主板，第一版，**草稿**：原理图已画完，PCB 已布通，

@@ -11,7 +11,7 @@ import pcbnew
 HERE = os.path.dirname(os.path.abspath(__file__))
 OUT = sys.argv[1] if len(sys.argv) > 1 else os.path.join(HERE, "..")
 LIB = os.path.join(OUT, "zeebuddy.pretty")
-PLUG = pcbnew.PCB_IO_MGR.PluginFind(pcbnew.PCB_IO_MGR.KICAD_SEXP)
+PLUG = pcbnew.PCB_IO_MGR.FindPlugin(pcbnew.PCB_IO_MGR.KICAD_SEXP)
 MM = pcbnew.FromMM
 
 
@@ -218,6 +218,41 @@ def fpc(n):
     fp.save()
 
 
+def ocn_btb_socket(n=40):
+    """OCN (亚奇) OK-128GF040/2-35 board-to-board socket: 0.35 mm pitch, 0.6 mm mated height.
+    Pads from the maker's recommended PCB layout: signal pads 0.18 x 0.40 in two rows of n/2, outer edges 2.30 apart;
+    at each end two 0.40 x 0.39 power-pin pads, 0.58 apart, 1.28 from the nearest signal pad.
+    Pin numbering (odd pins in the top row, even pins in the bottom row, pin 1 top left) is ours: check it against
+    the maker's drawing before the board is made."""
+    half = n // 2
+    span = (half - 1) * 0.35            # DIM-D: 6.65 for 40 pins
+    fp = FP(f"OCN_OK-128GF{n:03d}_2-35", f"亚奇 OCN OK-128GF{n:03d}/2-35 板对板母座，0.35 mm 间距，{n} 脚 + 两端电源脚，"
+            "配合高度 0.6 mm。焊盘按亚奇规格书的推荐焊盘；脚号顺序（上排单数、下排双数）画板前要和亚奇图纸核对",
+            ref_y=-2.2, val_y=2.2)
+    for i in range(half):
+        x = -span / 2 + i * 0.35
+        fp.pad(2 * i + 1, x, -0.95, 0.18, 0.40)
+        fp.pad(2 * i + 2, x, 0.95, 0.18, 0.40)
+    for sx in (-1, 1):
+        for sy in (-1, 1):
+            fp.pad("MP", sx * (span / 2 + 1.28), sy * (0.29 + 0.195), 0.40, 0.39)
+    a = 9.45 / 2                         # DIM-A: socket body length for 40 pins
+    fp.rect(-a, -1.15, a, 1.15)
+    fp.line(-a, -1.4, -span / 2 - 0.35, -1.4, pcbnew.F_SilkS, 0.12)
+    fp.circle(-span / 2, -1.6, 0.08, pcbnew.F_SilkS, 0.16)
+    fp.courtyard(-a - 0.25, -1.45, a + 0.25, 1.45)
+    fp.save()
+
+
+def espressif_module(name="ESP32-S31-WROOM-1U"):
+    """Copy the module footprint from Espressif's official KiCad library (kicad/lib/espressif) into zeebuddy.pretty."""
+    src = os.path.join(HERE, "..", "lib", "espressif", name + ".kicad_mod")
+    with open(src, encoding="utf-8") as f:
+        text = f.read()
+    with open(os.path.join(LIB, name + ".kicad_mod"), "w", encoding="utf-8") as f:
+        f.write(text)
+
+
 def mounting_hole():
     fp = FP("MountingHole_1.6mm_Pad", "Ø1.6 螺丝孔，铜环 Ø2.8，接地（位置和孔径取自参考主板）", smd=False,
             ref_y=-2.6, val_y=2.6)
@@ -277,6 +312,8 @@ if __name__ == "__main__":
     mic()
     for pins in (6, 22, 24):
         fpc(pins)
+    ocn_btb_socket(40)
+    espressif_module()
     mounting_hole()
     mounting_hole_npth()
     wire_pads("BatteryPads", "电池焊线焊盘，位置和尺寸同参考主板：1 = 正，2 = 负，3 = 温度电阻（没接）",

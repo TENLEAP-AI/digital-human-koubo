@@ -1,13 +1,13 @@
 (footprint "TestPad_D1.0mm"
-	(version 20241229)
+	(version 20260206)
 	(generator "pcbnew")
-	(generator_version "9.0")
+	(generator_version "10.0")
 	(layer "F.Cu")
 	(descr "Ø1.0 测试点，外框比 KiCad 自带的小，省地方")
 	(property "Reference" "REF**"
 		(at 0 -1.2 0)
 		(layer "F.SilkS")
-		(uuid "51d0696e-0849-4448-bbe5-0ae24f5688c6")
+		(uuid "73a71c56-a40a-4998-a96a-167b7a5479b0")
 		(effects
 			(font
 				(size 0.8 0.8)
@@ -18,7 +18,7 @@
 	(property "Value" "TestPad_D1.0mm"
 		(at 0 1.2 0)
 		(layer "F.Fab")
-		(uuid "eb031b43-0b35-4447-9528-6c64b0094cd7")
+		(uuid "5dd89813-8934-46f5-9f3f-1ac12a895b2f")
 		(effects
 			(font
 				(size 0.8 0.8)
@@ -30,11 +30,10 @@
 		(at 0 0 0)
 		(layer "F.Fab")
 		(hide yes)
-		(uuid "5c7d6556-6f03-40f5-a84a-69b9e9b2d308")
+		(uuid "5768ebcb-321b-4dff-8f45-4f116eb6228d")
 		(effects
 			(font
 				(size 1.27 1.27)
-				(thickness 0.15)
 			)
 		)
 	)
@@ -42,15 +41,15 @@
 		(at 0 0 0)
 		(layer "F.Fab")
 		(hide yes)
-		(uuid "e299ecab-4525-4af5-b019-1d1fe9f0de89")
+		(uuid "87f4d66d-a9c7-4c32-8fc6-57276f3b2743")
 		(effects
 			(font
 				(size 1.27 1.27)
-				(thickness 0.15)
 			)
 		)
 	)
 	(attr smd exclude_from_bom)
+	(duplicate_pad_numbers_are_jumpers no)
 	(fp_rect
 		(start -0.6 -0.6)
 		(end 0.6 0.6)
@@ -60,13 +59,13 @@
 		)
 		(fill no)
 		(layer "F.CrtYd")
-		(uuid "a787619a-83c0-4d84-b5e5-864b41b3f07c")
+		(uuid "45496d6c-234a-43ef-baec-5c064143d54a")
 	)
 	(pad "1" smd circle
 		(at 0 0)
 		(size 1 1)
 		(layers "F.Cu" "F.Mask")
-		(uuid "c7eb8e87-9677-43fd-8491-7bc683b9028c")
+		(uuid "3e349b85-961a-48c7-a0aa-f229c313a3de")
 	)
 	(embedded_fonts no)
 )

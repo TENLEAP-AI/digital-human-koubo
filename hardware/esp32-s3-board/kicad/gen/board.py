@@ -19,7 +19,7 @@ from sexpr import find, first, parse
 HERE = os.path.dirname(os.path.abspath(__file__))
 OUT = sys.argv[1] if len(sys.argv) > 1 else os.path.join(HERE, "..")
 NAME = "zeebuddy-mainboard"
-PLUG = pcbnew.PCB_IO_MGR.PluginFind(pcbnew.PCB_IO_MGR.KICAD_SEXP)
+PLUG = pcbnew.PCB_IO_MGR.FindPlugin(pcbnew.PCB_IO_MGR.KICAD_SEXP)
 MM = pcbnew.FromMM
 OX, OY = 100.0, 60.0          # where the board's top-left corner sits on the KiCad page
 SYSLIB = "/usr/share/kicad/footprints"

@@ -1,29 +1,29 @@
 (kicad_sch
-	(version 20250114)
+	(version 20260306)
 	(generator "eeschema")
-	(generator_version "9.0")
+	(generator_version "10.0")
 	(uuid "7aeefa69-ecae-5622-92cc-4aeb9ca26e29")
 	(paper "A4")
 	(title_block
-		(title "Zeebuddy 主板 V1（ESP32-S3 + Air780E）")
-		(date "2026-11-10")
-		(rev "V1.0-draft")
+		(title "Zeebuddy 主板 V2（ESP32-S31 + Air780E）")
+		(date "2026-11-14")
+		(rev "V2.0-draft")
 		(company "")
 	)
 	(lib_symbols)
-	(text "Zeebuddy 主板 V1 原理图（草稿）"
+	(text "Zeebuddy 主板 V2 原理图（草稿，ESP32-S31）"
 		(exclude_from_sim no)
 		(at 25.4 17.78 0)
 		(effects (font (size 3 3)) (justify left top))
 		(uuid "0aa1612e-2882-5764-87df-161f63b488e3")
 	)
-	(text "主控 ESP32-S3-WROOM-1U-N16R8，4G 模组 Air780E（可换贴北美版 Air780EEN）。\n各页之间靠同名的网络标号连接；引脚分配见 docs/requirements.md 的方案三。"
+	(text "主控 ESP32-S31-WROOM-1U-N16R16V（16 MB Flash、16 MB PSRAM），4G 模组 Air780E（可换贴北美版 Air780EEN）。\n各页之间靠同名的网络标号连接；引脚分配见 docs/esp32-s31-pinmap.md。需要 KiCad 10 打开。\n模组的符号和封装用乐鑫官方 KiCad 库（kicad/lib/espressif）。"
 		(exclude_from_sim no)
 		(at 25.4 26.67 0)
 		(effects (font (size 1.5 1.5)) (justify left top))
 		(uuid "3875b843-c731-5c5b-b4b1-e275fe8c8099")
 	)
-	(text "画板之前还要确认的：\n1. 屏 LB28BOE47：背光电压电流、VCI 电压、排线间距和上下接、8 根数据线里哪几根有效、能否只用 DE。\n2. 触摸屏：芯片型号、排线脚位。\n3. 前摄：型号、排线脚位、10 脚要不要供电。\n4. 电池（2000 mAh，最大充电 0.5C）：电池座型号、有没有温度电阻脚。\n5. 按键：排线脚位，是否包含开关机键。\n6. 各连接器的具体型号（Type-C、SIM 卡座、TF 卡座、排线座、电池座、喇叭座）。\n7. 220 µF 钽电容的高度是否放得进外壳。"
+	(text "和 V1（ESP32-S3）相比：\n1. 主控换 S31；Type-C 接全速 USB（GPIO33 / 34），Air780E 接高速 USB；去掉 USB 切换芯片。\n2. 屏改 16 位并口 RGB，屏和触摸共用一个 40 脚亚奇板对板母座（OK-128GF040/2-35）。\n3. TF 卡改四线；BOOT 改到 GPIO61；调试串口独立（GPIO58 / 59）。\n4. 两颗扩展芯片重新分配：0x20 全输入（按键等），0x22 全输出。\n5. 摄像头主时钟改由 GPIO55 输出，24 MHz 晶振不贴；复位监控芯片改为默认贴。\n\n画板之前还要确认的：\n1. 两家屏：16 位模式、3.3 V IO、排线和母座脚号对照表（打样文件第 3 节）。\n2. 前摄：型号、排线脚位、10 脚要不要供电。\n3. 电池（2000 mAh，最大充电 0.5C）：电池座型号、有没有温度电阻脚。\n4. 按键：排线脚位，是否包含开关机键。\n5. 各连接器的具体型号（Type-C、SIM 卡座、TF 卡座、摄像头和按键排线座、电池座、喇叭座）。\n6. 220 µF 钽电容的高度是否放得进外壳。"
 		(exclude_from_sim no)
 		(at 25.4 137.16 0)
 		(effects (font (size 1.5 1.5)) (justify left top))
@@ -31,7 +31,7 @@
 	)
 	(text "本图由 gen/design.py 生成。改电路请改脚本后运行 gen/build.sh，不要直接在 KiCad 里改图。"
 		(exclude_from_sim no)
-		(at 25.4 172.72 0)
+		(at 25.4 205.74 0)
 		(effects (font (size 1.5 1.5)) (justify left top))
 		(uuid "aed1ca40-7501-5eac-a142-b173d998ef59")
 	)
@@ -65,7 +65,7 @@
 		(stroke (width 0.1524) (type solid))
 		(fill (color 0 0 0 0))
 		(uuid "211471ca-6f6b-5659-97e0-543d0c20cec9")
-		(property "Sheetname" "2 主控：ESP32-S3 模组、下载口、USB 切换"
+		(property "Sheetname" "2 主控：ESP32-S31 模组、复位、下载口、USB"
 			(at 106.68 39.94 0)
 			(effects (font (size 1.27 1.27)) (justify left bottom))
 		)
