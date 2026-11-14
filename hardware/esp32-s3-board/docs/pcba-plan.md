@@ -66,6 +66,14 @@ PCB 找外部工程师画（[pcb-redesign-brief.md](pcb-redesign-brief.md)）。
 
 已经可以不要的：USB 切换芯片 FSUSB42、第二颗 XL9555、可能还有 24 MHz 晶振（摄像头时钟改由主控出，要在开发板上确认）。
 
+### 4.1 读乐鑫资料后补充的（2026-11-14，见 [espressif-resources-for-ai-camera.md](espressif-resources-for-ai-camera.md)）
+
+- **烧录测试点**：乐鑫没有 WROOM-1U 的烧录治具。主板正面留测试点：USB D+ / D−（GPIO34 / 33）、串口 TX / RX（GPIO59 / 58）、BOOT（GPIO61）、EN、3.3 V、GND，做自己的顶针治具。
+- **前摄**：优先选乐鑫摄像头驱动支持的 GC0308、GC032A、BF3A03、SC030IOT。
+- **Wi-Fi 天线**：增益不超过 2.33 dBi（模组认证用的天线），超过可能要补测。
+- **认证**：S31-WROOM-1U 目前查不到 SRRC / CE / FCC 证书，打样不受影响，量产前必须问清。
+- **设计审阅**：乐鑫免费审原理图和 PCB（1 ~ 3 个工作日），原理图改完就提交。
+
 ## 5. 成本（粗估，等精确 BOM）
 
 之前按 S3 方案估的是：10 块打样每块约 180 ~ 190 元（元件约 100、贴片约 72、PCB 10 ~ 20），不含屏、摄像头、电池等。
