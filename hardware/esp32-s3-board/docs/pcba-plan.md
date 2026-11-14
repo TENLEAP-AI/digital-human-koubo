@@ -68,7 +68,7 @@ PCB 找外部工程师画（[pcb-redesign-brief.md](pcb-redesign-brief.md)）。
 
 ### 4.1 读乐鑫资料后补充的（2026-11-14，见 [espressif-resources-for-ai-camera.md](espressif-resources-for-ai-camera.md)）
 
-- **烧录测试点**：乐鑫没有 WROOM-1U 的烧录治具。主板正面留测试点：USB D+ / D−（GPIO34 / 33）、串口 TX / RX（GPIO59 / 58）、BOOT（GPIO61）、EN、3.3 V、GND，做自己的顶针治具。
+- **烧录测试点**：乐鑫没有 WROOM-1U 的烧录治具。主板正面留测试点：USB D+ / D−（GPIO34 / 33）、串口 TX / RX（GPIO58 / 59）、BOOT（GPIO61）、EN、3.3 V、GND，做自己的顶针治具。
 - **前摄**：30 万像素（640 × 480）够做人脸、手势功能，优先选乐鑫摄像头驱动支持的 GC0308、BF3A03、SC030IOT（GC032A 感光面积只有 1/10 英寸，暗光偏差，放最后）。跟模组厂定的规格：
   - 视角：对角 70° ~ 80°（太窄小朋友一偏就出画面，太宽脸变小）。
   - 对焦：定焦，清晰范围 25 cm ~ 1 m（不要按拍文档调成近焦）。
