@@ -59,6 +59,7 @@ S31 的引脚分配我们已经做好，见 `docs/esp32-s31-pinmap.md`。
 | 位号 | 器件 | 说明 |
 |---|---|---|
 | U4 | **ESP32-S31-WROOM-1U-N16R16V** | 主控，背面。18.0 × 20.5 × 3.2 mm，64 个焊盘；16 MB Flash、16 MB PSRAM；Wi-Fi 用模组自带的 IPEX 座。规格书还是预发布 v0.5 |
+| | | 符号和封装用乐鑫官方 KiCad 库 github.com/espressif/kicad-libraries 里的 `ESP32-S31-WROOM-1U`（已核对与规格书一致，带 3D 模型） |
 | U9 | 合宙 Air780E | 4G 模组，背面。**要能换贴北美版 Air780EEN**（同封装） |
 | U2 | SY6970QCC | 开关充电 + 电源路径，I²C 地址 0x6A。可换 BQ25895RTWR（脚位相同） |
 | U3 | SY8089AAAC | 3.3 V 降压。可换 TLV62569DBV |
