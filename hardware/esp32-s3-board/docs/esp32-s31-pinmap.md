@@ -37,7 +37,7 @@
 | 43 / 44 / 45 | 屏 DE / HSYNC / VSYNC | 专用高速脚 |
 | 46 ~ 53 | 摄像头数据 D0 ~ D7 | 专用高速脚（CAM_DATA0 ~ 7），前后摄共用，经总线开关切换 |
 | 54 / 55 / 56 / 57 | 摄像头 PCLK / XCLK / VSYNC / HREF | 专用高速脚。这 4 个也是 JTAG 脚，调试改走 USB 口的 JTAG |
-| 58 / 59 | 调试串口 RX / TX | UART0，独立 |
+| 58 / 59 | 调试串口 TX / RX | UART0，独立（GPIO58 = U0TXD，GPIO59 = U0RXD，模组规格书表 3-1；2026-11-14 更正，之前写反了） |
 | 60 | 充电中断 CHG_INT | 启动配置脚，平时为高，只影响启动时的日志打印 |
 | 61 | BOOT 按键 | 按住上电进下载模式；10 kΩ 上拉，不接电容 |
 | USB_DP / USB_DM | Air780E 的 USB | **专用高速 USB（480 Mbps）**，不占 GPIO |
@@ -48,14 +48,16 @@
 
 **备选（NV3049F 做不了 16 位时）**：8 位串行 RGB 只用 D0 ~ D7（GPIO8 ~ 15，全是专用高速脚）和同步线，D8 ~ D15 不接。
 
-## 3. 扩展芯片（两颗 XL9555，地址 0x20、0x21，中断并到 GPIO0）
+## 3. 扩展芯片（两颗 XL9555，地址 0x20、0x22，中断并到 GPIO0）
 
 | 芯片 | 方向 | 信号 |
 |---|---|---|
 | U7（0x20） | 输入 | KEY1 ~ KEY6、SD_DET、LTE_STATUS_N |
 | U7（0x20） | 空 | 8 路 |
-| U8（0x21） | 输出 | LTE_PWR_EN、LTE_PWRKEY_EN、LTE_RESET_EN、CAM_PWR_EN、CAMF_PWDN、CAMR_PWDN、CAM_RST、CAM_SEL、PA_EN、LCD_RST、TP_RST、LCD_CS、LCD_SCL、LCD_SDA |
-| U8（0x21） | 空 | 2 路 |
+| U8（0x22） | 输出 | LTE_PWR_EN、LTE_PWRKEY_EN、LTE_RESET_EN、CAM_PWR_EN、CAMF_PWDN、CAMR_PWDN、CAM_RST、CAM_SEL、PA_EN、LCD_RST、TP_RST、LCD_CS、LCD_SCL、LCD_SDA |
+| U8（0x22） | 空 | 2 路（P16 引到测试点备用） |
+
+**不用 0x21**：前摄候选 GC0308、GC032A 的 I²C 地址就是 0x21（乐鑫摄像头驱动里写的），会冲突。2026-11-14 从 0x21 改回 0x22。
 
 LCD_CS、LCD_SCL、LCD_SDA 是屏的三线 SPI，只在开机发初始化命令，用扩展芯片模拟足够（ST7102 和 NV3049F 都是这样初始化）。
 两颗扩展芯片在休眠时要保持供电，按键才能唤醒。
@@ -66,13 +68,17 @@ LCD_CS、LCD_SCL、LCD_SDA 是屏的三线 SPI，只在开机发初始化命令�
 |---|---|
 | 主控模组 | ESP32-S3-WROOM-1U-N16R8 → **ESP32-S31-WROOM-1U-N16R16V**，符号和封装都要换 |
 | USB | Type-C 的 D+ / D− 经 USBLC6 接 GPIO33 / 34；Air780E 的 USB 接专用高速口。**去掉 USB 切换芯片 FSUSB42（U6）和 USB_SEL** |
-| 扩展芯片 | 仍是两颗，地址改为 0x20 / 0x21，信号重新分配（见第 3 节） |
+| 扩展芯片 | 仍是两颗，地址 0x20 / 0x22，信号重新分配（见第 3 节） |
 | 屏 | 8 位串行 → **16 位并口 RGB**（也兼容 8 位串行屏）；去掉 G0 ~ G2 的接地电阻；屏的 VSYNC / HSYNC 不再和串口共用，去掉相关串联电阻 |
 | TF 卡 | 1 线 → **4 线**，固定接 GPIO20 ~ 25 |
 | 调试串口 | 独立的 UART0（GPIO58 / 59），下载焊盘改到这里 |
 | BOOT 按键 | GPIO0 → **GPIO61** |
 | 摄像头主时钟 | 可以改由 GPIO55 输出，**去掉 24 MHz 有源晶振 Y1**。要在开发板上确认两颗摄像头用主控给的时钟正常 |
 | 屏和触摸的接口 | 亚奇 OCN OK-128 板对板公母座（主板母座 OK-128GF040/2-35，0.35 mm 间距，40 脚 + 2 个端头电源脚），40 脚全部用上（见两份打样文件） |
+
+## 4.1 原理图
+
+2026-11-14 已按本表画好 S31 版原理图，在分支 `claude/board-s31`（`hardware/esp32-s3-board/kicad/`，KiCad 10）。S3 版原理图和布线留在原来的分支不动。
 
 ## 5. 被替换的方案
 
