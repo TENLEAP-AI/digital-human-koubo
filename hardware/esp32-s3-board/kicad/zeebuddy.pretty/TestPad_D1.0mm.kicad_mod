@@ -7,7 +7,7 @@
 	(property "Reference" "REF**"
 		(at 0 -1.2 0)
 		(layer "F.SilkS")
-		(uuid "73a71c56-a40a-4998-a96a-167b7a5479b0")
+		(uuid "184811bc-94fc-4e5f-80de-7f3c671f97d8")
 		(effects
 			(font
 				(size 0.8 0.8)
@@ -18,7 +18,7 @@
 	(property "Value" "TestPad_D1.0mm"
 		(at 0 1.2 0)
 		(layer "F.Fab")
-		(uuid "5dd89813-8934-46f5-9f3f-1ac12a895b2f")
+		(uuid "c62de619-6bfb-4254-8d9e-b5c3cc987d2a")
 		(effects
 			(font
 				(size 0.8 0.8)
@@ -30,7 +30,7 @@
 		(at 0 0 0)
 		(layer "F.Fab")
 		(hide yes)
-		(uuid "5768ebcb-321b-4dff-8f45-4f116eb6228d")
+		(uuid "b4c88055-b54e-4fa0-b9f4-03aa97133851")
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -41,7 +41,7 @@
 		(at 0 0 0)
 		(layer "F.Fab")
 		(hide yes)
-		(uuid "87f4d66d-a9c7-4c32-8fc6-57276f3b2743")
+		(uuid "820e5c03-a3d5-462b-9fbf-84de7e892388")
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -59,13 +59,13 @@
 		)
 		(fill no)
 		(layer "F.CrtYd")
-		(uuid "45496d6c-234a-43ef-baec-5c064143d54a")
+		(uuid "3ba06da3-e430-4b8c-84f8-12f4af4fc49f")
 	)
 	(pad "1" smd circle
 		(at 0 0)
 		(size 1 1)
 		(layers "F.Cu" "F.Mask")
-		(uuid "3e349b85-961a-48c7-a0aa-f229c313a3de")
+		(uuid "32ff09d9-535e-4fad-b09d-12b91dd516bc")
 	)
 	(embedded_fonts no)
 )

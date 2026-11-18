@@ -101,6 +101,16 @@ CHARGER = d.define(box_symbol(
     desc="矽力杰 I²C 开关充电芯片，带电源路径和电压电流检测，QFN4x4-24，脚位与 BQ25895RTW 相同",
     datasheet="https://www.electronics-lab.com/wp-content/uploads/2023/12/SY6970-.pdf"))
 
+FUEL_GAUGE = d.define(box_symbol(
+    "BQ27220YZFR", "U",
+    left=[("C3", "BAT", "passive"), ("C1", "SRP", "input"), ("C2", "SRN", "input"), None,
+          ("B1", "BIN", "input"), ("B2", "VSS", "power_in")],
+    right=[("B3", "VDD", "power_out"), None, ("A2", "SDA", "bidirectional"), ("A3", "SCL", "input"),
+           ("A1", "GPOUT", "open_collector")],
+    fp="Package_BGA:BGA-9_1.6x1.6mm_Layout3x3_P0.5mm", minw=20.32,
+    desc="TI 单节锂电池电量计（库仑计），DSBGA-9 1.62 × 1.58 mm、0.5 mm 间距，I²C 地址 0x55（固定）",
+    datasheet="https://www.ti.com/lit/ds/symlink/bq27220.pdf"))
+
 MIC = d.define(box_symbol(
     "MSM261S4030H0R", "MK",
     left=[(8, "VDD", "power_in"), (4, "CHIPEN", "input"), (5, "L/R", "input"), (1, "GND", "power_in")],
@@ -175,7 +185,7 @@ def power():
             "固件死机后看门狗 40 秒超时，芯片回到默认状态，重新受上面的硬件限制（这一点打样后要实测确认）。", 1.3)
 
     sh.frame(12.7, 137.16, 213.36, 248.92, "电池座和 3.3 V 降压")
-    sh.place("Connector_Generic:Conn_01x02", 48.26, 162.56, {"1": "VBAT", "2": "GND"}, value="电池焊盘",
+    sh.place("Connector_Generic:Conn_01x02", 48.26, 162.56, {"1": "VBAT_CELL", "2": "GND"}, value="电池焊盘",
              fp="zeebuddy:BatteryPads")
     sh.place("Regulator_Switching:TLV62569DBV", 111.76, 162.56,
              {"VIN": "VSYS", "EN": "BUCK_EN", "SW": "BUCK_SW", "FB": "BUCK_FB", "GND": "GND"},
@@ -191,19 +201,44 @@ def power():
     sh.caps(86.36, 218.44, "+3V3", [("22µF", FP_0805), ("22µF", FP_0805)], pitch=12.7)
     sh.text(15.24, 238.76, "输出 = 0.6 V × (1 + 100k / 22.1k) = 3.31 V。电池低于 3.4 V 左右时输出会跟着往下掉，固件要提前关机。", 1.3)
 
-    sh.frame(218.44, 137.16, 406.4, 248.92, "电源标记、测试点、螺丝孔")
+    sh.frame(218.44, 137.16, 299.72, 248.92, "电源标记、测试点、螺丝孔")
     for i, net in enumerate(["GND", "VBUS", "VBAT", "VSYS", "+3V3"]):
-        sh.flag(228.6 + (i % 3) * 33.02, 165.1 + (i // 3) * 25.4, net)
+        sh.flag(228.6 + (i % 3) * 25.4, 157.48 + (i // 3) * 20.32, net)
     for i, net in enumerate(["VBUS", "VBAT", "VSYS", "+3V3", "GND", "GND"]):
-        sh.tp(340.36 + i * 10.16, 170.18, net)
+        sh.tp(228.6 + i * 10.16, 203.2, net)
     for i in range(4):
         if i == 0:      # the top-right hole is only 1.2 mm from the board edge: no room for a copper ring
-            sh.place("Mechanical:MountingHole", 238.76, 228.6, {}, value="Ø1.6 螺丝孔（无铜环）",
+            sh.place("Mechanical:MountingHole", 231.14, 228.6, {}, value="Ø1.6 螺丝孔（无铜环）",
                      fp="zeebuddy:MountingHole_1.6mm_NPTH")
             continue
-        sh.place("Mechanical:MountingHole_Pad", 238.76 + i * 20.32, 228.6, {"1": "GND"}, value="Ø1.6 螺丝孔",
+        sh.place("Mechanical:MountingHole_Pad", 231.14 + i * 17.78, 228.6, {"1": "GND"}, value="Ø1.6 螺丝孔",
                  fp="zeebuddy:MountingHole_1.6mm_Pad")
     return sh
+
+
+def fuel_gauge(sh):
+    """BQ27220 system-side coulomb counter on its own I2C bus (GPIO42 / 60): its fixed address 0x55 is also the
+    address of the ST7123 in-cell touch the ST7102 panel may use, so it cannot share the main bus."""
+    sh.frame(304.8, 137.16, 406.4, 248.92, "电量计（BQ27220，单独的 I²C，地址 0x55）")
+    sh.place(FUEL_GAUGE, 335.28, 167.64,
+             {"BAT": "VBAT_CELL", "SRP": "VBAT_CELL", "SRN": "VBAT", "BIN": "FG_BIN", "VSS": "GND",
+              "VDD": "FG_VDD", "SDA": "FG_SDA", "SCL": "FG_SCL", "GPOUT": "FG_INT"}, value="BQ27220YZFR")
+    sh.hlist(383.54, 147.32, [
+        ("R", "VBAT_CELL", "VBAT", "10mΩ 1%", "", "Resistor_SMD:R_0805_2012Metric"),
+        ("R", "FG_BIN", "GND", "10k"),
+        ("R", "+3V3", "FG_INT", "10k"),
+        ("R", "+3V3", "FG_SDA", "10k"),
+        ("R", "+3V3", "FG_SCL", "10k"),
+    ])
+    sh.caps(317.5, 198.12, "VBAT_CELL", ["1µF"])
+    sh.caps(332.74, 198.12, "FG_VDD", ["2.2µF"])
+    sh.tp(350.52, 198.12, "VBAT_CELL")
+    sh.text(307.34, 218.44,
+            "电池正极 → 10 mΩ 采样电阻 → 充电芯片 BAT。SRP、SRN 从电阻两端开尔文引线；\n"
+            "BAT 脚接电池正极，1µF 贴近芯片。VDD 是芯片自己的 1.8 V，只接 2.2µF。\n"
+            "BIN 10k 下拉：内置电池。GPOUT 接扩展芯片 0x20 的 P10（电量变化中断）。\n"
+            "不和主 I²C 共用：联讯屏如果用 ST7123 内嵌触摸，地址也是 0x55。\n"
+            "芯片出厂已按 10 mΩ 校准；按我们电池的容量和化学参数要写一次配置。", 1.3)
 
 
 # =============================================================================
@@ -230,7 +265,7 @@ ESP_PINS = {
     "23": "LCD_D15",     # GPIO38
     "24": "LCD_BL_PWM",  # GPIO39
     "25": "LCD_PCLK",    # GPIO40
-    "28": "ESP_SPARE",   # GPIO42
+    "28": "FG_SDA",      # GPIO42 fuel gauge I2C (second bus)
     "29": "LCD_DE", "30": "LCD_HSYNC", "31": "LCD_VSYNC",      # GPIO43 / 44 / 45
     "32": "CAM_D0", "33": "CAM_D1",                             # GPIO46 / 47 = CAM_DATA0 / 1
     **{str(56 + i): f"CAM_D{2 + i}" for i in range(6)},        # GPIO48 .. 53 = CAM_DATA2 .. 7
@@ -240,7 +275,7 @@ ESP_PINS = {
     "39": "CAM_HREF",      # GPIO57
     "37": "U0TXD",         # GPIO58 = UART0 TXD
     "36": "U0RXD",         # GPIO59 = UART0 RXD
-    "26": "CHG_INT",       # GPIO60 strapping: high at boot (charger INT is open drain with a pull-up)
+    "26": "FG_SCL",        # GPIO60 strapping, only boot log: high at boot thanks to the I2C pull-up
     "27": "ESP_BOOT",      # GPIO61 strapping: low at reset = download mode
     "54": "LTE_USB_DM", "55": "LTE_USB_DP",                     # dedicated high-speed USB OTG -> Air780E
 }
@@ -263,7 +298,6 @@ def mcu():
     ])
     sh.tp(33.02, 149.86, "I2C_SDA")
     sh.tp(43.18, 149.86, "I2C_SCL")
-    sh.tp(53.34, 149.86, "ESP_SPARE")
     sh.place("Switch:SW_Push", 58.42, 165.1, {"1": "ESP_EN", "2": "GND"}, value="复位",
              fp="Button_Switch_SMD:SW_SPST_B3U-1000P")
     sh.place("Switch:SW_Push", 58.42, 177.8, {"1": "ESP_BOOT", "2": "GND"}, value="BOOT（GPIO61）",
@@ -278,7 +312,7 @@ def mcu():
     sh.text(15.24, 220.98,
             "启动配置脚：\n"
             "GPIO61（BOOT）：10k 上拉，按键旁不放电容；BOOT 键或下载焊盘拉低进下载模式。\n"
-            "GPIO60（充电中断）：开漏 + 上拉，上电为高，只影响启动日志。\n"
+            "GPIO60（电量计 I²C SCL）：有上拉，上电为高，只影响启动日志。\n"
             "GPIO36（屏 D13）：模组内部已上拉，决定 Flash 电压，上电时外部不能拉低。\n"
             "GPIO37（屏 D14）：屏的输入上电时是高阻，不影响启动。\n"
             "EN：10k + 1µF，加电压监控芯片。63 脚（第二天线）模组默认不用，悬空。", 1.3)
@@ -287,9 +321,9 @@ def mcu():
             "6  功放数据\n7  麦克风数据\n8 ~ 19  屏 D0 ~ D11\n20 ~ 23  TF D0 ~ D3\n24 / 25  TF CLK / CMD\n"
             "33 / 34  USB D− / D+（Type-C）", 1.3)
     sh.text(238.76, 177.8,
-            "\n35 ~ 38  屏 D12 ~ D15\n39  背光调光\n40  屏 PCLK\n42  备用（测试点）\n43 / 44 / 45  屏 DE / HSYNC / VSYNC\n"
+            "\n35 ~ 38  屏 D12 ~ D15\n39  背光调光\n40  屏 PCLK\n42  电量计 SDA\n43 / 44 / 45  屏 DE / HSYNC / VSYNC\n"
             "46 ~ 53  摄像头 D0 ~ D7\n54 / 55  摄像头 PCLK / XCLK\n56 / 57  摄像头 VSYNC / HREF\n"
-            "58 / 59  串口 TX / RX\n60  充电中断\n61  BOOT\n高速 USB  Air780E", 1.3)
+            "58 / 59  串口 TX / RX\n60  电量计 SCL\n61  BOOT\n高速 USB  Air780E", 1.3)
 
     sh.frame(256.54, 17.78, 406.4, 137.16, "USB：Type-C 接全速口，Air780E 接高速口")
     sh.hlist(299.72, 45.72, [
@@ -313,7 +347,7 @@ def mcu():
 # U7 (0x20) takes the inputs, U8 (0x22) the outputs (docs/esp32-s31-pinmap.md, section 3). The board engineer may
 # swap pins within a chip to ease routing. 0x21 is not used: GC0308 and GC032A front cameras answer on it.
 EXP_A = {"P00": "KEY1", "P01": "KEY2", "P02": "KEY3", "P03": "KEY4", "P04": "KEY5", "P05": "KEY6",
-         "P06": "SD_DET", "P07": "LTE_STATUS_N"}
+         "P06": "SD_DET", "P07": "LTE_STATUS_N", "P10": "FG_INT", "P11": "CHG_INT"}
 EXP_B = {"P00": "LCD_RST", "P01": "LCD_CS", "P02": "LCD_SCL", "P03": "LCD_SDA", "P04": "TP_RST",
          "P05": "CAM_PWR_EN", "P06": "CAMR_PWDN", "P07": "CAMF_PWDN", "P10": "CAM_RST", "P11": "CAM_SEL",
          "P12": "PA_EN", "P13": "LTE_PWR_EN", "P14": "LTE_PWRKEY_EN", "P15": "LTE_RESET_EN", "P16": "EXP_SPARE"}
@@ -327,10 +361,10 @@ def expander():
     sh.frame(12.7, 17.78, 175.26, 248.92, "两颗 16 位 I²C 扩展芯片")
     sh.place("Interface_Expansion:TCA9555RTWR", 91.44, 78.74,
              dict(common, A0="GND", A1="GND", A2="GND", **EXP_A),
-             nc=["P10", "P11", "P12", "P13", "P14", "P15", "P16", "P17"], value=EXP_VALUE)
+             nc=["P12", "P13", "P14", "P15", "P16", "P17"], value=EXP_VALUE)
     sh.place("Interface_Expansion:TCA9555RTWR", 91.44, 185.42,
              dict(common, A0="GND", A1="+3V3", A2="GND", **EXP_B), nc=["P17"], value=EXP_VALUE)
-    sh.text(15.24, 121.92, "上：地址 0x20，全部是输入：6 个按键、TF 卡检测、4G 状态。P10 ~ P17 空，固件里设成输出。\n"
+    sh.text(15.24, 121.92, "上：地址 0x20，全部是输入：6 个按键、TF 卡检测、4G 状态、电量计中断、充电中断。P12 ~ P17 空，固件里设成输出。\n"
                            "下：地址 0x22，全部是输出：屏和触摸的复位、屏的三线 SPI、摄像头电源和控制、功放、4G 电源和开关机。\n"
                            "    P16 是备用脚（引到测试点），P17 空。不用 0x21：前摄 GC0308、GC032A 占这个地址。\n"
                            "两颗的 INT 并在一起接 GPIO0：任何一个输入脚变化都会把 INT 拉低，深度休眠时也能唤醒。\n"
@@ -667,13 +701,14 @@ def backlight(sh):
 
 
 if __name__ == "__main__":
-    power()
+    power_sheet = power()
     mcu()
     expander()
     cellular()
     display()
     camera()
     audio_tf()
+    fuel_gauge(power_sheet)     # added 2026-11-18; drawn last so every earlier reference keeps its number
     d.root_text = [
         (25.4, 17.78, "Zeebuddy 主板 V2 原理图（草稿，ESP32-S31）", 3.0),
         (25.4, 26.67, "主控 ESP32-S31-WROOM-1U-N16R16V（16 MB Flash、16 MB PSRAM），4G 模组 Air780E（可换贴北美版 Air780EEN）。\n"
@@ -685,7 +720,8 @@ if __name__ == "__main__":
          "2. 屏改 16 位并口 RGB，屏和触摸共用一个 40 脚亚奇板对板母座（OK-128GF040/2-35）。\n"
          "3. TF 卡改四线；BOOT 改到 GPIO61；调试串口独立（GPIO58 / 59）。\n"
          "4. 两颗扩展芯片重新分配：0x20 全输入（按键等），0x22 全输出。\n"
-         "5. 摄像头主时钟改由 GPIO55 输出，24 MHz 晶振不贴；复位监控芯片改为默认贴。\n\n"
+         "5. 摄像头主时钟改由 GPIO55 输出，24 MHz 晶振不贴；复位监控芯片改为默认贴。\n"
+         "6. 2026-11-18 加电量计 BQ27220（U17），单独一组 I²C（GPIO42 / 60）；充电中断挪到扩展芯片。\n\n"
          "画板之前还要确认的：\n"
          "1. 两家屏：16 位模式、3.3 V IO、排线和母座脚号对照表（打样文件第 3 节）。\n"
          "2. 前摄：型号、排线脚位、10 脚要不要供电。\n"

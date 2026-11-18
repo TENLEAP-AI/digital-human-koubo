@@ -2016,7 +2016,7 @@
 			(effects (font (size 1.27 1.27)))
 		)
 	)
-	(global_label "CHG_INT"
+	(global_label "FG_SCL"
 		(shape passive)
 		(at 209.55 119.38 0)
 		(effects (font (size 1.27 1.27)) (justify left))
@@ -2291,7 +2291,7 @@
 			(effects (font (size 1.27 1.27)))
 		)
 	)
-	(global_label "ESP_SPARE"
+	(global_label "FG_SDA"
 		(shape passive)
 		(at 209.55 114.3 0)
 		(effects (font (size 1.27 1.27)) (justify left))
@@ -2786,22 +2786,11 @@
 			(effects (font (size 1.27 1.27)))
 		)
 	)
-	(global_label "ESP_SPARE"
-		(shape passive)
-		(at 53.34 147.32 90)
-		(effects (font (size 1.27 1.27)) (justify left))
-		(uuid "e44e251e-69c1-5618-9697-efc80fbd453c")
-		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 53.34 147.32 0)
-			(hide yes)
-			(effects (font (size 1.27 1.27)))
-		)
-	)
 	(global_label "ESP_EN"
 		(shape passive)
 		(at 50.8 165.1 180)
 		(effects (font (size 1.27 1.27)) (justify right))
-		(uuid "117fd685-a2e1-5e6b-85cb-54fe49b8ce9e")
+		(uuid "e44e251e-69c1-5618-9697-efc80fbd453c")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
 			(at 50.8 165.1 0)
 			(hide yes)
@@ -2812,7 +2801,7 @@
 		(shape passive)
 		(at 66.04 165.1 0)
 		(effects (font (size 1.27 1.27)) (justify left))
-		(uuid "332c00d4-6cb5-534b-aa65-bba080c5891e")
+		(uuid "117fd685-a2e1-5e6b-85cb-54fe49b8ce9e")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
 			(at 66.04 165.1 0)
 			(hide yes)
@@ -2823,7 +2812,7 @@
 		(shape passive)
 		(at 50.8 177.8 180)
 		(effects (font (size 1.27 1.27)) (justify right))
-		(uuid "7ee72631-539d-592f-8dd9-03b5414213b4")
+		(uuid "332c00d4-6cb5-534b-aa65-bba080c5891e")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
 			(at 50.8 177.8 0)
 			(hide yes)
@@ -2834,7 +2823,7 @@
 		(shape passive)
 		(at 66.04 177.8 0)
 		(effects (font (size 1.27 1.27)) (justify left))
-		(uuid "67d0345c-6612-5894-919e-cb572de408e1")
+		(uuid "7ee72631-539d-592f-8dd9-03b5414213b4")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
 			(at 66.04 177.8 0)
 			(hide yes)
@@ -2845,7 +2834,7 @@
 		(shape passive)
 		(at 60.96 195.58 180)
 		(effects (font (size 1.27 1.27)) (justify right))
-		(uuid "ffe62f6a-9c58-549b-8da8-b6d6fbd26a20")
+		(uuid "67d0345c-6612-5894-919e-cb572de408e1")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
 			(at 60.96 195.58 0)
 			(hide yes)
@@ -2856,7 +2845,7 @@
 		(shape passive)
 		(at 60.96 198.12 180)
 		(effects (font (size 1.27 1.27)) (justify right))
-		(uuid "79622626-bb63-5870-a4f5-d679295e09ac")
+		(uuid "ffe62f6a-9c58-549b-8da8-b6d6fbd26a20")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
 			(at 60.96 198.12 0)
 			(hide yes)
@@ -2867,7 +2856,7 @@
 		(shape passive)
 		(at 60.96 200.66 180)
 		(effects (font (size 1.27 1.27)) (justify right))
-		(uuid "825f0932-bc9c-5930-88f7-aebe3472690c")
+		(uuid "79622626-bb63-5870-a4f5-d679295e09ac")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
 			(at 60.96 200.66 0)
 			(hide yes)
@@ -2878,7 +2867,7 @@
 		(shape passive)
 		(at 60.96 203.2 180)
 		(effects (font (size 1.27 1.27)) (justify right))
-		(uuid "64f59db0-28b4-58ac-a5e6-d5f7de4be5f7")
+		(uuid "825f0932-bc9c-5930-88f7-aebe3472690c")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
 			(at 60.96 203.2 0)
 			(hide yes)
@@ -2889,7 +2878,7 @@
 		(shape passive)
 		(at 60.96 205.74 180)
 		(effects (font (size 1.27 1.27)) (justify right))
-		(uuid "5d017067-8296-5a33-9289-1e54acf3f7a8")
+		(uuid "64f59db0-28b4-58ac-a5e6-d5f7de4be5f7")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
 			(at 60.96 205.74 0)
 			(hide yes)
@@ -2900,7 +2889,7 @@
 		(shape passive)
 		(at 60.96 208.28 180)
 		(effects (font (size 1.27 1.27)) (justify right))
-		(uuid "7f282b6c-19fe-5ffb-9219-b29af8eef173")
+		(uuid "5d017067-8296-5a33-9289-1e54acf3f7a8")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
 			(at 60.96 208.28 0)
 			(hide yes)
@@ -2911,7 +2900,7 @@
 		(shape passive)
 		(at 127 190.5 0)
 		(effects (font (size 1.27 1.27)) (justify left))
-		(uuid "b312c7de-9d0d-5f54-98fd-55b5352b3910")
+		(uuid "7f282b6c-19fe-5ffb-9219-b29af8eef173")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
 			(at 127 190.5 0)
 			(hide yes)
@@ -2922,7 +2911,7 @@
 		(shape passive)
 		(at 293.37 45.72 180)
 		(effects (font (size 1.27 1.27)) (justify right))
-		(uuid "4a80fce6-6389-5c34-89c7-0bf697a30d99")
+		(uuid "b312c7de-9d0d-5f54-98fd-55b5352b3910")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
 			(at 293.37 45.72 0)
 			(hide yes)
@@ -2933,7 +2922,7 @@
 		(shape passive)
 		(at 306.07 45.72 0)
 		(effects (font (size 1.27 1.27)) (justify left))
-		(uuid "79d5218a-adbd-5370-8f8a-c9d18c4d0fd1")
+		(uuid "4a80fce6-6389-5c34-89c7-0bf697a30d99")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
 			(at 306.07 45.72 0)
 			(hide yes)
@@ -2944,7 +2933,7 @@
 		(shape passive)
 		(at 293.37 53.34 180)
 		(effects (font (size 1.27 1.27)) (justify right))
-		(uuid "83cc7316-fde6-592b-ac27-f6239918f816")
+		(uuid "79d5218a-adbd-5370-8f8a-c9d18c4d0fd1")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
 			(at 293.37 53.34 0)
 			(hide yes)
@@ -2955,7 +2944,7 @@
 		(shape passive)
 		(at 306.07 53.34 0)
 		(effects (font (size 1.27 1.27)) (justify left))
-		(uuid "b20a6721-5ed7-563b-8781-a3ba2f4f0639")
+		(uuid "83cc7316-fde6-592b-ac27-f6239918f816")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
 			(at 306.07 53.34 0)
 			(hide yes)
@@ -2966,7 +2955,7 @@
 		(shape passive)
 		(at 293.37 63.5 180)
 		(effects (font (size 1.27 1.27)) (justify right))
-		(uuid "19f8413a-163e-57ad-b8fb-3ab47949f6d0")
+		(uuid "b20a6721-5ed7-563b-8781-a3ba2f4f0639")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
 			(at 293.37 63.5 0)
 			(hide yes)
@@ -2977,7 +2966,7 @@
 		(shape passive)
 		(at 306.07 63.5 0)
 		(effects (font (size 1.27 1.27)) (justify left))
-		(uuid "eab997db-90bc-5541-99cc-28205d88f89b")
+		(uuid "19f8413a-163e-57ad-b8fb-3ab47949f6d0")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
 			(at 306.07 63.5 0)
 			(hide yes)
@@ -2988,7 +2977,7 @@
 		(shape passive)
 		(at 293.37 73.66 180)
 		(effects (font (size 1.27 1.27)) (justify right))
-		(uuid "5de5062f-5255-5cbe-a092-d69bb82456f2")
+		(uuid "eab997db-90bc-5541-99cc-28205d88f89b")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
 			(at 293.37 73.66 0)
 			(hide yes)
@@ -2999,7 +2988,7 @@
 		(shape passive)
 		(at 306.07 73.66 0)
 		(effects (font (size 1.27 1.27)) (justify left))
-		(uuid "261f98ff-281f-5a8b-8750-2283fdec1b21")
+		(uuid "5de5062f-5255-5cbe-a092-d69bb82456f2")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
 			(at 306.07 73.66 0)
 			(hide yes)
@@ -3010,7 +2999,7 @@
 		(shape passive)
 		(at 271.78 96.52 90)
 		(effects (font (size 1.27 1.27)) (justify left))
-		(uuid "419a9197-2964-5507-81ee-297f9731c5f1")
+		(uuid "261f98ff-281f-5a8b-8750-2283fdec1b21")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
 			(at 271.78 96.52 0)
 			(hide yes)
@@ -3021,7 +3010,7 @@
 		(shape passive)
 		(at 284.48 96.52 90)
 		(effects (font (size 1.27 1.27)) (justify left))
-		(uuid "c6c54bf6-e67d-5087-adc6-64747cda8954")
+		(uuid "419a9197-2964-5507-81ee-297f9731c5f1")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
 			(at 284.48 96.52 0)
 			(hide yes)
@@ -3032,7 +3021,7 @@
 		(shape passive)
 		(at 297.18 96.52 90)
 		(effects (font (size 1.27 1.27)) (justify left))
-		(uuid "4552da22-39aa-5294-b55c-dc685e43cd73")
+		(uuid "c6c54bf6-e67d-5087-adc6-64747cda8954")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
 			(at 297.18 96.52 0)
 			(hide yes)
@@ -3043,7 +3032,7 @@
 		(shape passive)
 		(at 309.88 96.52 90)
 		(effects (font (size 1.27 1.27)) (justify left))
-		(uuid "937c721c-e098-544c-b8ff-effcb688b9f9")
+		(uuid "4552da22-39aa-5294-b55c-dc685e43cd73")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
 			(at 309.88 96.52 0)
 			(hide yes)
@@ -3054,7 +3043,7 @@
 		(shape passive)
 		(at 322.58 96.52 90)
 		(effects (font (size 1.27 1.27)) (justify left))
-		(uuid "b01d26bb-3eec-5bbb-9fcf-5081ebb7ac6e")
+		(uuid "937c721c-e098-544c-b8ff-effcb688b9f9")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
 			(at 322.58 96.52 0)
 			(hide yes)
@@ -4007,43 +3996,6 @@
 		(uuid "40ee3aef-a5a1-5870-9e98-9a47b905af7c")
 	)
 	(symbol
-		(lib_id "Connector:TestPoint")
-		(at 53.34 149.86 180)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom no)
-		(on_board yes)
-		(dnp no)
-		(uuid "0b4e112e-e709-51c8-91b4-aa7fc3366f02")
-		(property "Reference" "TP10" (at 55.14 153.16 0) (effects (font (size 1.27 1.27)) (justify right)))
-		(property "Value" "TP" (at 53.34 149.86 0) (hide yes) (effects (font (size 1.27 1.27))))
-		(property "Footprint" "zeebuddy:TestPad_D1.0mm"
-			(at 48.26 149.86 0)
-			(hide yes)
-			(effects (font (size 1.27 1.27)))
-		)
-		(property "Datasheet" "" (at 48.26 149.86 0) (hide yes) (effects (font (size 1.27 1.27))))
-		(property "Description" "test point"
-			(at 53.34 149.86 0)
-			(hide yes)
-			(effects (font (size 1.27 1.27)))
-		)
-		(pin "1" (uuid "4f33eca6-5376-5b09-916f-b81ee9d454a8"))
-		(instances
-			(project "zeebuddy-mainboard"
-				(path "/7aeefa69-ecae-5622-92cc-4aeb9ca26e29/211471ca-6f6b-5659-97e0-543d0c20cec9"
-					(reference "TP10")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(wire
-		(pts (xy 53.34 149.86) (xy 53.34 147.32))
-		(stroke (width 0) (type default))
-		(uuid "a61c60e2-7308-5a19-85bd-ee45ca4cbdf3")
-	)
-	(symbol
 		(lib_id "Switch:SW_Push")
 		(at 58.42 165.1 0)
 		(unit 1)
@@ -4051,7 +4003,7 @@
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
-		(uuid "8400f3f8-708f-56c2-b40b-f2809f53aeee")
+		(uuid "0b4e112e-e709-51c8-91b4-aa7fc3366f02")
 		(property "Reference" "SW1" (at 59.69 162.56 0) (effects (font (size 1.27 1.27)) (justify left)))
 		(property "Value" "复位" (at 58.42 166.624 0) (effects (font (size 1.27 1.27))))
 		(property "Footprint" "Button_Switch_SMD:SW_SPST_B3U-1000P"
@@ -4065,8 +4017,8 @@
 			(hide yes)
 			(effects (font (size 1.27 1.27)))
 		)
-		(pin "1" (uuid "9e7b9323-66c1-5d9e-ad2e-c6eb264cf753"))
-		(pin "2" (uuid "3ee762b7-dae2-59a2-ae62-e281c47bc966"))
+		(pin "1" (uuid "4f33eca6-5376-5b09-916f-b81ee9d454a8"))
+		(pin "2" (uuid "99b07d6e-b958-5a9d-b3a7-c6e1e2696375"))
 		(instances
 			(project "zeebuddy-mainboard"
 				(path "/7aeefa69-ecae-5622-92cc-4aeb9ca26e29/211471ca-6f6b-5659-97e0-543d0c20cec9"
@@ -4079,12 +4031,12 @@
 	(wire
 		(pts (xy 53.34 165.1) (xy 50.8 165.1))
 		(stroke (width 0) (type default))
-		(uuid "8fd17526-5f72-5292-b3f1-d83ed34c0406")
+		(uuid "2e6aa183-f930-5b45-bf17-36c864865a87")
 	)
 	(wire
 		(pts (xy 63.5 165.1) (xy 66.04 165.1))
 		(stroke (width 0) (type default))
-		(uuid "408daa4c-e9d8-5785-8ef5-3dc6009507a1")
+		(uuid "e88420f3-0bf7-5531-b59b-3da4464ac5f7")
 	)
 	(symbol
 		(lib_id "Switch:SW_Push")
@@ -4094,7 +4046,7 @@
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
-		(uuid "335c5288-c15b-555a-8448-2304deb0a74c")
+		(uuid "2aed93d3-0bf7-535b-a1f0-4f210946ee5c")
 		(property "Reference" "SW2" (at 59.69 175.26 0) (effects (font (size 1.27 1.27)) (justify left)))
 		(property "Value" "BOOT（GPIO61）" (at 58.42 179.324 0) (effects (font (size 1.27 1.27))))
 		(property "Footprint" "Button_Switch_SMD:SW_SPST_B3U-1000P"
@@ -4108,8 +4060,8 @@
 			(hide yes)
 			(effects (font (size 1.27 1.27)))
 		)
-		(pin "1" (uuid "06e4c0a1-b6b6-5046-bf71-51dc9f0407b6"))
-		(pin "2" (uuid "8ff40065-fbc1-5cee-af99-ef356d989efb"))
+		(pin "1" (uuid "1acc0e03-4f80-5120-ae8b-228cc64a3148"))
+		(pin "2" (uuid "e8f8c7f2-c206-5658-8d43-8f02bac170ac"))
 		(instances
 			(project "zeebuddy-mainboard"
 				(path "/7aeefa69-ecae-5622-92cc-4aeb9ca26e29/211471ca-6f6b-5659-97e0-543d0c20cec9"
@@ -4122,12 +4074,12 @@
 	(wire
 		(pts (xy 53.34 177.8) (xy 50.8 177.8))
 		(stroke (width 0) (type default))
-		(uuid "a91666d9-9981-54fb-8a1b-14440bb13c3d")
+		(uuid "9fd84206-6858-5781-85f1-07e641a20375")
 	)
 	(wire
 		(pts (xy 63.5 177.8) (xy 66.04 177.8))
 		(stroke (width 0) (type default))
-		(uuid "c51dfc2d-34c6-5631-931c-423a24e78da9")
+		(uuid "aa0f762a-3010-5180-8c00-0da3bd6efab9")
 	)
 	(symbol
 		(lib_id "Connector_Generic:Conn_01x06")
@@ -4137,7 +4089,7 @@
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
-		(uuid "72ed3ba1-5ca6-5eed-80d0-e20e2ab45b4b")
+		(uuid "f5650661-ede6-5383-a507-6d28a2e426f3")
 		(property "Reference" "J3" (at 68.58 193.04 0) (effects (font (size 1.27 1.27))))
 		(property "Value" "下载 / 调试焊盘" (at 68.58 210.82 0) (effects (font (size 1.27 1.27))))
 		(property "Footprint" "zeebuddy:ProgPads_1x06"
@@ -4151,12 +4103,12 @@
 			(hide yes)
 			(effects (font (size 1.27 1.27)))
 		)
-		(pin "1" (uuid "96fe6b1d-8694-5900-bc62-0ea4dbb0c590"))
-		(pin "2" (uuid "2a04a429-dfd0-5d08-ba58-e4cd28a8b16b"))
-		(pin "3" (uuid "3ce2b52b-56f9-5698-889c-1ff050028b5a"))
-		(pin "4" (uuid "09245df6-1c17-506c-9573-85165f0e5ded"))
-		(pin "5" (uuid "c618829e-2111-585f-906c-3d7b57d198bf"))
-		(pin "6" (uuid "dda8a823-9b41-56f3-ab21-3b4615bb944b"))
+		(pin "1" (uuid "ea551ce6-51b4-55b1-b3e1-5cbc3edb85e6"))
+		(pin "2" (uuid "dc387b1a-0adc-5092-be36-33eeea8b131e"))
+		(pin "3" (uuid "20dfa814-b556-545b-85dc-056d088ed860"))
+		(pin "4" (uuid "96fe6b1d-8694-5900-bc62-0ea4dbb0c590"))
+		(pin "5" (uuid "2a04a429-dfd0-5d08-ba58-e4cd28a8b16b"))
+		(pin "6" (uuid "3ce2b52b-56f9-5698-889c-1ff050028b5a"))
 		(instances
 			(project "zeebuddy-mainboard"
 				(path "/7aeefa69-ecae-5622-92cc-4aeb9ca26e29/211471ca-6f6b-5659-97e0-543d0c20cec9"
@@ -4169,32 +4121,32 @@
 	(wire
 		(pts (xy 63.5 195.58) (xy 60.96 195.58))
 		(stroke (width 0) (type default))
-		(uuid "a21dc760-55e1-52ee-af25-8bcf21f9f2a4")
+		(uuid "557c67c6-405a-52e8-8c1b-c7647ef9a7a7")
 	)
 	(wire
 		(pts (xy 63.5 198.12) (xy 60.96 198.12))
 		(stroke (width 0) (type default))
-		(uuid "3249a2b8-732a-5636-8965-9da52cb15d54")
+		(uuid "66a09f6e-f198-5665-8a23-a752e6f373a2")
 	)
 	(wire
 		(pts (xy 63.5 200.66) (xy 60.96 200.66))
 		(stroke (width 0) (type default))
-		(uuid "b7f3ef69-2d29-5118-9c40-6908afccbdf0")
+		(uuid "412ce7ea-256b-5808-9501-8902962129bc")
 	)
 	(wire
 		(pts (xy 63.5 203.2) (xy 60.96 203.2))
 		(stroke (width 0) (type default))
-		(uuid "9e0bddc6-2002-541b-8010-c42e4afbac1a")
+		(uuid "a21dc760-55e1-52ee-af25-8bcf21f9f2a4")
 	)
 	(wire
 		(pts (xy 63.5 205.74) (xy 60.96 205.74))
 		(stroke (width 0) (type default))
-		(uuid "f6b03df7-132e-5615-bec1-5fa019c2ecae")
+		(uuid "3249a2b8-732a-5636-8965-9da52cb15d54")
 	)
 	(wire
 		(pts (xy 63.5 208.28) (xy 60.96 208.28))
 		(stroke (width 0) (type default))
-		(uuid "c7085011-b8fe-5847-923a-5c6919332c0f")
+		(uuid "b7f3ef69-2d29-5118-9c40-6908afccbdf0")
 	)
 	(symbol
 		(lib_id "Power_Supervisor:LM809")
@@ -4204,7 +4156,7 @@
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
-		(uuid "63221006-f6a4-558f-a385-2fd11154631c")
+		(uuid "4416908a-99ce-5517-95d0-1663be8f99bf")
 		(property "Reference" "U5" (at 119.38 177.8 0) (effects (font (size 1.27 1.27))))
 		(property "Value" "803 型 3.08V 开漏" (at 121.92 180.34 0) (effects (font (size 1.27 1.27))))
 		(property "Footprint" "Package_TO_SOT_SMD:SOT-23"
@@ -4222,9 +4174,9 @@
 			(hide yes)
 			(effects (font (size 1.27 1.27)))
 		)
-		(pin "1" (uuid "27466637-2432-528e-8094-d3d8daaeb459"))
-		(pin "2" (uuid "542f1d33-70d1-5815-b927-a3f067ce6ddd"))
-		(pin "3" (uuid "84d0c429-0839-5c60-b273-65a627b51b0e"))
+		(pin "1" (uuid "e2fcf5d2-e054-5782-8a1f-f1d8762dbe74"))
+		(pin "2" (uuid "bb79f252-35a8-5083-864c-62b133298a95"))
+		(pin "3" (uuid "26790ed3-05bd-581d-8a44-370ed478d65a"))
 		(instances
 			(project "zeebuddy-mainboard"
 				(path "/7aeefa69-ecae-5622-92cc-4aeb9ca26e29/211471ca-6f6b-5659-97e0-543d0c20cec9"
@@ -4237,7 +4189,7 @@
 	(wire
 		(pts (xy 116.84 200.66) (xy 116.84 203.2))
 		(stroke (width 0) (type default))
-		(uuid "040a7144-1169-53ef-8f70-5b9aed800d5a")
+		(uuid "3b9596f7-0f3d-505a-85c2-0c055ea9d2f9")
 	)
 	(symbol
 		(lib_id "power:GND")
@@ -4247,7 +4199,7 @@
 		(in_bom no)
 		(on_board yes)
 		(dnp no)
-		(uuid "e20e14cd-fb92-52f8-961d-9c1e771e08c4")
+		(uuid "1d120084-0e6e-5f45-ad02-abdd904f0b44")
 		(property "Reference" "#PWR41" (at 116.84 209.55 0) (hide yes) (effects (font (size 1.27 1.27))))
 		(property "Value" "GND" (at 116.84 207.01 0) (effects (font (size 1.27 1.27))))
 		(property "Footprint" "" (at 116.84 203.2 0) (hide yes) (effects (font (size 1.27 1.27))))
@@ -4257,7 +4209,7 @@
 			(hide yes)
 			(effects (font (size 1.27 1.27)))
 		)
-		(pin "1" (uuid "08d2fec4-a5e1-57bd-bb76-86721983b764"))
+		(pin "1" (uuid "84d0c429-0839-5c60-b273-65a627b51b0e"))
 		(instances
 			(project "zeebuddy-mainboard"
 				(path "/7aeefa69-ecae-5622-92cc-4aeb9ca26e29/211471ca-6f6b-5659-97e0-543d0c20cec9"
@@ -4270,12 +4222,12 @@
 	(wire
 		(pts (xy 124.46 190.5) (xy 127 190.5))
 		(stroke (width 0) (type default))
-		(uuid "e4db2223-728c-5a88-8259-87e9b48fecfc")
+		(uuid "040a7144-1169-53ef-8f70-5b9aed800d5a")
 	)
 	(wire
 		(pts (xy 116.84 180.34) (xy 116.84 177.8))
 		(stroke (width 0) (type default))
-		(uuid "d5149087-a1c3-59c0-a9a6-0f0d483f69c0")
+		(uuid "96baa4f9-9bfa-5069-97b8-802f6c3f4fd4")
 	)
 	(symbol
 		(lib_id "power:+3V3")
@@ -4285,7 +4237,7 @@
 		(in_bom no)
 		(on_board yes)
 		(dnp no)
-		(uuid "fa3b5be1-32dd-5b26-87df-e99b0c592d34")
+		(uuid "7668daae-1d27-509e-a7dd-72cce2dc30e4")
 		(property "Reference" "#PWR42" (at 116.84 181.61 0) (hide yes) (effects (font (size 1.27 1.27))))
 		(property "Value" "+3V3" (at 116.84 174.244 0) (effects (font (size 1.27 1.27))))
 		(property "Footprint" "" (at 116.84 177.8 0) (hide yes) (effects (font (size 1.27 1.27))))
@@ -4295,7 +4247,7 @@
 			(hide yes)
 			(effects (font (size 1.27 1.27)))
 		)
-		(pin "1" (uuid "883d0fdc-fc9a-57cb-a971-8640345a3485"))
+		(pin "1" (uuid "2d94b0a6-f2ac-5e25-a092-1599e190c7a1"))
 		(instances
 			(project "zeebuddy-mainboard"
 				(path "/7aeefa69-ecae-5622-92cc-4aeb9ca26e29/211471ca-6f6b-5659-97e0-543d0c20cec9"
@@ -4309,38 +4261,38 @@
 		(exclude_from_sim no)
 		(at 96.52 209.55 0)
 		(effects (font (size 1.3 1.3)) (justify left top))
-		(uuid "0c3b2e41-8a9c-580b-940b-c98ad88adcdc")
+		(uuid "4daa395b-47b5-5818-9e77-59177d26c8d6")
 	)
-	(text "启动配置脚：\nGPIO61（BOOT）：10k 上拉，按键旁不放电容；BOOT 键或下载焊盘拉低进下载模式。\nGPIO60（充电中断）：开漏 + 上拉，上电为高，只影响启动日志。\nGPIO36（屏 D13）：模组内部已上拉，决定 Flash 电压，上电时外部不能拉低。\nGPIO37（屏 D14）：屏的输入上电时是高阻，不影响启动。\nEN：10k + 1µF，加电压监控芯片。63 脚（第二天线）模组默认不用，悬空。"
+	(text "启动配置脚：\nGPIO61（BOOT）：10k 上拉，按键旁不放电容；BOOT 键或下载焊盘拉低进下载模式。\nGPIO60（电量计 I²C SCL）：有上拉，上电为高，只影响启动日志。\nGPIO36（屏 D13）：模组内部已上拉，决定 Flash 电压，上电时外部不能拉低。\nGPIO37（屏 D14）：屏的输入上电时是高阻，不影响启动。\nEN：10k + 1µF，加电压监控芯片。63 脚（第二天线）模组默认不用，悬空。"
 		(exclude_from_sim no)
 		(at 15.24 220.98 0)
 		(effects (font (size 1.3 1.3)) (justify left top))
-		(uuid "94e3f36f-8a48-5ab6-b6d9-ff2fe012445e")
+		(uuid "22db9277-66ca-5eeb-b167-3cd1e0c70455")
 	)
 	(text "GPIO 分配\n0  扩展芯片中断\n1  触摸中断\n2 / 3  I²C SDA / SCL\n4 / 5  音频 BCLK / WS\n6  功放数据\n7  麦克风数据\n8 ~ 19  屏 D0 ~ D11\n20 ~ 23  TF D0 ~ D3\n24 / 25  TF CLK / CMD\n33 / 34  USB D− / D+（Type-C）"
 		(exclude_from_sim no)
 		(at 203.2 177.8 0)
 		(effects (font (size 1.3 1.3)) (justify left top))
-		(uuid "a05cd743-fd04-579d-8f7d-a7ed8aa5c4d0")
+		(uuid "3f28f9c1-72a7-5939-a390-558fc9bb0b5c")
 	)
-	(text "\n35 ~ 38  屏 D12 ~ D15\n39  背光调光\n40  屏 PCLK\n42  备用（测试点）\n43 / 44 / 45  屏 DE / HSYNC / VSYNC\n46 ~ 53  摄像头 D0 ~ D7\n54 / 55  摄像头 PCLK / XCLK\n56 / 57  摄像头 VSYNC / HREF\n58 / 59  串口 TX / RX\n60  充电中断\n61  BOOT\n高速 USB  Air780E"
+	(text "\n35 ~ 38  屏 D12 ~ D15\n39  背光调光\n40  屏 PCLK\n42  电量计 SDA\n43 / 44 / 45  屏 DE / HSYNC / VSYNC\n46 ~ 53  摄像头 D0 ~ D7\n54 / 55  摄像头 PCLK / XCLK\n56 / 57  摄像头 VSYNC / HREF\n58 / 59  串口 TX / RX\n60  电量计 SCL\n61  BOOT\n高速 USB  Air780E"
 		(exclude_from_sim no)
 		(at 238.76 177.8 0)
 		(effects (font (size 1.3 1.3)) (justify left top))
-		(uuid "0687425d-8f82-501b-b1b9-04332df8064f")
+		(uuid "0c3b2e41-8a9c-580b-940b-c98ad88adcdc")
 	)
 	(rectangle
 		(start 256.54 17.78)
 		(end 406.4 137.16)
 		(stroke (width 0.15) (type dash))
 		(fill (type none))
-		(uuid "9d53fbb6-8971-5c6d-83af-91e160efaa12")
+		(uuid "068db4e6-6455-51ca-8c9e-a0369e50a64c")
 	)
 	(text "USB：Type-C 接全速口，Air780E 接高速口"
 		(exclude_from_sim no)
 		(at 258.04 19.28 0)
 		(effects (font (size 2 2)) (justify left top))
-		(uuid "ea1a76bb-74ea-5454-83ba-eb3c1f10eea0")
+		(uuid "a05cd743-fd04-579d-8f7d-a7ed8aa5c4d0")
 	)
 	(symbol
 		(lib_id "Device:R")
@@ -4350,7 +4302,7 @@
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
-		(uuid "91839ad1-e4a3-5bcd-96a3-04da73018f66")
+		(uuid "39b7de4b-e313-59a0-a11a-fb34d06efd83")
 		(property "Reference" "R17" (at 299.72 43.18 90) (effects (font (size 1.27 1.27))))
 		(property "Value" "22R" (at 299.72 48.26 90) (effects (font (size 1.27 1.27))))
 		(property "Footprint" "Resistor_SMD:R_0402_1005Metric"
@@ -4360,8 +4312,8 @@
 		)
 		(property "Datasheet" "" (at 299.72 45.72 0) (hide yes) (effects (font (size 1.27 1.27))))
 		(property "Description" "Resistor" (at 299.72 45.72 0) (hide yes) (effects (font (size 1.27 1.27))))
-		(pin "1" (uuid "7e136027-fc2d-5859-a129-93d703e26479"))
-		(pin "2" (uuid "5ee1cee5-9ca3-566b-97a8-e94c1748f900"))
+		(pin "1" (uuid "35f8e425-4337-5c26-80eb-4d7bea997636"))
+		(pin "2" (uuid "a25764d6-1651-57e3-8e7b-5fa474f76343"))
 		(instances
 			(project "zeebuddy-mainboard"
 				(path "/7aeefa69-ecae-5622-92cc-4aeb9ca26e29/211471ca-6f6b-5659-97e0-543d0c20cec9"
@@ -4374,12 +4326,12 @@
 	(wire
 		(pts (xy 295.91 45.72) (xy 293.37 45.72))
 		(stroke (width 0) (type default))
-		(uuid "6507678f-6f34-530e-aec7-3ffe902a7508")
+		(uuid "fddaabe3-f43b-5a2b-bfd3-b703b9a1e69d")
 	)
 	(wire
 		(pts (xy 303.53 45.72) (xy 306.07 45.72))
 		(stroke (width 0) (type default))
-		(uuid "468ea982-324e-576d-a021-7ee037c30b91")
+		(uuid "52932c2f-4f3b-5240-8e9f-bf286001d18b")
 	)
 	(symbol
 		(lib_id "Device:R")
@@ -4389,7 +4341,7 @@
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
-		(uuid "14c0c34a-6b9c-54a5-ac73-9ecd8e117a5b")
+		(uuid "1d489981-84f0-599f-8f2d-628e3140919e")
 		(property "Reference" "R18" (at 299.72 50.8 90) (effects (font (size 1.27 1.27))))
 		(property "Value" "22R" (at 299.72 55.88 90) (effects (font (size 1.27 1.27))))
 		(property "Footprint" "Resistor_SMD:R_0402_1005Metric"
@@ -4399,8 +4351,8 @@
 		)
 		(property "Datasheet" "" (at 299.72 53.34 0) (hide yes) (effects (font (size 1.27 1.27))))
 		(property "Description" "Resistor" (at 299.72 53.34 0) (hide yes) (effects (font (size 1.27 1.27))))
-		(pin "1" (uuid "d04e1f8d-3c2e-5a9c-a03b-2cdcb1dccded"))
-		(pin "2" (uuid "68d6dd20-aa65-5db3-9c54-1762407503ce"))
+		(pin "1" (uuid "132e3163-47ed-509a-9841-48a4a64f45b0"))
+		(pin "2" (uuid "45cac7b3-fea2-5cdc-a6af-8f6196b7cd13"))
 		(instances
 			(project "zeebuddy-mainboard"
 				(path "/7aeefa69-ecae-5622-92cc-4aeb9ca26e29/211471ca-6f6b-5659-97e0-543d0c20cec9"
@@ -4413,12 +4365,12 @@
 	(wire
 		(pts (xy 295.91 53.34) (xy 293.37 53.34))
 		(stroke (width 0) (type default))
-		(uuid "75c842fe-9b2a-58fb-af41-946191bf752b")
+		(uuid "99c88d32-bb8c-54ef-b6f1-ccefe9be614d")
 	)
 	(wire
 		(pts (xy 303.53 53.34) (xy 306.07 53.34))
 		(stroke (width 0) (type default))
-		(uuid "accbf417-e903-58b8-a68c-a9385f9d2fb7")
+		(uuid "0dd5368d-45bb-524e-bfc9-5b3bcc28232e")
 	)
 	(symbol
 		(lib_id "Device:C")
@@ -4428,7 +4380,7 @@
 		(in_bom yes)
 		(on_board yes)
 		(dnp yes)
-		(uuid "64ca6063-23b5-54d9-990e-25ab4aaf096f")
+		(uuid "9b0b96eb-f240-5f28-bf86-9d3ae5e0c5d7")
 		(property "Reference" "C15" (at 299.72 60.2 90) (effects (font (size 1.27 1.27))))
 		(property "Value" "待定 (不贴)" (at 299.72 66.8 90) (effects (font (size 1.27 1.27))))
 		(property "Footprint" "Capacitor_SMD:C_0402_1005Metric"
@@ -4442,8 +4394,8 @@
 			(hide yes)
 			(effects (font (size 1.27 1.27)))
 		)
-		(pin "1" (uuid "8979a349-8236-532f-b140-c72368f4b457"))
-		(pin "2" (uuid "7e7988c0-fb9b-597c-bd1a-8f6e90fe4c53"))
+		(pin "1" (uuid "0c9d0044-53cb-5161-8e1f-b14bd434f3c3"))
+		(pin "2" (uuid "266b02a3-1fe8-5293-a5bd-cea53af59d67"))
 		(instances
 			(project "zeebuddy-mainboard"
 				(path "/7aeefa69-ecae-5622-92cc-4aeb9ca26e29/211471ca-6f6b-5659-97e0-543d0c20cec9"
@@ -4456,12 +4408,12 @@
 	(wire
 		(pts (xy 295.91 63.5) (xy 293.37 63.5))
 		(stroke (width 0) (type default))
-		(uuid "11823327-a7f0-58c8-b560-e42c02cfbf62")
+		(uuid "dd81ce24-0d0c-5bb6-97d5-f2e933e87fe4")
 	)
 	(wire
 		(pts (xy 303.53 63.5) (xy 306.07 63.5))
 		(stroke (width 0) (type default))
-		(uuid "6d422434-a7f8-5f59-a982-a03f43dbf56a")
+		(uuid "af0d0050-9db5-593b-ae48-14f33a65ca94")
 	)
 	(symbol
 		(lib_id "Device:C")
@@ -4471,7 +4423,7 @@
 		(in_bom yes)
 		(on_board yes)
 		(dnp yes)
-		(uuid "30d34e7c-7b56-5f4e-aaea-998e51ff5773")
+		(uuid "60a225da-6b1b-5806-982d-ba40a73f666d")
 		(property "Reference" "C16" (at 299.72 70.36 90) (effects (font (size 1.27 1.27))))
 		(property "Value" "待定 (不贴)" (at 299.72 76.96 90) (effects (font (size 1.27 1.27))))
 		(property "Footprint" "Capacitor_SMD:C_0402_1005Metric"
@@ -4485,8 +4437,8 @@
 			(hide yes)
 			(effects (font (size 1.27 1.27)))
 		)
-		(pin "1" (uuid "d6389d6a-f761-5656-8097-d4e80d941965"))
-		(pin "2" (uuid "6994d694-383e-5a8e-a62e-1a637d76e48b"))
+		(pin "1" (uuid "33742914-5306-5515-a3f7-ad0631dbb4d7"))
+		(pin "2" (uuid "be1449a6-ed7d-5cea-ac39-bb4998614d1a"))
 		(instances
 			(project "zeebuddy-mainboard"
 				(path "/7aeefa69-ecae-5622-92cc-4aeb9ca26e29/211471ca-6f6b-5659-97e0-543d0c20cec9"
@@ -4499,12 +4451,12 @@
 	(wire
 		(pts (xy 295.91 73.66) (xy 293.37 73.66))
 		(stroke (width 0) (type default))
-		(uuid "d7554c13-cc69-5b57-9ab3-3d6a764bc961")
+		(uuid "ba7b2191-33bd-5da9-a297-66b249c18659")
 	)
 	(wire
 		(pts (xy 303.53 73.66) (xy 306.07 73.66))
 		(stroke (width 0) (type default))
-		(uuid "5f85eb16-54fa-5668-abb4-02fb6c7dab59")
+		(uuid "6a6a6a80-5cee-53d8-aadb-f24e068dd2df")
 	)
 	(symbol
 		(lib_id "Connector:TestPoint")
@@ -4514,8 +4466,8 @@
 		(in_bom no)
 		(on_board yes)
 		(dnp no)
-		(uuid "6c255479-dca0-5e7d-8f1d-73996d73540a")
-		(property "Reference" "TP11" (at 273.58 102.36 0) (effects (font (size 1.27 1.27)) (justify right)))
+		(uuid "f335617f-41ec-50e1-a1a9-729a94c90175")
+		(property "Reference" "TP10" (at 273.58 102.36 0) (effects (font (size 1.27 1.27)) (justify right)))
 		(property "Value" "TP" (at 271.78 99.06 0) (hide yes) (effects (font (size 1.27 1.27))))
 		(property "Footprint" "zeebuddy:TestPad_D1.0mm"
 			(at 266.7 99.06 0)
@@ -4525,6 +4477,43 @@
 		(property "Datasheet" "" (at 266.7 99.06 0) (hide yes) (effects (font (size 1.27 1.27))))
 		(property "Description" "test point"
 			(at 271.78 99.06 0)
+			(hide yes)
+			(effects (font (size 1.27 1.27)))
+		)
+		(pin "1" (uuid "e5aa25a8-1b77-5bd9-8cd9-3ef92c941a3c"))
+		(instances
+			(project "zeebuddy-mainboard"
+				(path "/7aeefa69-ecae-5622-92cc-4aeb9ca26e29/211471ca-6f6b-5659-97e0-543d0c20cec9"
+					(reference "TP10")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(wire
+		(pts (xy 271.78 99.06) (xy 271.78 96.52))
+		(stroke (width 0) (type default))
+		(uuid "5f85eb16-54fa-5668-abb4-02fb6c7dab59")
+	)
+	(symbol
+		(lib_id "Connector:TestPoint")
+		(at 284.48 99.06 180)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom no)
+		(on_board yes)
+		(dnp no)
+		(uuid "6c255479-dca0-5e7d-8f1d-73996d73540a")
+		(property "Reference" "TP11" (at 286.28 102.36 0) (effects (font (size 1.27 1.27)) (justify right)))
+		(property "Value" "TP" (at 284.48 99.06 0) (hide yes) (effects (font (size 1.27 1.27))))
+		(property "Footprint" "zeebuddy:TestPad_D1.0mm"
+			(at 279.4 99.06 0)
+			(hide yes)
+			(effects (font (size 1.27 1.27)))
+		)
+		(property "Datasheet" "" (at 279.4 99.06 0) (hide yes) (effects (font (size 1.27 1.27))))
+		(property "Description" "test point"
+			(at 284.48 99.06 0)
 			(hide yes)
 			(effects (font (size 1.27 1.27)))
 		)
@@ -4539,29 +4528,29 @@
 		)
 	)
 	(wire
-		(pts (xy 271.78 99.06) (xy 271.78 96.52))
+		(pts (xy 284.48 99.06) (xy 284.48 96.52))
 		(stroke (width 0) (type default))
 		(uuid "c67826d6-79f2-58f8-b4cb-166aefe4e124")
 	)
 	(symbol
 		(lib_id "Connector:TestPoint")
-		(at 284.48 99.06 180)
+		(at 297.18 99.06 180)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom no)
 		(on_board yes)
 		(dnp no)
 		(uuid "4de0d900-dc14-59da-8187-102279bf79db")
-		(property "Reference" "TP12" (at 286.28 102.36 0) (effects (font (size 1.27 1.27)) (justify right)))
-		(property "Value" "TP" (at 284.48 99.06 0) (hide yes) (effects (font (size 1.27 1.27))))
+		(property "Reference" "TP12" (at 298.98 102.36 0) (effects (font (size 1.27 1.27)) (justify right)))
+		(property "Value" "TP" (at 297.18 99.06 0) (hide yes) (effects (font (size 1.27 1.27))))
 		(property "Footprint" "zeebuddy:TestPad_D1.0mm"
-			(at 279.4 99.06 0)
+			(at 292.1 99.06 0)
 			(hide yes)
 			(effects (font (size 1.27 1.27)))
 		)
-		(property "Datasheet" "" (at 279.4 99.06 0) (hide yes) (effects (font (size 1.27 1.27))))
+		(property "Datasheet" "" (at 292.1 99.06 0) (hide yes) (effects (font (size 1.27 1.27))))
 		(property "Description" "test point"
-			(at 284.48 99.06 0)
+			(at 297.18 99.06 0)
 			(hide yes)
 			(effects (font (size 1.27 1.27)))
 		)
@@ -4576,29 +4565,29 @@
 		)
 	)
 	(wire
-		(pts (xy 284.48 99.06) (xy 284.48 96.52))
+		(pts (xy 297.18 99.06) (xy 297.18 96.52))
 		(stroke (width 0) (type default))
 		(uuid "b33503e4-e9ec-553f-ae1c-61ac3bb282f9")
 	)
 	(symbol
 		(lib_id "Connector:TestPoint")
-		(at 297.18 99.06 180)
+		(at 309.88 99.06 180)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom no)
 		(on_board yes)
 		(dnp no)
 		(uuid "a54aa0c4-6e36-5300-a473-7bd70d60b184")
-		(property "Reference" "TP13" (at 298.98 102.36 0) (effects (font (size 1.27 1.27)) (justify right)))
-		(property "Value" "TP" (at 297.18 99.06 0) (hide yes) (effects (font (size 1.27 1.27))))
+		(property "Reference" "TP13" (at 311.68 102.36 0) (effects (font (size 1.27 1.27)) (justify right)))
+		(property "Value" "TP" (at 309.88 99.06 0) (hide yes) (effects (font (size 1.27 1.27))))
 		(property "Footprint" "zeebuddy:TestPad_D1.0mm"
-			(at 292.1 99.06 0)
+			(at 304.8 99.06 0)
 			(hide yes)
 			(effects (font (size 1.27 1.27)))
 		)
-		(property "Datasheet" "" (at 292.1 99.06 0) (hide yes) (effects (font (size 1.27 1.27))))
+		(property "Datasheet" "" (at 304.8 99.06 0) (hide yes) (effects (font (size 1.27 1.27))))
 		(property "Description" "test point"
-			(at 297.18 99.06 0)
+			(at 309.88 99.06 0)
 			(hide yes)
 			(effects (font (size 1.27 1.27)))
 		)
@@ -4613,29 +4602,29 @@
 		)
 	)
 	(wire
-		(pts (xy 297.18 99.06) (xy 297.18 96.52))
+		(pts (xy 309.88 99.06) (xy 309.88 96.52))
 		(stroke (width 0) (type default))
 		(uuid "71361255-e0e7-50c2-b6cb-4f75a3012d3b")
 	)
 	(symbol
 		(lib_id "Connector:TestPoint")
-		(at 309.88 99.06 180)
+		(at 322.58 99.06 180)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom no)
 		(on_board yes)
 		(dnp no)
 		(uuid "0dcd7fdb-211d-5d82-9e1d-125b0050ed37")
-		(property "Reference" "TP14" (at 311.68 102.36 0) (effects (font (size 1.27 1.27)) (justify right)))
-		(property "Value" "TP" (at 309.88 99.06 0) (hide yes) (effects (font (size 1.27 1.27))))
+		(property "Reference" "TP14" (at 324.38 102.36 0) (effects (font (size 1.27 1.27)) (justify right)))
+		(property "Value" "TP" (at 322.58 99.06 0) (hide yes) (effects (font (size 1.27 1.27))))
 		(property "Footprint" "zeebuddy:TestPad_D1.0mm"
-			(at 304.8 99.06 0)
+			(at 317.5 99.06 0)
 			(hide yes)
 			(effects (font (size 1.27 1.27)))
 		)
-		(property "Datasheet" "" (at 304.8 99.06 0) (hide yes) (effects (font (size 1.27 1.27))))
+		(property "Datasheet" "" (at 317.5 99.06 0) (hide yes) (effects (font (size 1.27 1.27))))
 		(property "Description" "test point"
-			(at 309.88 99.06 0)
+			(at 322.58 99.06 0)
 			(hide yes)
 			(effects (font (size 1.27 1.27)))
 		)
@@ -4650,52 +4639,15 @@
 		)
 	)
 	(wire
-		(pts (xy 309.88 99.06) (xy 309.88 96.52))
-		(stroke (width 0) (type default))
-		(uuid "5c110d58-f05e-5196-9216-7c0e99c61f6b")
-	)
-	(symbol
-		(lib_id "Connector:TestPoint")
-		(at 322.58 99.06 180)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom no)
-		(on_board yes)
-		(dnp no)
-		(uuid "35cc267b-8e38-55c2-ade8-600cb7094da8")
-		(property "Reference" "TP15" (at 324.38 102.36 0) (effects (font (size 1.27 1.27)) (justify right)))
-		(property "Value" "TP" (at 322.58 99.06 0) (hide yes) (effects (font (size 1.27 1.27))))
-		(property "Footprint" "zeebuddy:TestPad_D1.0mm"
-			(at 317.5 99.06 0)
-			(hide yes)
-			(effects (font (size 1.27 1.27)))
-		)
-		(property "Datasheet" "" (at 317.5 99.06 0) (hide yes) (effects (font (size 1.27 1.27))))
-		(property "Description" "test point"
-			(at 322.58 99.06 0)
-			(hide yes)
-			(effects (font (size 1.27 1.27)))
-		)
-		(pin "1" (uuid "6f63841a-97f8-51f1-8b1d-fc73beb65d86"))
-		(instances
-			(project "zeebuddy-mainboard"
-				(path "/7aeefa69-ecae-5622-92cc-4aeb9ca26e29/211471ca-6f6b-5659-97e0-543d0c20cec9"
-					(reference "TP15")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(wire
 		(pts (xy 322.58 99.06) (xy 322.58 96.52))
 		(stroke (width 0) (type default))
-		(uuid "3422dcf5-7195-53b5-95e5-2b618a834ecf")
+		(uuid "5c110d58-f05e-5196-9216-7c0e99c61f6b")
 	)
 	(text "Type-C 的 D+ / D− 经 ESD 管、22 Ω 接 GPIO34 / 33（USB 串口 / JTAG）：下载、调试、日志。\n电阻和电容位贴近模组，电容先不贴。\nAir780E 的 USB 直接接模组的高速 USB 脚（54 = DM，55 = DP），90 Ω 差分、等长。\n不用 USB 切换芯片（2026-11-14 定：不做网课摄像头功能）。"
 		(exclude_from_sim no)
 		(at 259.08 116.84 0)
 		(effects (font (size 1.3 1.3)) (justify left top))
-		(uuid "072dd9b4-e925-5988-a63a-da8e7d091823")
+		(uuid "c75f662f-c681-506b-824b-923f2ca7c1ed")
 	)
 	(embedded_fonts no)
 )

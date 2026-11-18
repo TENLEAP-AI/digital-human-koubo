@@ -5590,7 +5590,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "959669e4-6fc9-54c3-af5c-f94fbf3dcf40")
-		(property "Reference" "TP17" (at 192.3 188.72 0) (effects (font (size 1.27 1.27)) (justify right)))
+		(property "Reference" "TP16" (at 192.3 188.72 0) (effects (font (size 1.27 1.27)) (justify right)))
 		(property "Value" "TP" (at 190.5 185.42 0) (hide yes) (effects (font (size 1.27 1.27))))
 		(property "Footprint" "zeebuddy:TestPad_D1.0mm"
 			(at 185.42 185.42 0)
@@ -5607,7 +5607,7 @@
 		(instances
 			(project "zeebuddy-mainboard"
 				(path "/7aeefa69-ecae-5622-92cc-4aeb9ca26e29/838bff14-ac06-5d10-840e-06ae3b903a43"
-					(reference "TP17")
+					(reference "TP16")
 					(unit 1)
 				)
 			)
@@ -5627,7 +5627,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "8bb488a6-6ee9-5e78-8440-06a5629dfa16")
-		(property "Reference" "TP18" (at 212.62 188.72 0) (effects (font (size 1.27 1.27)) (justify right)))
+		(property "Reference" "TP17" (at 212.62 188.72 0) (effects (font (size 1.27 1.27)) (justify right)))
 		(property "Value" "TP" (at 210.82 185.42 0) (hide yes) (effects (font (size 1.27 1.27))))
 		(property "Footprint" "zeebuddy:TestPad_D1.0mm"
 			(at 205.74 185.42 0)
@@ -5644,7 +5644,7 @@
 		(instances
 			(project "zeebuddy-mainboard"
 				(path "/7aeefa69-ecae-5622-92cc-4aeb9ca26e29/838bff14-ac06-5d10-840e-06ae3b903a43"
-					(reference "TP18")
+					(reference "TP17")
 					(unit 1)
 				)
 			)
@@ -5664,7 +5664,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "043e2caa-e4cc-5728-b862-475ed8a852f4")
-		(property "Reference" "TP19" (at 232.94 188.72 0) (effects (font (size 1.27 1.27)) (justify right)))
+		(property "Reference" "TP18" (at 232.94 188.72 0) (effects (font (size 1.27 1.27)) (justify right)))
 		(property "Value" "TP" (at 231.14 185.42 0) (hide yes) (effects (font (size 1.27 1.27))))
 		(property "Footprint" "zeebuddy:TestPad_D1.0mm"
 			(at 226.06 185.42 0)
@@ -5681,7 +5681,7 @@
 		(instances
 			(project "zeebuddy-mainboard"
 				(path "/7aeefa69-ecae-5622-92cc-4aeb9ca26e29/838bff14-ac06-5d10-840e-06ae3b903a43"
-					(reference "TP19")
+					(reference "TP18")
 					(unit 1)
 				)
 			)
@@ -5701,7 +5701,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "6a4b8baf-2425-5ffd-806b-5755b59e104b")
-		(property "Reference" "TP20" (at 253.26 188.72 0) (effects (font (size 1.27 1.27)) (justify right)))
+		(property "Reference" "TP19" (at 253.26 188.72 0) (effects (font (size 1.27 1.27)) (justify right)))
 		(property "Value" "TP" (at 251.46 185.42 0) (hide yes) (effects (font (size 1.27 1.27))))
 		(property "Footprint" "zeebuddy:TestPad_D1.0mm"
 			(at 246.38 185.42 0)
@@ -5718,7 +5718,7 @@
 		(instances
 			(project "zeebuddy-mainboard"
 				(path "/7aeefa69-ecae-5622-92cc-4aeb9ca26e29/838bff14-ac06-5d10-840e-06ae3b903a43"
-					(reference "TP20")
+					(reference "TP19")
 					(unit 1)
 				)
 			)
@@ -5738,7 +5738,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "08f03778-4582-5079-b21a-21c2d8592357")
-		(property "Reference" "TP21" (at 273.58 188.72 0) (effects (font (size 1.27 1.27)) (justify right)))
+		(property "Reference" "TP20" (at 273.58 188.72 0) (effects (font (size 1.27 1.27)) (justify right)))
 		(property "Value" "TP" (at 271.78 185.42 0) (hide yes) (effects (font (size 1.27 1.27))))
 		(property "Footprint" "zeebuddy:TestPad_D1.0mm"
 			(at 266.7 185.42 0)
@@ -5755,7 +5755,7 @@
 		(instances
 			(project "zeebuddy-mainboard"
 				(path "/7aeefa69-ecae-5622-92cc-4aeb9ca26e29/838bff14-ac06-5d10-840e-06ae3b903a43"
-					(reference "TP21")
+					(reference "TP20")
 					(unit 1)
 				)
 			)
@@ -5775,7 +5775,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "3b1de2d0-a171-5951-85c1-b5e5b165318c")
-		(property "Reference" "TP22" (at 192.3 221.74 0) (effects (font (size 1.27 1.27)) (justify right)))
+		(property "Reference" "TP21" (at 192.3 221.74 0) (effects (font (size 1.27 1.27)) (justify right)))
 		(property "Value" "TP" (at 190.5 218.44 0) (hide yes) (effects (font (size 1.27 1.27))))
 		(property "Footprint" "zeebuddy:TestPad_D1.0mm"
 			(at 185.42 218.44 0)
@@ -5792,7 +5792,7 @@
 		(instances
 			(project "zeebuddy-mainboard"
 				(path "/7aeefa69-ecae-5622-92cc-4aeb9ca26e29/838bff14-ac06-5d10-840e-06ae3b903a43"
-					(reference "TP22")
+					(reference "TP21")
 					(unit 1)
 				)
 			)
@@ -5812,7 +5812,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "1af93b63-b338-54f1-ba74-d7c01a15f4c5")
-		(property "Reference" "TP23" (at 212.62 221.74 0) (effects (font (size 1.27 1.27)) (justify right)))
+		(property "Reference" "TP22" (at 212.62 221.74 0) (effects (font (size 1.27 1.27)) (justify right)))
 		(property "Value" "TP" (at 210.82 218.44 0) (hide yes) (effects (font (size 1.27 1.27))))
 		(property "Footprint" "zeebuddy:TestPad_D1.0mm"
 			(at 205.74 218.44 0)
@@ -5829,7 +5829,7 @@
 		(instances
 			(project "zeebuddy-mainboard"
 				(path "/7aeefa69-ecae-5622-92cc-4aeb9ca26e29/838bff14-ac06-5d10-840e-06ae3b903a43"
-					(reference "TP23")
+					(reference "TP22")
 					(unit 1)
 				)
 			)
@@ -5849,7 +5849,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "f6a109aa-fa6f-58a8-969b-9c277cda3a63")
-		(property "Reference" "TP24" (at 232.94 221.74 0) (effects (font (size 1.27 1.27)) (justify right)))
+		(property "Reference" "TP23" (at 232.94 221.74 0) (effects (font (size 1.27 1.27)) (justify right)))
 		(property "Value" "TP" (at 231.14 218.44 0) (hide yes) (effects (font (size 1.27 1.27))))
 		(property "Footprint" "zeebuddy:TestPad_D1.0mm"
 			(at 226.06 218.44 0)
@@ -5866,7 +5866,7 @@
 		(instances
 			(project "zeebuddy-mainboard"
 				(path "/7aeefa69-ecae-5622-92cc-4aeb9ca26e29/838bff14-ac06-5d10-840e-06ae3b903a43"
-					(reference "TP24")
+					(reference "TP23")
 					(unit 1)
 				)
 			)
@@ -5886,7 +5886,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "d815a308-e9ff-5e35-a5a3-96fa82fb3f53")
-		(property "Reference" "TP25" (at 253.26 221.74 0) (effects (font (size 1.27 1.27)) (justify right)))
+		(property "Reference" "TP24" (at 253.26 221.74 0) (effects (font (size 1.27 1.27)) (justify right)))
 		(property "Value" "TP" (at 251.46 218.44 0) (hide yes) (effects (font (size 1.27 1.27))))
 		(property "Footprint" "zeebuddy:TestPad_D1.0mm"
 			(at 246.38 218.44 0)
@@ -5903,7 +5903,7 @@
 		(instances
 			(project "zeebuddy-mainboard"
 				(path "/7aeefa69-ecae-5622-92cc-4aeb9ca26e29/838bff14-ac06-5d10-840e-06ae3b903a43"
-					(reference "TP25")
+					(reference "TP24")
 					(unit 1)
 				)
 			)
@@ -5923,7 +5923,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "1fa80ef2-a154-5145-81fa-d95f9e799d18")
-		(property "Reference" "TP26" (at 273.58 221.74 0) (effects (font (size 1.27 1.27)) (justify right)))
+		(property "Reference" "TP25" (at 273.58 221.74 0) (effects (font (size 1.27 1.27)) (justify right)))
 		(property "Value" "TP" (at 271.78 218.44 0) (hide yes) (effects (font (size 1.27 1.27))))
 		(property "Footprint" "zeebuddy:TestPad_D1.0mm"
 			(at 266.7 218.44 0)
@@ -5940,7 +5940,7 @@
 		(instances
 			(project "zeebuddy-mainboard"
 				(path "/7aeefa69-ecae-5622-92cc-4aeb9ca26e29/838bff14-ac06-5d10-840e-06ae3b903a43"
-					(reference "TP26")
+					(reference "TP25")
 					(unit 1)
 				)
 			)

@@ -897,6 +897,100 @@
 		)
 		(embedded_fonts no)
 	)
+	(symbol "BQ27220YZFR"
+		(pin_names (offset 0.762))
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(property "Reference" "U"
+			(at -10.16 10.16 0)
+			(effects (font (size 1.27 1.27)) (justify left bottom))
+		)
+		(property "Value" "BQ27220YZFR"
+			(at -10.16 -10.16 0)
+			(effects (font (size 1.27 1.27)) (justify left top))
+		)
+		(property "Footprint" "Package_BGA:BGA-9_1.6x1.6mm_Layout3x3_P0.5mm"
+			(at 0 0 0)
+			(hide yes)
+			(effects (font (size 1.27 1.27)))
+		)
+		(property "Datasheet" "https://www.ti.com/lit/ds/symlink/bq27220.pdf"
+			(at 0 0 0)
+			(hide yes)
+			(effects (font (size 1.27 1.27)))
+		)
+		(property "Description" "TI 单节锂电池电量计（库仑计），DSBGA-9 1.62 × 1.58 mm、0.5 mm 间距，I²C 地址 0x55（固定）"
+			(at 0 0 0)
+			(hide yes)
+			(effects (font (size 1.27 1.27)))
+		)
+		(symbol "BQ27220YZFR_0_1"
+			(rectangle
+				(start -10.16 8.89)
+				(end 10.16 -8.89)
+				(stroke (width 0.254) (type default))
+				(fill (type background))
+			)
+		)
+		(symbol "BQ27220YZFR_1_1"
+			(pin passive line
+				(at -12.7 6.35 0)
+				(length 2.54)
+				(name "BAT" (effects (font (size 1.27 1.27))))
+				(number "C3" (effects (font (size 1.27 1.27))))
+			)
+			(pin input line
+				(at -12.7 3.81 0)
+				(length 2.54)
+				(name "SRP" (effects (font (size 1.27 1.27))))
+				(number "C1" (effects (font (size 1.27 1.27))))
+			)
+			(pin input line
+				(at -12.7 1.27 0)
+				(length 2.54)
+				(name "SRN" (effects (font (size 1.27 1.27))))
+				(number "C2" (effects (font (size 1.27 1.27))))
+			)
+			(pin input line
+				(at -12.7 -3.81 0)
+				(length 2.54)
+				(name "BIN" (effects (font (size 1.27 1.27))))
+				(number "B1" (effects (font (size 1.27 1.27))))
+			)
+			(pin power_in line
+				(at -12.7 -6.35 0)
+				(length 2.54)
+				(name "VSS" (effects (font (size 1.27 1.27))))
+				(number "B2" (effects (font (size 1.27 1.27))))
+			)
+			(pin power_out line
+				(at 12.7 6.35 180)
+				(length 2.54)
+				(name "VDD" (effects (font (size 1.27 1.27))))
+				(number "B3" (effects (font (size 1.27 1.27))))
+			)
+			(pin bidirectional line
+				(at 12.7 1.27 180)
+				(length 2.54)
+				(name "SDA" (effects (font (size 1.27 1.27))))
+				(number "A2" (effects (font (size 1.27 1.27))))
+			)
+			(pin input line
+				(at 12.7 -1.27 180)
+				(length 2.54)
+				(name "SCL" (effects (font (size 1.27 1.27))))
+				(number "A3" (effects (font (size 1.27 1.27))))
+			)
+			(pin open_collector line
+				(at 12.7 -3.81 180)
+				(length 2.54)
+				(name "GPOUT" (effects (font (size 1.27 1.27))))
+				(number "A1" (effects (font (size 1.27 1.27))))
+			)
+		)
+		(embedded_fonts no)
+	)
 	(symbol "CAM_FPC_24P"
 		(pin_names (offset 0.762))
 		(exclude_from_sim no)
