@@ -222,17 +222,18 @@ def ocn_btb_socket(n=40):
     """OCN (亚奇) OK-128GF040/2-35 board-to-board socket: 0.35 mm pitch, 0.6 mm mated height.
     Pads from the maker's recommended PCB layout: signal pads 0.18 x 0.40 in two rows of n/2, outer edges 2.30 apart;
     at each end two 0.40 x 0.39 power-pin pads, 0.58 apart, 1.28 from the nearest signal pad.
-    Pin numbering (odd pins in the top row, even pins in the bottom row, pin 1 top left) is ours: check it against
-    the maker's drawing before the board is made."""
+    Pin numbering follows the panel maker's plug drawing (Lianxun LX280BS0176, 2026-11-18): one row 1 .. 20, the other
+    row 21 .. 40 running back, so 20 faces 21 and 1 faces 40. Here: top row 1 .. 20 left to right, bottom row 40 .. 21
+    left to right. A plug laid face-down on the socket then puts every pin N on pad N."""
     half = n // 2
     span = (half - 1) * 0.35            # DIM-D: 6.65 for 40 pins
     fp = FP(f"OCN_OK-128GF{n:03d}_2-35", f"亚奇 OCN OK-128GF{n:03d}/2-35 板对板母座，0.35 mm 间距，{n} 脚 + 两端电源脚，"
-            "配合高度 0.6 mm。焊盘按亚奇规格书的推荐焊盘；脚号顺序（上排单数、下排双数）画板前要和亚奇图纸核对",
+            "配合高度 0.6 mm。焊盘按亚奇规格书的推荐焊盘；脚号按联讯图纸：上排 1 ~ 20，下排 21 ~ 40 倒排（20 对 21，1 对 40）",
             ref_y=-2.2, val_y=2.2)
     for i in range(half):
         x = -span / 2 + i * 0.35
-        fp.pad(2 * i + 1, x, -0.95, 0.18, 0.40)
-        fp.pad(2 * i + 2, x, 0.95, 0.18, 0.40)
+        fp.pad(i + 1, x, -0.95, 0.18, 0.40)          # top row: 1 .. 20
+        fp.pad(n - i, x, 0.95, 0.18, 0.40)           # bottom row: 40 .. 21, so pin 1 faces pin 40
     for sx in (-1, 1):
         for sy in (-1, 1):
             fp.pad("MP", sx * (span / 2 + 1.28), sy * (0.29 + 0.195), 0.40, 0.39)

@@ -7,7 +7,7 @@
 	(property "Reference" "REF**"
 		(at 0 -1.6 0)
 		(layer "F.SilkS")
-		(uuid "86eff5c5-f151-4a80-98c4-4ea31c37d4f1")
+		(uuid "3d713c25-a069-4201-93e8-d9d0f56f6390")
 		(effects
 			(font
 				(size 0.8 0.8)
@@ -18,7 +18,7 @@
 	(property "Value" "ProgPads_1x06"
 		(at 0 1.6 0)
 		(layer "F.Fab")
-		(uuid "4f021f24-6fd4-4e2e-8db9-2b92c7d541d6")
+		(uuid "57caa7af-6083-464c-82f0-18a9f62e4b25")
 		(effects
 			(font
 				(size 0.8 0.8)
@@ -30,7 +30,7 @@
 		(at 0 0 0)
 		(layer "F.Fab")
 		(hide yes)
-		(uuid "240eb0ec-1998-40f8-9a67-95156c125cb3")
+		(uuid "41a1ad7c-df78-45d7-abeb-747f651a6fa1")
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -41,7 +41,7 @@
 		(at 0 0 0)
 		(layer "F.Fab")
 		(hide yes)
-		(uuid "83834d1a-53d0-4941-92d4-71197709b566")
+		(uuid "465269f8-ddf3-495a-91f0-420a6b8bfa18")
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -59,44 +59,44 @@
 		)
 		(fill no)
 		(layer "F.CrtYd")
-		(uuid "892e086d-76d0-4ce7-a0c8-5fb4c18f1d3f")
+		(uuid "76bd75c1-398c-44f8-855c-5873233536a2")
 	)
 	(pad "1" smd rect
 		(at -3.75 0)
 		(size 1 1)
 		(layers "F.Cu" "F.Mask")
 		(thermal_bridge_angle 45)
-		(uuid "8e22dbbb-1a85-4647-8f79-5540b3bc2401")
+		(uuid "2123e9b2-c0dc-4614-b6bc-ca0f4f1ff722")
 	)
 	(pad "2" smd circle
 		(at -2.25 0)
 		(size 1 1)
 		(layers "F.Cu" "F.Mask")
-		(uuid "a9e944b9-2696-443d-91ea-c2de679d9f37")
+		(uuid "835d2052-e959-4b90-9e76-8218585eb5c4")
 	)
 	(pad "3" smd circle
 		(at -0.75 0)
 		(size 1 1)
 		(layers "F.Cu" "F.Mask")
-		(uuid "e1786b93-5eb8-4abe-921d-45c0056a3330")
+		(uuid "57e969b1-dcfb-43a4-b728-1410b2281a55")
 	)
 	(pad "4" smd circle
 		(at 0.75 0)
 		(size 1 1)
 		(layers "F.Cu" "F.Mask")
-		(uuid "a87dcc9f-cecd-43ae-b0bb-2c8edd55bbac")
+		(uuid "37b7d89e-869f-4196-a335-e3c346fbc78b")
 	)
 	(pad "5" smd circle
 		(at 2.25 0)
 		(size 1 1)
 		(layers "F.Cu" "F.Mask")
-		(uuid "7b31265a-d330-44ba-a198-fdfd3f6cc248")
+		(uuid "44d94ec9-9792-49b2-9116-3b22547d2839")
 	)
 	(pad "6" smd circle
 		(at 3.75 0)
 		(size 1 1)
 		(layers "F.Cu" "F.Mask")
-		(uuid "1aa5e4df-e44e-4dd5-822e-3754cdd2f082")
+		(uuid "d3351198-1c23-45ca-9c09-8ce8fbec829d")
 	)
 	(embedded_fonts no)
 )
