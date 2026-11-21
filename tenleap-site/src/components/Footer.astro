@@ -1,0 +1,43 @@
+---
+import { site } from '../data/site';
+import { products } from '../data/products';
+const year = new Date().getFullYear();
+---
+<footer>
+  <div class="wrap grid">
+    <div class="brand">
+      <div class="name">{site.name}</div>
+      <p class="muted">{site.tagline}</p>
+    </div>
+    <div>
+      <h4>Products</h4>
+      <ul>{products.map((p) => <li><a href={`/products/${p.slug}`}>{p.name}</a></li>)}</ul>
+    </div>
+    <div>
+      <h4>Company</h4>
+      <ul>
+        <li><a href="/about">About</a></li>
+        <li><a href="/contact">Contact</a></li>
+        <li><a href="/contact#support">Support</a></li>
+      </ul>
+    </div>
+    <div>
+      <h4>Follow</h4>
+      <ul>{site.social.map((s) => <li><a href={s.href}>{s.label}</a></li>)}</ul>
+    </div>
+  </div>
+  <div class="wrap legal muted">
+    <span>© {year} {site.name}. All rights reserved.</span>
+    <span><a href="#">Privacy</a> · <a href="#">Terms</a> · <a href="#">Shipping &amp; Returns</a></span>
+  </div>
+</footer>
+<style>
+  footer { border-top: 1px solid var(--line); padding: 64px 0 32px; margin-top: 40px; }
+  .grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 32px; }
+  .name { font-family: var(--display); font-size: 28px; font-weight: 700; margin-bottom: 8px; }
+  h4 { font-size: 13px; text-transform: uppercase; letter-spacing: 0.12em; color: var(--muted); margin: 0 0 14px; }
+  ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+  ul a:hover { color: var(--accent); }
+  .legal { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px; font-size: 13px; margin-top: 48px; padding-top: 24px; border-top: 1px solid var(--line); }
+  @media (max-width: 760px) { .grid { grid-template-columns: 1fr 1fr; } .brand { grid-column: 1 / -1; } }
+</style>

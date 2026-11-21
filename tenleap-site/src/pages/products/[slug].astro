@@ -1,0 +1,85 @@
+---
+import Base from '../../layouts/Base.astro';
+import ProductArt from '../../components/ProductArt.astro';
+import ProductCard from '../../components/ProductCard.astro';
+import { products, statusLabel, type Product } from '../../data/products';
+
+export function getStaticPaths() {
+  return products.map((p) => ({ params: { slug: p.slug }, props: { p } }));
+}
+const { p } = Astro.props as { p: Product };
+const others = products.filter((x) => x.slug !== p.slug);
+// TODO: 接入结账（Shopify Buy Button / Stripe Payment Link 等）后，把按钮 href 换成真实购买链接。
+const buy = p.status === 'available' ? 'Buy now' : p.status === 'preorder' ? 'Pre-order' : 'Notify me';
+---
+<Base title={p.name} description={p.short}>
+  <section class="section top">
+    <div class="wrap grid">
+      <div class="art" style={`--hue:${p.hue}`}><ProductArt kind={p.art} hue={p.hue} size={460} /></div>
+      <div class="info">
+        <a href="/products" class="back muted">← All products</a>
+        <span class:list={['pill', { coming: p.status === 'coming' }]}>{statusLabel[p.status]}</span>
+        <h1>{p.name}</h1>
+        <p class="muted cat">{p.category}</p>
+        <p class="short">{p.short}</p>
+        <div class="price">{p.price}</div>
+        <div class="ctas">
+          <a href="/contact" class="btn btn-primary">{buy}</a>
+          <a href="#specs" class="btn btn-ghost">Tech specs</a>
+        </div>
+        <ul class="assure muted">
+          <li>Free shipping over $79</li><li>2-year warranty</li><li>30-day returns</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="section hl">
+    <div class="wrap hl-grid">
+      {p.highlights.map((h) => (<article><h3>{h.title}</h3><p class="muted">{h.text}</p></article>))}
+    </div>
+  </section>
+
+  <section class="section" id="specs">
+    <div class="wrap">
+      <p class="eyebrow">Tech specs</p>
+      <h2 class="h2">{p.name}</h2>
+      <dl>{p.specs.map(([k, v]) => (<div><dt class="muted">{k}</dt><dd>{v}</dd></div>))}</dl>
+    </div>
+  </section>
+
+  <section class="section more">
+    <div class="wrap">
+      <h2 class="h2">You might also like</h2>
+      <div class="cards">{others.map((x) => <ProductCard p={x} />)}</div>
+    </div>
+  </section>
+</Base>
+<style>
+  .top { padding-top: 48px; }
+  .grid { display: grid; grid-template-columns: 1.1fr 1fr; gap: 48px; align-items: center; }
+  .art { background: var(--ink-2); border: 1px solid var(--line); border-radius: 28px; display: grid; place-items: center; padding: 32px; aspect-ratio: 1; }
+  .art :global(svg) { width: 100%; height: auto; }
+  .info { display: grid; gap: 12px; justify-items: start; }
+  .back { font-size: 14px; margin-bottom: 12px; }
+  .back:hover { color: var(--paper); }
+  h1 { font-size: clamp(40px, 5.5vw, 68px); }
+  .short { font-size: 18px; color: var(--paper-2); max-width: 44ch; }
+  .price { font-family: var(--display); font-size: 36px; font-weight: 700; margin-top: 8px; }
+  .ctas { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 8px; }
+  .assure { list-style: none; padding: 0; margin: 12px 0 0; display: flex; gap: 18px; flex-wrap: wrap; font-size: 14px; }
+  .assure li::before { content: '✓ '; color: var(--accent); }
+  .hl { background: var(--ink-2); border-block: 1px solid var(--line); }
+  .hl-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 32px; }
+  .hl-grid h3 { font-size: 26px; margin-bottom: 10px; }
+  .h2 { font-size: clamp(28px, 3.6vw, 42px); margin: 10px 0 32px; }
+  dl { margin: 0; display: grid; grid-template-columns: 1fr 1fr; column-gap: 48px; }
+  dl div { display: grid; grid-template-columns: 160px 1fr; gap: 16px; padding: 18px 0; border-bottom: 1px solid var(--line); }
+  dd { margin: 0; }
+  .more { padding-top: 0; }
+  .cards { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
+  @media (max-width: 860px) {
+    .grid, .hl-grid, dl, .cards { grid-template-columns: 1fr; }
+    dl div { grid-template-columns: 130px 1fr; }
+  }
+</style>

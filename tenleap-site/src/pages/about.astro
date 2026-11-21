@@ -1,0 +1,35 @@
+---
+import Base from '../layouts/Base.astro';
+// TODO: 换成 Tenleap 真实的品牌故事、成立时间、团队与地点
+const values = [
+  ['Useful over flashy', 'Every feature has to earn its place on your wrist.'],
+  ['Full-stack craft', 'Hardware, firmware, app and AI designed as one system.'],
+  ['Your data, your call', 'Clear controls for what is collected, stored and shared.'],
+];
+---
+<Base title="About" description="The story and values behind Tenleap.">
+  <section class="section">
+    <div class="wrap narrow">
+      <p class="eyebrow">About Tenleap</p>
+      <h1>Ten small steps.<br />One leap.</h1>
+      <p class="lead">Tenleap started with a simple belief: the devices closest to us should understand us best. We design wearables and AI companions that quietly collect the right signals and turn them into decisions you can act on.</p>
+      <p class="muted">We build the whole stack in-house — from circuit boards and embedded firmware to the companion app and the AI that ties it together. That is how we keep devices light, batteries long and insights honest.</p>
+    </div>
+  </section>
+  <section class="section vals">
+    <div class="wrap grid">
+      {values.map(([t, d], i) => (<article><span>0{i + 1}</span><h3>{t}</h3><p class="muted">{d}</p></article>))}
+    </div>
+  </section>
+</Base>
+<style>
+  .narrow { max-width: 780px; }
+  h1 { font-size: clamp(44px, 7vw, 88px); margin: 14px 0 28px; }
+  .lead { font-size: clamp(18px, 1.8vw, 22px); margin-bottom: 20px; color: var(--paper-2); }
+  .vals { padding-top: 0; }
+  .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+  article { background: var(--ink-2); border: 1px solid var(--line); border-radius: var(--radius); padding: 28px; }
+  article span { font-family: var(--display); color: var(--accent); font-weight: 700; }
+  h3 { font-size: 24px; margin: 28px 0 10px; }
+  @media (max-width: 760px) { .grid { grid-template-columns: 1fr; } }
+</style>

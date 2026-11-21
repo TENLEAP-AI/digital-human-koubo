@@ -1,0 +1,39 @@
+---
+// TODO: 接入真实邮件服务（Klaviyo / Mailchimp / Shopify Email 等）后，把 action 换成服务商的提交地址。
+---
+<section class="news">
+  <div class="wrap box">
+    <div>
+      <p class="eyebrow">Stay in the loop</p>
+      <h2>Be first to know when we launch.</h2>
+      <p class="muted">Launch dates, early-bird pricing and product news. No spam.</p>
+    </div>
+    <form id="news-form">
+      <label for="email" class="sr">Email address</label>
+      <input id="email" name="email" type="email" required placeholder="you@example.com" autocomplete="email" />
+      <button class="btn btn-primary" type="submit">Notify me</button>
+      <p class="msg" role="status" aria-live="polite"></p>
+    </form>
+  </div>
+</section>
+<script>
+  const form = document.getElementById('news-form') as HTMLFormElement | null;
+  form?.addEventListener('submit', (e) => {
+    e.preventDefault();
+    // 占位：还没接邮件服务，这里只给出提示，不会保存邮箱。
+    const msg = form.querySelector('.msg');
+    if (msg) msg.textContent = 'Thanks! Sign-ups open soon — we have not saved your email yet.';
+    form.reset();
+  });
+</script>
+<style>
+  .news { padding: 40px 0 80px; }
+  .box { display: grid; grid-template-columns: 1.2fr 1fr; gap: 40px; align-items: center; padding: clamp(28px, 5vw, 56px); border-radius: 28px; background: linear-gradient(135deg, #1a2010, #14171f 60%); border: 1px solid var(--line); }
+  h2 { font-size: clamp(28px, 3.6vw, 42px); margin: 10px 0 12px; }
+  form { display: flex; gap: 10px; flex-wrap: wrap; }
+  input { flex: 1 1 220px; padding: 14px 18px; border-radius: 999px; border: 1px solid var(--line); background: var(--ink); color: var(--paper); font: inherit; font-size: 15px; }
+  input:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
+  .msg { flex-basis: 100%; font-size: 14px; color: var(--accent); min-height: 1.4em; }
+  .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+  @media (max-width: 760px) { .box { grid-template-columns: 1fr; } }
+</style>

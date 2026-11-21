@@ -1,0 +1,53 @@
+---
+import Base from '../layouts/Base.astro';
+import { site } from '../data/site';
+// TODO: 换成真实 FAQ
+const faq = [
+  ['When will my order ship?', 'In-stock items ship within 2 business days. Pre-orders ship in the order they were placed.'],
+  ['Which phones are supported?', 'iOS 14 or later and Android 8 or later.'],
+  ['How do I start a return?', 'Email us within 30 days of delivery with your order number and we will send a prepaid label.'],
+  ['Do you work with distributors?', 'Yes — reach out with your region and channel and our partnerships team will reply.'],
+];
+---
+<Base title="Contact" description="Get in touch with Tenleap for support, orders and partnerships.">
+  <section class="section">
+    <div class="wrap grid">
+      <div>
+        <p class="eyebrow">Contact</p>
+        <h1>Let’s talk.</h1>
+        <p class="muted lead">Orders, product support, press or wholesale — we reply within one business day.</p>
+        <a class="mail" href={`mailto:${site.email}`}>{site.email}</a>
+      </div>
+      <div class="cards">
+        <a href={`mailto:${site.email}?subject=Order%20question`}><h3>Orders &amp; pre-orders</h3><p class="muted">Status, shipping and changes.</p></a>
+        <a id="support" href={`mailto:${site.email}?subject=Product%20support`}><h3>Product support</h3><p class="muted">Setup, pairing and warranty.</p></a>
+        <a href={`mailto:${site.email}?subject=Partnership`}><h3>Partnerships</h3><p class="muted">Distribution, OEM and collaborations.</p></a>
+      </div>
+    </div>
+  </section>
+  <section class="section faq">
+    <div class="wrap narrow">
+      <h2>FAQ</h2>
+      {faq.map(([q, a]) => (<details><summary>{q}</summary><p class="muted">{a}</p></details>))}
+    </div>
+  </section>
+</Base>
+<style>
+  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: start; }
+  h1 { font-size: clamp(44px, 7vw, 88px); margin: 14px 0 20px; }
+  .lead { font-size: 18px; max-width: 40ch; }
+  .mail { display: inline-block; margin-top: 28px; font-family: var(--display); font-size: clamp(22px, 2.6vw, 32px); border-bottom: 2px solid var(--accent); }
+  .cards { display: grid; gap: 14px; }
+  .cards a { background: var(--ink-2); border: 1px solid var(--line); border-radius: var(--radius); padding: 24px 26px; transition: border-color 0.2s; }
+  .cards a:hover { border-color: var(--accent); }
+  .cards h3 { font-size: 22px; margin-bottom: 6px; }
+  .faq { padding-top: 0; }
+  .narrow { max-width: 820px; }
+  h2 { font-size: clamp(28px, 3.6vw, 42px); margin-bottom: 20px; }
+  details { border-bottom: 1px solid var(--line); padding: 20px 0; }
+  summary { cursor: pointer; font-weight: 600; font-size: 18px; list-style: none; display: flex; justify-content: space-between; gap: 16px; }
+  summary::after { content: '+'; color: var(--accent); font-size: 22px; line-height: 1; }
+  details[open] summary::after { content: '–'; }
+  details p { margin-top: 12px; }
+  @media (max-width: 760px) { .grid { grid-template-columns: 1fr; } }
+</style>

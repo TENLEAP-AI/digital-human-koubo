@@ -1,0 +1,124 @@
+---
+import Base from '../layouts/Base.astro';
+import ProductArt from '../components/ProductArt.astro';
+import ProductCard from '../components/ProductCard.astro';
+import Newsletter from '../components/Newsletter.astro';
+import { products } from '../data/products';
+import { site } from '../data/site';
+
+// TODO: 换成真实的服务承诺（运费门槛、保修年限、退货天数）
+const perks = [
+  ['Free shipping', 'On orders over $79'],
+  ['2-year warranty', 'On every device'],
+  ['30-day returns', 'No questions asked'],
+  ['Secure checkout', 'Major cards & PayPal'],
+];
+
+// TODO: 换成 Tenleap 真实的技术亮点
+const tech = [
+  { k: '01', t: 'On-device AI', d: 'Health insights are computed on the wearable first, so the essentials work even offline.' },
+  { k: '02', t: 'Sensors you can trust', d: 'Multi-wavelength optical sensing tuned for sleep, heart rate and recovery.' },
+  { k: '03', t: 'Voice-first', d: 'Talk to your devices naturally. Notes, reminders and answers without reaching for your phone.' },
+  { k: '04', t: 'Open ecosystem', d: 'Works with Apple Health and Google Health Connect, plus custom watch faces.' },
+];
+---
+<Base>
+  <section class="hero">
+    <div class="wrap hero-grid">
+      <div class="copy">
+        <p class="eyebrow">New · Leap Watch S1</p>
+        <h1>Intelligence<br />you can <em>wear.</em></h1>
+        <p class="lead">{site.description}</p>
+        <div class="ctas">
+          <a href="/products/leap-watch-s1" class="btn btn-primary">Pre-order Watch S1</a>
+          <a href="/products" class="btn btn-ghost">Explore products</a>
+        </div>
+      </div>
+      <div class="visual" aria-hidden="true">
+        <div class="ring"></div>
+        <ProductArt kind="watch" hue="#C6F432" size={440} />
+      </div>
+    </div>
+  </section>
+
+  <section class="perks" aria-label="Store benefits">
+    <div class="wrap perk-row">
+      {perks.map(([t, d]) => (<div><strong>{t}</strong><span class="muted">{d}</span></div>))}
+    </div>
+  </section>
+
+  <section class="section" id="products">
+    <div class="wrap">
+      <div class="section-head">
+        <div><p class="eyebrow">The lineup</p><h2>Made for the leaps you take every day.</h2></div>
+        <a href="/products" class="btn btn-ghost">View all</a>
+      </div>
+      <div class="cards">{products.map((p) => <ProductCard p={p} />)}</div>
+    </div>
+  </section>
+
+  <section class="section tech" id="technology">
+    <div class="wrap">
+      <div class="section-head">
+        <div><p class="eyebrow">Technology</p><h2>Small devices. Serious engineering.</h2></div>
+        <p class="muted" style="max-width:42ch">From PCB and firmware to the companion app, we build the whole stack — so every part works together.</p>
+      </div>
+      <div class="tech-grid">
+        {tech.map((x) => (<article><span class="k">{x.k}</span><h3>{x.t}</h3><p class="muted">{x.d}</p></article>))}
+      </div>
+    </div>
+  </section>
+
+  <section class="section story">
+    <div class="wrap story-box">
+      <p class="eyebrow">Our idea</p>
+      <p class="quote">Ten small steps make one leap. We build technology that turns everyday data into the next good decision.</p>
+      <a href="/about" class="btn btn-ghost">Our story</a>
+    </div>
+  </section>
+
+  <Newsletter />
+</Base>
+
+<style>
+  .hero { position: relative; overflow: hidden; padding: clamp(48px, 8vw, 96px) 0 clamp(40px, 6vw, 72px); }
+  .hero::before { content: ''; position: absolute; inset: -20% -10% auto auto; width: 70vw; height: 70vw; background: radial-gradient(closest-side, rgba(198,244,50,0.12), transparent); pointer-events: none; }
+  .hero-grid { display: grid; grid-template-columns: 1.1fr 1fr; gap: 40px; align-items: center; position: relative; }
+  h1 { font-size: clamp(48px, 8vw, 104px); margin: 18px 0 22px; }
+  h1 em { font-style: normal; color: var(--accent); }
+  .lead { font-size: clamp(17px, 1.6vw, 20px); color: var(--paper-2); max-width: 46ch; }
+  .ctas { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 32px; }
+  .visual { position: relative; display: grid; place-items: center; }
+  .visual :global(svg) { width: min(440px, 100%); height: auto; animation: float 6s ease-in-out infinite; }
+  .ring { position: absolute; width: 88%; aspect-ratio: 1; border-radius: 50%; border: 1px dashed rgba(198,244,50,0.25); animation: spin 40s linear infinite; }
+  @keyframes float { 50% { transform: translateY(-12px); } }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .perks { border-block: 1px solid var(--line); }
+  .perk-row { display: grid; grid-template-columns: repeat(4, 1fr); }
+  .perk-row div { padding: 22px 16px; display: grid; gap: 2px; font-size: 14px; }
+  .perk-row div + div { border-left: 1px solid var(--line); }
+  .perk-row strong { font-size: 15px; }
+  .cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+  .tech { background: var(--paper); color: var(--ink); }
+  .tech .muted { color: #5b606b; }
+  .tech .eyebrow { color: #4d6a00; }
+  .tech .btn-ghost { color: var(--ink); }
+  .tech-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+  .tech-grid article { background: #fff; border-radius: var(--radius); padding: 28px 24px 32px; border: 1px solid var(--paper-2); }
+  .k { font-family: var(--display); font-weight: 700; color: #4d6a00; }
+  .tech-grid h3 { font-size: 22px; margin: 40px 0 10px; }
+  .story-box { text-align: center; display: grid; justify-items: center; gap: 24px; }
+  .quote { font-family: var(--display); font-size: clamp(26px, 3.4vw, 44px); line-height: 1.2; max-width: 24ch; letter-spacing: -0.015em; }
+  @media (max-width: 960px) {
+    .cards { grid-template-columns: 1fr 1fr; }
+    .tech-grid { grid-template-columns: 1fr 1fr; }
+  }
+  @media (max-width: 760px) {
+    .hero-grid { grid-template-columns: 1fr; }
+    .visual { order: -1; max-width: 320px; margin: 0 auto; }
+    .perk-row { grid-template-columns: 1fr 1fr; }
+    .perk-row div:nth-child(3) { border-left: 0; }
+    .perk-row div:nth-child(n+3) { border-top: 1px solid var(--line); }
+    .cards, .tech-grid { grid-template-columns: 1fr; }
+  }
+</style>

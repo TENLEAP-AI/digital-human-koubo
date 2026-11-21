@@ -1,0 +1,22 @@
+---
+import Base from '../../layouts/Base.astro';
+import ProductCard from '../../components/ProductCard.astro';
+import { products } from '../../data/products';
+---
+<Base title="Products" description="Explore Tenleap smartwatches, health bands and AI voice companions.">
+  <section class="section">
+    <div class="wrap">
+      <p class="eyebrow">Shop</p>
+      <h1>All products</h1>
+      <p class="muted intro">Every Tenleap device works with one companion app and syncs with Apple Health and Google Health Connect.</p>
+      <div class="cards">{products.map((p) => <ProductCard p={p} />)}</div>
+    </div>
+  </section>
+</Base>
+<style>
+  h1 { font-size: clamp(40px, 6vw, 72px); margin: 12px 0 16px; }
+  .intro { max-width: 56ch; margin-bottom: 48px; }
+  .cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+  @media (max-width: 960px) { .cards { grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 640px) { .cards { grid-template-columns: 1fr; } }
+</style>

@@ -1,0 +1,53 @@
+---
+import { site } from '../data/site';
+const path = Astro.url.pathname;
+---
+<header class="hdr">
+  <div class="wrap row">
+    <a href="/" class="logo" aria-label={`${site.name} home`}>
+      <svg viewBox="0 0 64 64" width="28" height="28" aria-hidden="true"><rect width="64" height="64" rx="14" fill="#1e222c"/><path d="M14 44 L30 20 L38 32 L50 16" fill="none" stroke="#C6F432" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <span>{site.name}</span>
+    </a>
+    <nav aria-label="Main">
+      <ul>
+        {site.nav.map((n) => (
+          <li><a href={n.href} aria-current={path.startsWith(n.href) && n.href !== '/' ? 'page' : undefined}>{n.label}</a></li>
+        ))}
+      </ul>
+    </nav>
+    <a href="/products" class="btn btn-primary cta">Shop</a>
+    <button class="menu" aria-label="Open menu" aria-expanded="false">
+      <span></span><span></span>
+    </button>
+  </div>
+</header>
+<script>
+  const btn = document.querySelector<HTMLButtonElement>('.hdr .menu');
+  btn?.addEventListener('click', () => {
+    const open = document.body.classList.toggle('nav-open');
+    btn.setAttribute('aria-expanded', String(open));
+  });
+</script>
+<style>
+  .hdr { position: sticky; top: 0; z-index: 50; backdrop-filter: blur(14px); background: rgba(11,13,18,0.72); border-bottom: 1px solid var(--line); }
+  .row { display: flex; align-items: center; gap: 32px; height: 68px; }
+  .logo { display: flex; align-items: center; gap: 10px; font-family: var(--display); font-weight: 700; font-size: 20px; letter-spacing: -0.01em; }
+  nav { margin-left: auto; }
+  ul { display: flex; gap: 28px; list-style: none; margin: 0; padding: 0; }
+  nav a { font-size: 15px; color: var(--paper-2); }
+  nav a:hover, nav a[aria-current='page'] { color: var(--accent); }
+  .cta { padding: 10px 20px; }
+  .menu { display: none; background: none; border: 0; width: 40px; height: 40px; cursor: pointer; flex-direction: column; justify-content: center; gap: 6px; padding: 8px; }
+  .menu span { display: block; height: 2px; background: var(--paper); border-radius: 2px; transition: transform 0.2s; }
+  @media (max-width: 760px) {
+    .row { gap: 12px; }
+    .menu { display: flex; margin-left: auto; }
+    .cta { display: none; }
+    nav { position: fixed; inset: 68px 0 auto 0; background: var(--ink); border-bottom: 1px solid var(--line); display: none; }
+    :global(body.nav-open) nav { display: block; }
+    :global(body.nav-open) .menu span:first-child { transform: translateY(4px) rotate(45deg); }
+    :global(body.nav-open) .menu span:last-child { transform: translateY(-4px) rotate(-45deg); }
+    ul { flex-direction: column; gap: 0; padding: 8px 16px 16px; }
+    nav a { display: block; padding: 14px 0; font-size: 18px; border-bottom: 1px solid var(--line); }
+  }
+</style>

@@ -1,0 +1,27 @@
+---
+import ProductArt from './ProductArt.astro';
+import { statusLabel, type Product } from '../data/products';
+interface Props { p: Product }
+const { p } = Astro.props;
+---
+<a class="card" href={`/products/${p.slug}`}>
+  <div class="art"><ProductArt kind={p.art} hue={p.hue} size={260} /></div>
+  <div class="meta">
+    <span class:list={['pill', { coming: p.status === 'coming' }]}>{statusLabel[p.status]}</span>
+    <h3>{p.name}</h3>
+    <p class="muted">{p.category}</p>
+    <div class="foot"><span class="price">{p.price}</span><span class="go" aria-hidden="true">→</span></div>
+  </div>
+</a>
+<style>
+  .card { display: flex; flex-direction: column; background: var(--ink-2); border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; transition: transform 0.2s, border-color 0.2s; }
+  .card:hover { transform: translateY(-4px); border-color: rgba(255,255,255,0.22); }
+  .art { display: grid; place-items: center; padding: 24px; background: var(--ink-3); aspect-ratio: 1 / 0.86; }
+  .meta { padding: 22px 24px 24px; display: grid; gap: 6px; justify-items: start; }
+  .foot { justify-self: stretch; }
+  h3 { font-size: 24px; margin-top: 8px; }
+  .foot { display: flex; justify-content: space-between; align-items: center; margin-top: 10px; }
+  .price { font-family: var(--display); font-size: 20px; font-weight: 700; }
+  .go { width: 36px; height: 36px; border-radius: 50%; display: grid; place-items: center; background: rgba(255,255,255,0.06); transition: background 0.2s, color 0.2s; }
+  .card:hover .go { background: var(--accent); color: var(--ink); }
+</style>
