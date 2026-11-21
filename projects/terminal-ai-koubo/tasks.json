@@ -1,0 +1,82 @@
+[
+ {
+  "model": "grok-video-1.5",
+  "kind": "video",
+  "ratio": "9:16",
+  "resolution": "720p",
+  "duration": 8,
+  "label": "口播 s1",
+  "idempotencyKey": "dh-script-s1-v1",
+  "references": [
+   {
+    "ref": "material:329814",
+    "role": "reference_image"
+   }
+  ],
+  "prompt": "The young woman in @material:329814 talks straight into her phone's front camera, same selfie framing, lighting and outfit as the reference, like a friendly Chinese tech vlogger casually recommending a favorite coding tool: warm eye contact, expressive face, natural hand gestures. Handheld selfie feel with only a very slight natural sway. She speaks Mandarin Chinese, clearly lip-synced, in a young friendly female voice, clear and patient but lively, natural pace:\n“我只说了一句话，它就把整个博客搭好了。装依赖、写页面、跑预览，全程我没敲一行代码。”\nSound: only her voice and quiet room tone, no music, no subtitles, no on-screen text."
+ },
+ {
+  "model": "grok-video-1.5",
+  "kind": "video",
+  "ratio": "9:16",
+  "resolution": "720p",
+  "duration": 9,
+  "label": "口播 s2",
+  "idempotencyKey": "dh-script-s2-v1",
+  "references": [
+   {
+    "ref": "material:329814",
+    "role": "reference_image"
+   }
+  ],
+  "prompt": "The young woman in @material:329814 talks straight into her phone's front camera, same selfie framing, lighting and outfit as the reference, like a friendly Chinese tech vlogger casually recommending a favorite coding tool: warm eye contact, expressive face, natural hand gestures. Handheld selfie feel with only a very slight natural sway. She speaks Mandarin Chinese, clearly lip-synced, in a young friendly female voice, clear and patient but lively, natural pace:\n“它是一个住在终端里的AI编程助手。在自己电脑上建个文件夹，打开终端，直接跟它说人话就行。”\nSound: only her voice and quiet room tone, no music, no subtitles, no on-screen text."
+ },
+ {
+  "model": "grok-video-1.5",
+  "kind": "video",
+  "ratio": "9:16",
+  "resolution": "720p",
+  "duration": 10,
+  "label": "口播 s3",
+  "idempotencyKey": "dh-script-s3-v1",
+  "references": [
+   {
+    "ref": "material:329814",
+    "role": "reference_image"
+   }
+  ],
+  "prompt": "The young woman in @material:329814 talks straight into her phone's front camera, same selfie framing, lighting and outfit as the reference, like a friendly Chinese tech vlogger casually recommending a favorite coding tool: relaxed lifestyle vlogger sharing a favorite tool, natural small head tilts and nods, one hand comes up briefly in a casual gesture. Handheld selfie feel with only a very slight natural sway. She speaks Mandarin Chinese, clearly lip-synced, in a young friendly female voice, clear and patient but lively, natural pace:\n“比如我说：用 Astro 搭一个博客。它先自己装好依赖，再一页一页把页面写出来，最后把预览跑起来给我看。”\nSound: only her voice and quiet room tone, no music, no subtitles, no on-screen text."
+ },
+ {
+  "model": "grok-video-1.5",
+  "kind": "video",
+  "ratio": "9:16",
+  "resolution": "720p",
+  "duration": 9,
+  "label": "口播 s4",
+  "idempotencyKey": "dh-script-s4-v1",
+  "references": [
+   {
+    "ref": "material:329814",
+    "role": "reference_image"
+   }
+  ],
+  "prompt": "The young woman in @material:329814 talks straight into her phone's front camera, same selfie framing, lighting and outfit as the reference, like a friendly Chinese tech vlogger casually recommending a favorite coding tool: warm eye contact, expressive face, natural hand gestures. Handheld selfie feel with only a very slight natural sway. She speaks Mandarin Chinese, clearly lip-synced, in a young friendly female voice, clear and patient but lively, natural pace:\n“最让我放心的是，代码全在我自己的电脑上。想改哪里接着跟它说，想自己动手也随时能接过来。”\nSound: only her voice and quiet room tone, no music, no subtitles, no on-screen text."
+ },
+ {
+  "model": "grok-video-1.5",
+  "kind": "video",
+  "ratio": "9:16",
+  "resolution": "720p",
+  "duration": 7,
+  "label": "口播 s5",
+  "idempotencyKey": "dh-script-s5-v1",
+  "references": [
+   {
+    "ref": "material:329814",
+    "role": "reference_image"
+   }
+  ],
+  "prompt": "The young woman in @material:329814 talks straight into her phone's front camera, same selfie framing, lighting and outfit as the reference, like a friendly Chinese tech vlogger casually recommending a favorite coding tool: warm eye contact, expressive face, natural hand gestures. Handheld selfie feel with only a very slight natural sway. She speaks Mandarin Chinese, clearly lip-synced, in a young friendly female voice, clear and patient but lively, natural pace:\n“还在对着教程一行一行敲命令的，真的可以试试。打开终端，说出你想做的东西。”\nSound: only her voice and quiet room tone, no music, no subtitles, no on-screen text."
+ }
+]
