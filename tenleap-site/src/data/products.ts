@@ -1,5 +1,5 @@
 // 产品数据：名字、价格、卖点、规格全是占位（TODO），换成 Tenleap 真实产品。
-// art 决定产品插画样式：watch | band | voice。有实拍图后改成 image 字段即可。
+// art 决定产品插画样式：watch | band | ring。有实拍图后改成 image 字段即可。
 export type Product = {
   slug: string;
   name: string;
@@ -7,7 +7,7 @@ export type Product = {
   price: string;
   status: 'available' | 'preorder' | 'coming';
   short: string;
-  art: 'watch' | 'band' | 'voice';
+  art: 'watch' | 'band' | 'ring';
   hue: string;
   highlights: { title: string; text: string }[];
   specs: [string, string][];
@@ -61,24 +61,25 @@ export const products: Product[] = [
     ],
   },
   {
-    slug: 'leap-voice',
-    name: 'Leap Voice',
-    category: 'AI Voice Companion',
-    price: '$89',
+    slug: 'leap-ring',
+    name: 'Leap Ring',
+    category: 'Smart Ring',
+    price: '$199',
     status: 'coming',
-    short: 'A clip-on AI companion you talk to naturally — notes, reminders, translation and answers, hands-free.',
-    art: 'voice',
+    short: 'A titanium smart ring that tracks sleep, heart rate, HRV and skin temperature — no screen, no distractions.',
+    art: 'ring',
     hue: '#FF8A3D',
     highlights: [
-      { title: 'Just talk', text: 'Press once and speak. It remembers, reminds and replies.' },
-      { title: 'Live translation', text: 'Conversations across languages, in real time.' },
-      { title: 'Private by design', text: 'You decide what is stored, and you can delete it any time.' },
+      { title: 'Sleep, measured at the finger', text: 'Finger-based sensing for steadier overnight heart rate, HRV and temperature trends.' },
+      { title: '7-day battery', text: 'A week of 24/7 tracking, with a compact charging dock.' },
+      { title: 'Nothing to look at', text: 'No screen and no buzzing — insights wait for you in the app.' },
     ],
     specs: [
-      ['Microphones', 'Dual beamforming array'],
-      ['Battery', 'Up to 2 days typical'],
-      ['Wearing', 'Magnetic clip / lanyard'],
-      ['Connectivity', 'Bluetooth 5.3, Wi-Fi'],
+      ['Material', 'Titanium shell, hypoallergenic inner coating'],
+      ['Sensors', 'Heart rate, SpO₂, skin temperature, accelerometer'],
+      ['Battery', 'Up to 7 days typical'],
+      ['Water resistance', '10 ATM'],
+      ['Sizes', 'US 6–13 (free sizing kit before you buy)'],
       ['Compatibility', 'iOS 14+ / Android 8+'],
     ],
   },

@@ -1,6 +1,6 @@
 ---
 // 占位产品插画（纯 SVG）。有实拍图后在 ProductCard / 详情页换成 <img>。
-interface Props { kind: 'watch' | 'band' | 'voice'; hue: string; size?: number }
+interface Props { kind: 'watch' | 'band' | 'ring'; hue: string; size?: number }
 const { kind, hue, size = 320 } = Astro.props;
 const id = `g-${kind}-${Math.random().toString(36).slice(2, 7)}`;
 ---
@@ -37,15 +37,40 @@ const id = `g-${kind}-${Math.random().toString(36).slice(2, 7)}`;
       </g>
     </g>
   )}
-  {kind === 'voice' && (
+  {kind === 'ring' && (
     <g>
-      <rect x="110" y="70" width="100" height="160" rx="50" fill="#2a2f3b" />
-      <rect x="120" y="80" width="80" height="140" rx="40" fill="#050608" />
-      {[0, 1, 2, 3, 4].map((i) => {
-        const h = [18, 40, 60, 40, 18][i];
-        return <rect x={134 + i * 11} y={150 - h / 2} width="6" height={h} rx="3" fill={hue} />;
-      })}
-      <rect x="146" y="238" width="28" height="40" rx="8" fill="#232733" />
+      <defs>
+        <linearGradient id={`${id}-metal`} x1="0" x2="1" y1="0" y2="0">
+          <stop offset="0" stop-color="#1b1e26" />
+          <stop offset="0.35" stop-color="#4a505e" />
+          <stop offset="0.55" stop-color="#2a2f3b" />
+          <stop offset="1" stop-color="#15181f" />
+        </linearGradient>
+        <linearGradient id={`${id}-top`} x1="0" x2="0" y1="0" y2="1">
+          <stop offset="0" stop-color="#5a6070" />
+          <stop offset="1" stop-color="#2a2f3b" />
+        </linearGradient>
+        <mask id={`${id}-hole`}>
+          <rect width="320" height="320" fill="#fff" />
+          <ellipse cx="160" cy="140" rx="82" ry="44" fill="#000" />
+        </mask>
+        <clipPath id={`${id}-in`}>
+          <ellipse cx="160" cy="140" rx="82" ry="44" />
+        </clipPath>
+      </defs>
+      <g mask={`url(#${id}-hole)`}>
+        <path d="M60 140 A100 58 0 0 0 260 140 L260 180 A100 58 0 0 1 60 180 Z" fill={`url(#${id}-metal)`} />
+        <ellipse cx="160" cy="140" rx="100" ry="58" fill={`url(#${id}-top)`} />
+      </g>
+      <g clip-path={`url(#${id}-in)`}>
+        <ellipse cx="160" cy="140" rx="82" ry="44" fill="#0b0d12" opacity="0.55" />
+        <path d="M78 140 A82 44 0 0 1 242 140 L242 180 A82 44 0 0 0 78 180 Z" fill="#101218" />
+        <ellipse cx="148" cy="114" rx="5" ry="3" fill={hue} />
+        <ellipse cx="164" cy="113" rx="5" ry="3" fill={hue} opacity="0.55" />
+        <ellipse cx="180" cy="114" rx="3" ry="2" fill={hue} opacity="0.35" />
+      </g>
+      <path d="M92 182 A100 58 0 0 0 150 197" fill="none" stroke="#8b92a3" stroke-width="3" stroke-linecap="round" opacity="0.6" />
+      <ellipse cx="160" cy="250" rx="90" ry="10" fill="#000" opacity="0.35" />
     </g>
   )}
 </svg>

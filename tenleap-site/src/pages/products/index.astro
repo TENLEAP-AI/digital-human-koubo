@@ -3,10 +3,10 @@ import Base from '../../layouts/Base.astro';
 import ProductCard from '../../components/ProductCard.astro';
 import { products } from '../../data/products';
 ---
-<Base title="Products" description="Explore Tenleap smartwatches, health bands and AI voice companions.">
+<Base title="Products" description="Explore Tenleap smartwatches, smart bands and smart rings.">
   <section class="section">
     <div class="wrap">
-      <p class="eyebrow">Shop</p>
+      <p class="eyebrow">Watch · Band · Ring</p>
       <h1>All products</h1>
       <p class="muted intro">Every Tenleap device works with one companion app and syncs with Apple Health and Google Health Connect.</p>
       <div class="cards">{products.map((p) => <ProductCard p={p} />)}</div>

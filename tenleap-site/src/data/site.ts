@@ -3,7 +3,7 @@ export const site = {
   name: 'Tenleap',
   tagline: 'Wearable intelligence for everyday leaps.', // TODO
   description:
-    'Tenleap designs AI-powered wearables and companions that understand your body, your voice and your day.', // TODO
+    'Tenleap makes smartwatches, smart bands and smart rings with built-in AI that turns your body’s signals into simple daily guidance.', // TODO
   email: 'hello@tenleap.com', // TODO
   social: [
     { label: 'Instagram', href: '#' }, // TODO
