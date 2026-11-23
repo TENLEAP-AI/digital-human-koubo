@@ -1,4 +1,4 @@
-"""Zeebuddy mainboard V2 schematic (ESP32-S31 module + ML307Y 4G on UART).
+"""Zeebuddy mainboard V2 schematic (ESP32-S31 module + ML307Y 4G on USB).
 
 Run:  python3 design.py [output_dir]
 The pin plan follows docs/esp32-s31-pinmap.md. Needs KiCad 10 (the module symbol uses KiCad 10 stacked pins).
@@ -154,7 +154,7 @@ def power():
              {"I/O1": "USBC_DP", "I/O2": "USBC_DM", "GND": "GND", "VBUS": "VBUS"})   # pin 5 to VBUS, as in ST's circuit
     sh.hlist(106.68, 81.28, [("R", "USBC_CC1", "GND", "5.1k"), ("R", "USBC_CC2", "GND", "5.1k")])
     sh.D(88.9, 114.3, "GND", "VBUS", "TVS 5V", "Device:D_TVS", "up", fp="Diode_SMD:D_SOD-123F")
-    sh.text(15.24, 121.92, "USB 数据线只去 ESD 管和 USB 转串口芯片 CH340C（下载、调试），不接充电芯片，\n"
+    sh.text(15.24, 121.92, "USB 数据线只去 ESD 管和主控的全速 USB 口（GPIO33 / 34），不接充电芯片，\n"
                            "所以不会触发快充升压，VBUS 一直是 5 V。", 1.3)
 
     sh.frame(142.24, 17.78, 406.4, 132.08, "充电和电源路径（SY6970，I²C 地址 0x6A）")
@@ -220,43 +220,17 @@ def power():
     return sh
 
 
-def download_and_lte_uart(sh):
-    """Type-C download port (CH340C) and the ML307Y UART level shifter, on the MCU sheet. Added 2026-11-23 and drawn
-    last so every earlier reference keeps its number."""
-    sh.frame(256.54, 17.78, 406.4, 137.16, "下载口：Type-C → USB 转串口 CH340C → 调试串口（UART0）")
-    sh.place("Interface_USB:CH340C", 299.72, 66.04,
-             {"VCC": "USB_3V3", "V3": "USB_3V3", "GND": "GND", "UD+": "USBC_DP", "UD-": "USBC_DM",
-              "TXD": "CH_TXD", "RXD": "CH_RXD", "~{DTR}": "CH_DTR", "~{RTS}": "CH_RTS"},
-             nc=["~{CTS}", "~{DSR}", "~{RI}", "~{DCD}", "R232", "NC"])
-    sh.place("Regulator_Linear:ME6211C33M5", 299.72, 116.84,
-             {"1": "VBUS", "2": "GND", "3": "VBUS", "5": "USB_3V3"}, nc=["4"], value="3.3 V LDO")
-    sh.hlist(355.6, 30.48, [
-        ("R", "CH_TXD", "U0RXD", "1k"),
-        ("R", "U0TXD", "CH_RXD", "1k"),
-        ("R", "CH_DTR", "AD_B1", "10k"),
-        ("R", "CH_RTS", "AD_B2", "10k"),
+def lte_usb_filter(sh):
+    """Reserved USB filter between the ML307Y and the S31 high-speed USB, as the module manual recommends
+    (15 nH in series with 1.8 pF across it, 2.2 pF between the lines). 0R fitted, capacitors not fitted.
+    Added 2026-11-23 and drawn last so earlier references keep their numbers."""
+    sh.hlist(271.78, 152.4, [
+        ("R", "LTE_USB_DP_M", "LTE_USB_DP", "0R（可换 15nH）"),
+        ("R", "LTE_USB_DM_M", "LTE_USB_DM", "0R（可换 15nH）"),
+        ("C", "LTE_USB_DP_M", "LTE_USB_DP", "1.8pF", "dnp"),
+        ("C", "LTE_USB_DM_M", "LTE_USB_DM", "1.8pF", "dnp"),
+        ("C", "LTE_USB_DP_M", "LTE_USB_DM_M", "2.2pF", "dnp"),
     ])
-    sh.place("Transistor_BJT:MMBT3904", 360.68, 88.9, {"B": "AD_B1", "C": "ESP_EN", "E": "CH_RTS"}, fp=FP_SOT23)
-    sh.place("Transistor_BJT:MMBT3904", 383.54, 88.9, {"B": "AD_B2", "C": "ESP_BOOT", "E": "CH_DTR"}, fp=FP_SOT23)
-    sh.caps(271.78, 101.6, "USB_3V3", ["100nF", ("1µF", None)], pitch=10.16)
-    sh.caps(335.28, 116.84, "VBUS", ["1µF"])
-    for i, net in enumerate(["U0TXD", "U0RXD", "ESP_BOOT", "USB_HS_DP", "USB_HS_DM"]):
-        sh.tp(350.52 + i * 10.16, 116.84, net)
-    sh.text(259.08, 129.54, "CH340C 由 VBUS 经 3.3 V LDO 供电：只在插 USB 时工作，不耗电池。串口串 1k，CH340C 断电时不倒灌。\n"
-                            "两颗三极管是乐鑫标准的自动下载电路（DTR / RTS → EN / GPIO61），电脑一键烧录。\n"
-                            "高速 USB（模组 54 / 55 脚）先引到测试点，留给 USB 前摄方案（验证后定）。", 1.3)
-
-    sh.frame(256.54, 142.24, 406.4, 248.92, "4G 串口电平转换（1.8 V ↔ 3.3 V，TXS0104E）")
-    sh.place("Logic_LevelTranslator:TXS0104EPW", 330.2, 190.5,
-             {"V_{CCA}": "LTE_VDD_EXT", "V_{CCB}": "+3V3", "OE": "LTE_VDD_EXT", "GND": "GND",
-              "A1": "LTE_RXD", "B1": "LTE_UART_TX", "A2": "LTE_TXD", "B2": "LTE_UART_RX",
-              "A3": "LTE_DTR", "B3": "LTE_DTR_3V3", "A4": "LTE_RI", "B4": "LTE_RI_3V3"}, nc=["NC"])
-    sh.caps(281.94, 175.26, "LTE_VDD_EXT", ["100nF"])
-    sh.caps(373.38, 175.26, "+3V3", ["100nF"])
-    sh.text(259.08, 223.52, "A 边接 ML307Y（1.8 V，由模组的 VDD_EXT 供电），B 边接主控和扩展芯片（3.3 V）。\n"
-                            "OE 接 VDD_EXT：模组断电时转换芯片自动关断，不会从主控倒灌电进模组。\n"
-                            "1：GPIO33 → 模组 RXD；2：模组 TXD → GPIO34；3：扩展芯片 U7 P17 → DTR（休眠控制）；\n"
-                            "4：RI（来电 / 数据唤醒）→ 扩展芯片 U6 P12。串口 921600 bps，不接流控（小智方案同样不接）。", 1.3)
 
 
 def fuel_gauge(sh):
@@ -301,7 +275,7 @@ ESP_PINS = {
     **{str(42 + i): f"LCD_D{i}" for i in range(12)},          # GPIO8 .. 19 = LCD_DATA0 .. 11 (IO MUX)
     "15": "SD_D0", "16": "SD_D1", "17": "SD_D2", "18": "SD_D3",  # GPIO20 .. 23 (SDMMC slot 0, fixed)
     "19": "SD_CLK", "20": "SD_CMD",                             # GPIO24 / 25
-    "13": "LTE_UART_TX", "14": "LTE_UART_RX",                   # GPIO33 / 34: UART1 to the ML307Y (via level shifter)
+    "13": "ESP_DM", "14": "ESP_DP",                             # GPIO33 / 34: USB Serial/JTAG (full speed) to Type-C
     "12": "LCD_D12",     # GPIO35 (GPIO matrix)
     "21": "LCD_D13",     # GPIO36 strapping (VDD_SPI), pulled up inside the module
     "22": "LCD_D14",     # GPIO37 strapping
@@ -320,7 +294,7 @@ ESP_PINS = {
     "36": "U0RXD",         # GPIO59 = UART0 RXD
     "26": "FG_SCL",        # GPIO60 strapping, only boot log: high at boot thanks to the I2C pull-up
     "27": "ESP_BOOT",      # GPIO61 strapping: low at reset = download mode
-    "54": "USB_HS_DM", "55": "USB_HS_DP",                       # high-speed USB OTG: reserved (USB front camera option)
+    "54": "LTE_USB_DM", "55": "LTE_USB_DP",                     # dedicated high-speed USB OTG -> ML307Y (RNDIS)
 }
 
 
@@ -362,12 +336,25 @@ def mcu():
     sh.text(203.2, 177.8,
             "GPIO 分配\n0  扩展芯片中断\n1  触摸中断\n2 / 3  I²C SDA / SCL\n4 / 5  音频 BCLK / WS\n"
             "6  功放数据\n7  麦克风数据\n8 ~ 19  屏 D0 ~ D11\n20 ~ 23  TF D0 ~ D3\n24 / 25  TF CLK / CMD\n"
-            "33 / 34  4G 串口 TX / RX", 1.3)
+            "33 / 34  USB D− / D+（Type-C）", 1.3)
     sh.text(238.76, 177.8,
             "\n35 ~ 38  屏 D12 ~ D15\n39  背光调光\n40  屏 PCLK\n42  电量计 SDA\n43 / 44 / 45  屏 DE / HSYNC / VSYNC\n"
             "46 ~ 53  摄像头 D0 ~ D7\n54 / 55  摄像头 PCLK / XCLK\n56 / 57  摄像头 VSYNC / HREF\n"
-            "58 / 59  串口 TX / RX（Type-C 下载）\n60  电量计 SCL\n61  BOOT\n高速 USB  预留给 USB 前摄", 1.3)
+            "58 / 59  串口 TX / RX\n60  电量计 SCL\n61  BOOT\n高速 USB  4G（ML307Y）", 1.3)
 
+    sh.frame(256.54, 17.78, 406.4, 137.16, "USB：Type-C 接全速口，4G（ML307Y）接高速口")
+    sh.hlist(299.72, 45.72, [
+        ("R", "USBC_DP", "ESP_DP", "22R"),
+        ("R", "USBC_DM", "ESP_DM", "22R"),
+        ("C", "ESP_DP", "GND", "待定", "dnp"),
+        ("C", "ESP_DM", "GND", "待定", "dnp"),
+    ])
+    for i, net in enumerate(["ESP_DP", "ESP_DM", "U0TXD", "U0RXD", "ESP_BOOT"]):
+        sh.tp(271.78 + i * 12.7, 99.06, net)
+    sh.text(259.08, 116.84, "Type-C 的 D+ / D− 经 ESD 管、22 Ω 接 GPIO34 / 33（USB 串口 / JTAG）：下载、调试、日志。\n"
+                            "电阻和电容位贴近模组，电容先不贴。\n"
+                            "ML307Y 的 USB 接模组的高速 USB 脚（54 = DM，55 = DP），90 Ω 差分、等长（RNDIS 上网）。\n"
+                            "不用 USB 切换芯片（2026-11-14 定：不做网课摄像头功能）。", 1.3)
     return sh
 
 
@@ -377,11 +364,10 @@ def mcu():
 # U7 (0x20) takes the inputs, U8 (0x22) the outputs (docs/esp32-s31-pinmap.md, section 3). The board engineer may
 # swap pins within a chip to ease routing. 0x21 is not used: GC0308 and GC032A front cameras answer on it.
 EXP_A = {"P00": "KEY1", "P01": "KEY2", "P02": "KEY3", "P03": "KEY4", "P04": "KEY5", "P05": "KEY6",
-         "P06": "SD_DET", "P07": "LTE_STATUS_N", "P10": "FG_INT", "P11": "CHG_INT", "P12": "LTE_RI_3V3"}
+         "P06": "SD_DET", "P07": "LTE_STATUS_N", "P10": "FG_INT", "P11": "CHG_INT"}
 EXP_B = {"P00": "LCD_RST", "P01": "LCD_CS", "P02": "LCD_SCL", "P03": "LCD_SDA", "P04": "TP_RST",
          "P05": "CAM_PWR_EN", "P06": "CAMR_PWDN", "P07": "CAMF_PWDN", "P10": "CAM_RST", "P11": "CAM_SEL",
-         "P12": "PA_EN", "P13": "LTE_PWR_EN", "P14": "LTE_PWRKEY_EN", "P15": "LTE_RESET_EN", "P16": "EXP_SPARE",
-         "P17": "LTE_DTR_3V3"}
+         "P12": "PA_EN", "P13": "LTE_PWR_EN", "P14": "LTE_PWRKEY_EN", "P15": "LTE_RESET_EN", "P16": "EXP_SPARE"}
 
 
 def expander():
@@ -392,9 +378,9 @@ def expander():
     sh.frame(12.7, 17.78, 175.26, 248.92, "两颗 16 位 I²C 扩展芯片")
     sh.place("Interface_Expansion:TCA9555RTWR", 91.44, 78.74,
              dict(common, A0="GND", A1="GND", A2="GND", **EXP_A),
-             nc=["P13", "P14", "P15", "P16", "P17"], value=EXP_VALUE)
+             nc=["P12", "P13", "P14", "P15", "P16", "P17"], value=EXP_VALUE)
     sh.place("Interface_Expansion:TCA9555RTWR", 91.44, 185.42,
-             dict(common, A0="GND", A1="+3V3", A2="GND", **EXP_B), value=EXP_VALUE)
+             dict(common, A0="GND", A1="+3V3", A2="GND", **EXP_B), nc=["P17"], value=EXP_VALUE)
     sh.text(15.24, 121.92, "上：地址 0x20，全部是输入：6 个按键、TF 卡检测、4G 状态、电量计中断、充电中断。P12 ~ P17 空，固件里设成输出。\n"
                            "下：地址 0x22，全部是输出：屏和触摸的复位、屏的三线 SPI、摄像头电源和控制、功放、4G 电源和开关机。\n"
                            "    P16 是备用脚（引到测试点），P17 空。不用 0x21：前摄 GC0308、GC032A 占这个地址。\n"
@@ -427,7 +413,7 @@ def expander():
 # 4. Cellular
 # =============================================================================
 def cellular():
-    sh = d.sheet("cellular.kicad_sch", "4 4G：ML307Y（串口 + AT 指令）、SIM 卡、天线")
+    sh = d.sheet("cellular.kicad_sch", "4 4G：ML307Y（高速 USB，RNDIS）、SIM 卡、天线")
 
     def npn(x, y, base, collector):
         sh.place("Transistor_BJT:MMBT3904", x, y, {"B": base, "C": collector, "E": "GND"}, fp=FP_SOT23)
@@ -480,22 +466,25 @@ def cellular():
     sh.place(LTE_MODULE, 238.76, 86.36, {
         "VBAT": "VDD_4G", "GND": "GND", "PWR_ON/OFF": "LTE_PWRKEY", "RESET": "LTE_RESET_N",
         "STATE": "LTE_STATUS", "NETLIGHT": "LTE_NET_STATUS", "VDD_EXT": "LTE_VDD_EXT",
-        "USB_DP": "LTE_USB_DP", "USB_DM": "LTE_USB_DM", "USB_VBUS": "LTE_VBUS", "BOOT_MODE": "LTE_USB_BOOT",
-        "UART0_RXD": "LTE_RXD", "UART0_TXD": "LTE_TXD", "UART0_DTR": "LTE_DTR", "UART0_RI": "LTE_RI",
+        "USB_DP": "LTE_USB_DP_M", "USB_DM": "LTE_USB_DM_M", "USB_VBUS": "LTE_VBUS", "BOOT_MODE": "LTE_USB_BOOT",
+        "UART0_RXD": "LTE_RXD", "UART0_TXD": "LTE_TXD",
         "DBG_RXD": "LTE_DBG_RX", "DBG_TXD": "LTE_DBG_TX", "ANT_MAIN": "LTE_ANT",
         "SIM0_VCC": "SIM_VDD", "SIM0_RST": "SIM_RST", "SIM0_CLK": "SIM_CLK", "SIM0_DAT": "SIM_DAT",
         "SIM0_DET": "SIM_DET",
-    }, nc=["UART0_DCD", "UART0_CTS", "UART0_RTS", "SIM1_VCC", "SIM1_RST", "SIM1_CLK", "SIM1_DAT", "NC"],
+    }, nc=["UART0_DTR", "UART0_RI", "UART0_DCD", "UART0_CTS", "UART0_RTS",
+           "SIM1_VCC", "SIM1_RST", "SIM1_CLK", "SIM1_DAT", "NC"],
         value="ML307Y（AT 版本）")
+    # R42 was the Air780E IO-voltage link, not needed on the ML307Y: its number stays unused so later references keep theirs.
+    d.refs["R"] += 1
     sh.hlist(238.76, 142.24, [
-        ("R", "VDD_4G", "LTE_VBUS", "10k", "dnp"),   # USB is only used to update the module firmware
+        ("R", "VDD_4G", "LTE_VBUS", "10k"),      # USB detect: 3 .. 5.25 V per the ML307Y manual; VDD_4G is 3.5 .. 4.4 V
     ])
     tps = ["LTE_PWRKEY", "LTE_VDD_EXT", "LTE_USB_BOOT", "LTE_USB_DP", "LTE_USB_DM", "LTE_VBUS",
            "LTE_RXD", "LTE_TXD", "LTE_DBG_RX", "LTE_DBG_TX"]
     for i, net in enumerate(tps):
         sh.tp(187.96 + i * 10.16, 185.42, net)
-    sh.text(185.42, 205.74, "4G 数据走主串口（UART0，1.8 V），经电平转换接主控 GPIO33 / 34，AT 指令控制，921600 bps。\n"
-                            "USB、BOOT_MODE、调试串口只引到测试点，用于升级模组固件和抓日志；61 脚 10k 不贴。", 1.3)
+    sh.text(185.42, 205.74, "4G 数据走高速 USB（RNDIS 网卡 + AT 口），接主控的高速 USB 脚。61 脚（USB 检测，3 ~ 5.25 V）经 10k 接模组供电。\n"
+                            "USB 两根线上留了手册建议的滤波位置（0R 可换 15nH，电容先不贴）。主串口、调试串口、BOOT_MODE 只引到测试点。", 1.3)
     sh.text(185.42, 228.6, "封装和 Air780E 相同（Cat.1 标准 109 焊盘），已按 ML307Y 手册核对：6 脚是地，95 ~ 109 脚悬空。\n"
                            "隐藏脚都是不接的焊盘，不能接地。固件注意：ML307Y 不能发 AT+CGACT，会重启。", 1.3)
 
@@ -567,7 +556,7 @@ def display():
 # 6. Cameras
 # =============================================================================
 def camera():
-    sh = d.sheet("camera.kicad_sch", "6 摄像头：后摄 OV2640、前摄、总线切换、电源")
+    sh = d.sheet("camera.kicad_sch", "6 摄像头：后摄 GC2145（200 万）、前摄 30 万（视频通话）、总线切换、电源")
 
     def cam(y, side, name, dvdd, iovdd):
         p = "CAM" + side
@@ -579,7 +568,7 @@ def camera():
             "22": p + "_D2", "MP": "GND"}, nc=["1", "23", "24"], value=name)
 
     sh.frame(12.7, 17.78, 101.6, 248.92, "摄像头排线座（24P 0.5mm）")
-    cam(71.12, "R", "后摄 OV2640", "+1V2", "+3V3")
+    cam(71.12, "R", "后摄 GC2145（200 万）", "+1V2", "+3V3")
     cam(187.96, "F", "前摄 30 万（型号待定）", "CAMF_DVDD", "CAMF_IOVDD")
 
     sh.frame(106.68, 17.78, 251.46, 248.92, "并口总线切换（CAM_SEL = 0 后摄，1 前摄）")
@@ -730,23 +719,23 @@ def backlight(sh):
 
 if __name__ == "__main__":
     power_sheet = power()
-    mcu_sheet = mcu()
+    mcu()
     expander()
-    cellular()
+    cellular_sheet = cellular()
     display()
     camera()
     audio_tf()
     fuel_gauge(power_sheet)     # added 2026-11-18; drawn last so every earlier reference keeps its number
-    download_and_lte_uart(mcu_sheet)    # added 2026-11-23, same reason
+    lte_usb_filter(cellular_sheet)      # added 2026-11-23, same reason
     d.root_text = [
         (25.4, 17.78, "Zeebuddy 主板 V2 原理图（草稿，ESP32-S31）", 3.0),
-        (25.4, 26.67, "主控 ESP32-S31-WROOM-1U-N16R16V（16 MB Flash、16 MB PSRAM），4G 模组 ML307Y（串口 + AT 指令）。\n"
+        (25.4, 26.67, "主控 ESP32-S31-WROOM-1U-N16R16V（16 MB Flash、16 MB PSRAM），4G 模组 ML307Y（高速 USB）。\n"
                       "各页之间靠同名的网络标号连接；引脚分配见 docs/esp32-s31-pinmap.md。需要 KiCad 10 打开。\n"
                       "模组的符号和封装用乐鑫官方 KiCad 库（kicad/lib/espressif）。", 1.5),
         (25.4, 137.16,
          "和 V1（ESP32-S3）相比：\n"
-         "1. 主控换 S31；去掉 USB 切换芯片。2026-11-23：4G 换 ML307Y 走串口（GPIO33 / 34，经电平转换），\n"
-         "   Type-C 改接 USB 转串口 CH340C 下载调试，高速 USB 预留给 USB 前摄。\n"
+         "1. 主控换 S31；Type-C 接全速 USB（GPIO33 / 34），4G 接高速 USB；去掉 USB 切换芯片。\n"
+         "   2026-11-23：4G 模组换 ML307Y（封装同 Air780E），后摄换 GC2145。\n"
          "2. 屏改 16 位并口 RGB，屏和触摸共用一个 40 脚亚奇板对板母座（OK-128GF040/2-35）。\n"
          "3. TF 卡改四线；BOOT 改到 GPIO61；调试串口独立（GPIO58 / 59）。\n"
          "4. 两颗扩展芯片重新分配：0x20 全输入（按键等），0x22 全输出。\n"

@@ -17,13 +17,13 @@
 		(effects (font (size 3 3)) (justify left top))
 		(uuid "0aa1612e-2882-5764-87df-161f63b488e3")
 	)
-	(text "主控 ESP32-S31-WROOM-1U-N16R16V（16 MB Flash、16 MB PSRAM），4G 模组 ML307Y（串口 + AT 指令）。\n各页之间靠同名的网络标号连接；引脚分配见 docs/esp32-s31-pinmap.md。需要 KiCad 10 打开。\n模组的符号和封装用乐鑫官方 KiCad 库（kicad/lib/espressif）。"
+	(text "主控 ESP32-S31-WROOM-1U-N16R16V（16 MB Flash、16 MB PSRAM），4G 模组 ML307Y（高速 USB）。\n各页之间靠同名的网络标号连接；引脚分配见 docs/esp32-s31-pinmap.md。需要 KiCad 10 打开。\n模组的符号和封装用乐鑫官方 KiCad 库（kicad/lib/espressif）。"
 		(exclude_from_sim no)
 		(at 25.4 26.67 0)
 		(effects (font (size 1.5 1.5)) (justify left top))
 		(uuid "3875b843-c731-5c5b-b4b1-e275fe8c8099")
 	)
-	(text "和 V1（ESP32-S3）相比：\n1. 主控换 S31；去掉 USB 切换芯片。2026-11-23：4G 换 ML307Y 走串口（GPIO33 / 34，经电平转换），\n   Type-C 改接 USB 转串口 CH340C 下载调试，高速 USB 预留给 USB 前摄。\n2. 屏改 16 位并口 RGB，屏和触摸共用一个 40 脚亚奇板对板母座（OK-128GF040/2-35）。\n3. TF 卡改四线；BOOT 改到 GPIO61；调试串口独立（GPIO58 / 59）。\n4. 两颗扩展芯片重新分配：0x20 全输入（按键等），0x22 全输出。\n5. 摄像头主时钟改由 GPIO55 输出，24 MHz 晶振不贴；复位监控芯片改为默认贴。\n6. 2026-11-18 加电量计 BQ27220（U17），单独一组 I²C（GPIO42 / 60）；充电中断挪到扩展芯片。\n\n画板之前还要确认的：\n1. 两家屏：16 位模式、3.3 V IO、排线和母座脚号对照表（打样文件第 3 节）。\n2. 前摄：型号、排线脚位、10 脚要不要供电。\n3. 电池（2000 mAh，最大充电 0.5C）：电池座型号、有没有温度电阻脚。\n4. 按键：排线脚位，是否包含开关机键。\n5. 各连接器的具体型号（Type-C、SIM 卡座、TF 卡座、摄像头和按键排线座、电池座、喇叭座）。\n6. 220 µF 钽电容的高度是否放得进外壳。"
+	(text "和 V1（ESP32-S3）相比：\n1. 主控换 S31；Type-C 接全速 USB（GPIO33 / 34），4G 接高速 USB；去掉 USB 切换芯片。\n   2026-11-23：4G 模组换 ML307Y（封装同 Air780E），后摄换 GC2145。\n2. 屏改 16 位并口 RGB，屏和触摸共用一个 40 脚亚奇板对板母座（OK-128GF040/2-35）。\n3. TF 卡改四线；BOOT 改到 GPIO61；调试串口独立（GPIO58 / 59）。\n4. 两颗扩展芯片重新分配：0x20 全输入（按键等），0x22 全输出。\n5. 摄像头主时钟改由 GPIO55 输出，24 MHz 晶振不贴；复位监控芯片改为默认贴。\n6. 2026-11-18 加电量计 BQ27220（U17），单独一组 I²C（GPIO42 / 60）；充电中断挪到扩展芯片。\n\n画板之前还要确认的：\n1. 两家屏：16 位模式、3.3 V IO、排线和母座脚号对照表（打样文件第 3 节）。\n2. 前摄：型号、排线脚位、10 脚要不要供电。\n3. 电池（2000 mAh，最大充电 0.5C）：电池座型号、有没有温度电阻脚。\n4. 按键：排线脚位，是否包含开关机键。\n5. 各连接器的具体型号（Type-C、SIM 卡座、TF 卡座、摄像头和按键排线座、电池座、喇叭座）。\n6. 220 µF 钽电容的高度是否放得进外壳。"
 		(exclude_from_sim no)
 		(at 25.4 137.16 0)
 		(effects (font (size 1.5 1.5)) (justify left top))
@@ -105,7 +105,7 @@
 		(stroke (width 0.1524) (type solid))
 		(fill (color 0 0 0 0))
 		(uuid "838bff14-ac06-5d10-840e-06ae3b903a43")
-		(property "Sheetname" "4 4G：ML307Y（串口 + AT 指令）、SIM 卡、天线"
+		(property "Sheetname" "4 4G：ML307Y（高速 USB，RNDIS）、SIM 卡、天线"
 			(at 25.4 70.42 0)
 			(effects (font (size 1.27 1.27)) (justify left bottom))
 		)
@@ -145,7 +145,7 @@
 		(stroke (width 0.1524) (type solid))
 		(fill (color 0 0 0 0))
 		(uuid "fdb236d4-563a-50bb-8efa-d46cb487baba")
-		(property "Sheetname" "6 摄像头：后摄 OV2640、前摄、总线切换、电源"
+		(property "Sheetname" "6 摄像头：后摄 GC2145（200 万）、前摄 30 万（视频通话）、总线切换、电源"
 			(at 187.96 70.42 0)
 			(effects (font (size 1.27 1.27)) (justify left bottom))
 		)
