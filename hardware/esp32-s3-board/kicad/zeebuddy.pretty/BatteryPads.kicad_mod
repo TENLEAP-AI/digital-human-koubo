@@ -7,7 +7,7 @@
 	(property "Reference" "REF**"
 		(at 0 -3.81 0)
 		(layer "F.SilkS")
-		(uuid "ce9686be-79f6-418a-bf4c-966bb9239915")
+		(uuid "b46f8044-66ab-44b7-8c85-2c8f2f63f9d5")
 		(effects
 			(font
 				(size 0.8 0.8)
@@ -18,7 +18,7 @@
 	(property "Value" "BatteryPads"
 		(at 0 3.8 0)
 		(layer "F.Fab")
-		(uuid "387b0e4d-79d0-4326-8085-d90ac3b43339")
+		(uuid "3e857844-2b2d-4c21-9f95-c672b8c0d6fa")
 		(effects
 			(font
 				(size 0.8 0.8)
@@ -30,7 +30,7 @@
 		(at 0 0 0)
 		(layer "F.Fab")
 		(hide yes)
-		(uuid "e798f780-af86-44b9-97cd-92656ab321ea")
+		(uuid "65b42b9f-53eb-4308-bd4b-05dea6e296fd")
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -41,7 +41,7 @@
 		(at 0 0 0)
 		(layer "F.Fab")
 		(hide yes)
-		(uuid "5d59b011-3256-4206-92a4-e4ed4ed44e8d")
+		(uuid "830f8b02-d0b0-4dc4-a722-efd7531f4a65")
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -59,12 +59,12 @@
 		)
 		(fill no)
 		(layer "F.CrtYd")
-		(uuid "eaef1dd8-5a83-4020-a4c3-6d43d8235ffe")
+		(uuid "a8dbf061-2583-445a-8a97-ada922b538c0")
 	)
 	(fp_text user "-"
 		(at 1.99 -2.21 0)
 		(layer "F.SilkS")
-		(uuid "a96ebdfe-4472-4219-84c2-70a1ac2af631")
+		(uuid "a03d0a74-6416-4556-9ea4-1363ea3b9851")
 		(effects
 			(font
 				(size 0.8 0.8)
@@ -75,7 +75,7 @@
 	(fp_text user "+"
 		(at 1.99 2.2 0)
 		(layer "F.SilkS")
-		(uuid "f8d1b88e-6e34-4819-b630-9b68e8939796")
+		(uuid "24a319db-4a88-46f5-9520-90434a6d1d43")
 		(effects
 			(font
 				(size 0.8 0.8)
@@ -88,21 +88,21 @@
 		(size 2.58 1.2)
 		(layers "F.Cu" "F.Mask")
 		(thermal_bridge_angle 45)
-		(uuid "c2f29c55-0081-45ec-a90a-0d405fdbd8b0")
+		(uuid "ab227f62-1321-4289-83ee-f0a311bbdc27")
 	)
 	(pad "2" smd rect
 		(at 0 -2.21)
 		(size 2.58 1.2)
 		(layers "F.Cu" "F.Mask")
 		(thermal_bridge_angle 45)
-		(uuid "78d1c27d-6a86-4868-a9c8-9a185c8f60f0")
+		(uuid "9a5f0e6d-3877-402c-a655-22d1c95cd617")
 	)
 	(pad "3" smd rect
 		(at 0 0)
 		(size 2.58 1.2)
 		(layers "F.Cu" "F.Mask")
 		(thermal_bridge_angle 45)
-		(uuid "2772dede-1908-4e74-9311-d12b18d832d4")
+		(uuid "b607a546-6210-4917-83a3-eef7a4ef05a7")
 	)
 	(embedded_fonts no)
 )
